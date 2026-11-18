@@ -45,11 +45,10 @@ interface GalleryEntry {
 // Attachment name prefix used by BasePage.captureScreen()
 const SCREEN_PREFIX = 'screen: ';
 
-const DEFAULT_GENERATOR = path.join(
-  process.env.USERPROFILE ?? process.env.HOME ?? '',
-  'skills',
-  '02 automation test execution report template package - legacy',
-  'generate_report.py'
+// Report generator shipped in this repo (needs Python + `pip install jinja2`).
+// Override with the REPORT_GENERATOR environment variable.
+const DEFAULT_GENERATOR = path.resolve(
+  __dirname, '..', '..', 'tools', 'report-generator', 'generate_report.py'
 );
 
 // True when a notes file holds an empty JSON list ([]) or cannot be read

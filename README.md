@@ -18,6 +18,7 @@ BCP Project/
 ├── portals.config.ts     # THE config: environments -> portal, what each portal's screens have
 ├── playwright.config.ts  # ONE config: runs common/tests + <portal>/tests for ENV_NAME
 ├── scripts/pw.js         # runs Playwright for one environment (used by npm run test:*)
+├── tools/report-generator/  # builds the Test Execution Report HTML (Python + jinja2)
 │
 ├── common/               # written once, runs on every portal
 │   ├── config/           # testConfig.ts (run settings from .env), portals.ts (types + field ids)
@@ -52,11 +53,22 @@ BCP Project/
 
 ## Setup (once)
 
-1. Install in this folder:
+You need **Git**, **Node.js**, **Microsoft Edge** and **Python 3** installed, and the office network / VPN (the portals are internal).
+
+1. Get the code and install:
    ```powershell
+   git clone https://github.com/ss-derrick/BCP-project-progress-automation.git
+   cd BCP-project-progress-automation
    npm install
+   pip install jinja2        # for the Test Execution Report (tools/report-generator)
    ```
-2. Copy `.env.example` to `.env` and fill in **your own** logins for each environment. `.env` is never shared or committed. Both portals allow only **one session per user**, so two people on the same account log each other out.
+2. Copy `.env.example` to `.env` and fill in **your own** logins for each environment, and set `ENV_NAME`:
+   ```powershell
+   copy .env.example .env
+   notepad .env
+   ```
+   `.env` is never shared or committed. Both portals allow only **one session per user**, so two people on the same account log each other out: never use someone else's login.
+3. Later updates: `git pull` (then `npm install` if `package.json` changed).
 
 ## Running
 
