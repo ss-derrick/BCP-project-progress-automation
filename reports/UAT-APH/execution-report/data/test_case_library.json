@@ -1,0 +1,50 @@
+[
+  {
+    "id": "TC-APH-001",
+    "module": "Login",
+    "title": "Login with valid User ID and Password",
+    "priority": "High"
+  },
+  {
+    "id": "TC-APH-002",
+    "module": "All Companies",
+    "title": "Scenario sync company",
+    "priority": "High"
+  },
+  {
+    "id": "TC-APH-003",
+    "module": "All Companies",
+    "title": "Filter date from Jan 2026 to Current & Status is Suspended",
+    "priority": "Medium"
+  },
+  {
+    "id": "TC-APH-004",
+    "module": "All Companies",
+    "title": "Add a company with 3 MIDs on different Service Providers",
+    "priority": "High"
+  },
+  {
+    "id": "TC-APH-005",
+    "module": "All Companies",
+    "title": "Search parent company test_kw_master and view its details",
+    "priority": "High"
+  },
+  {
+    "id": "TC-APH-006",
+    "module": "All Companies",
+    "title": "Filter date from Jan 2026 to Current & Status is Suspended - Parent Company",
+    "priority": "Medium"
+  },
+  {
+    "id": "TC-APH-007",
+    "module": "All Companies",
+    "title": "Add a parent company - Master Merchant",
+    "priority": "High"
+  },
+  {
+    "id": "TC-APH-008",
+    "module": "All Companies",
+    "title": "Add a parent company - HQ Merchant",
+    "priority": "High"
+  }
+]

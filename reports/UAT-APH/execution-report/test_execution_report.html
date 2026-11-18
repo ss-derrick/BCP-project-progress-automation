@@ -1,0 +1,380 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>APH Automation — Test Execution Report</title>
+<style>
+  :root {
+    --bg: #f7f8fa; --card-bg: #ffffff; --text: #1a1d23; --text-dim: #5b6270;
+    --border: #e2e5ea; --accent: #2f6fed;
+    --pass: #1a7f37; --pass-bg: #dcfce7;
+    --fail: #b42318; --fail-bg: #fee4e2;
+    --blocked-env: #6b7280; --blocked-env-bg: #eef0f3;
+    --notrun: #4b5563; --notrun-bg: #eef0f3;
+    --skipped: #6b21a8; --skipped-bg: #f3e8ff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161a; --card-bg: #1c1f26; --text: #e7e9ee; --text-dim: #9aa2b1;
+      --border: #2b2f38; --accent: #6d9bff;
+      --pass: #4ade80; --pass-bg: #14351f;
+      --fail: #f87171; --fail-bg: #3a1715;
+      --blocked-env: #b8bfcb; --blocked-env-bg: #262a32;
+      --notrun: #b8bfcb; --notrun-bg: #262a32;
+      --skipped: #d8b4fe; --skipped-bg: #2c1c3d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161a; --card-bg: #1c1f26; --text: #e7e9ee; --text-dim: #9aa2b1;
+    --border: #2b2f38; --accent: #6d9bff;
+    --pass: #4ade80; --pass-bg: #14351f;
+    --fail: #f87171; --fail-bg: #3a1715;
+    --blocked-env: #b8bfcb; --blocked-env-bg: #262a32;
+    --notrun: #b8bfcb; --notrun-bg: #262a32;
+    --skipped: #d8b4fe; --skipped-bg: #2c1c3d;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 24px; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .subtitle { color: var(--text-dim); font-size: 13px; margin-bottom: 20px; }
+  .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 18px; }
+  .card h2 { font-size: 15px; margin: 0 0 10px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .stat { border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; min-width: 0; }
+  .stat .n { font-size: 22px; font-weight: 700; }
+  .stat .l { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--text-dim); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: .02em; position: sticky; top: 0; background: var(--card-bg); }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.mono { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; white-space: nowrap; }
+  td.small { font-size: 11px; color: var(--text-dim); }
+  td.notes { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-dim); }
+  td.wraptext { color: var(--text-dim); overflow-wrap: anywhere; }
+  .pass { color: var(--pass); } .fail { color: var(--fail); } .blocked { color: var(--blocked-env); } .notrun { color: var(--notrun); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge-pass { color: var(--pass); background: var(--pass-bg); }
+  .badge-fail { color: var(--fail); background: var(--fail-bg); }
+  .badge-blocked-env { color: var(--blocked-env); background: var(--blocked-env-bg); }
+  .badge-not-run { color: var(--notrun); background: var(--notrun-bg); }
+  .badge-skipped { color: var(--skipped); background: var(--skipped-bg); }
+  .badge-good { color: var(--pass); background: var(--pass-bg); }
+  .badge-bad { color: var(--fail); background: var(--fail-bg); }
+  .badge-warn { color: var(--skipped); background: var(--skipped-bg); }
+  .badge-neutral { color: var(--notrun); background: var(--notrun-bg); }
+  .empty-state { color: var(--text-dim); font-style: italic; }
+  .card-note { color: var(--text-dim); font-size: 12px; margin: -4px 0 10px; }
+  .controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .controls input, .controls select { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: 12.5px; }
+  .controls input { flex: 1; min-width: 180px; }
+  .table-scroll { max-height: 640px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .table-scroll-x { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .count-note { color: var(--text-dim); font-size: 11.5px; margin-top: 6px; }
+  a { color: var(--accent); }
+</style>
+</head><body>
+<div class="wrap">
+  <h1>APH Automation &mdash; Test Execution Report</h1>
+  <div class="subtitle">UAT-APH (https://10.0.1.30:35190) &middot; auto-generated 2026-11-18 10:32:40 +0800 (Asia/Kuala_Lumpur) after the last Playwright run &middot; source: data/last_execution_results.json + data/test_case_library.json</div>
+
+  <div class="card">
+    <h2>Summary &mdash; 8 test cases</h2>
+    <div class="stats">      <div class="stat"><div class="n">8</div><div class="l">Total</div></div>      <div class="stat"><div class="n pass">8</div><div class="l">Pass</div></div>      <div class="stat"><div class="n fail">0</div><div class="l">Fail</div></div>      <div class="stat"><div class="n blocked">0</div><div class="l">Blocked (environment)</div></div>      <div class="stat"><div class="n" style="color:var(--skipped)">0</div><div class="l">Skipped</div></div>      <div class="stat"><div class="n notrun">0</div><div class="l">Not run</div></div>    </div>
+  </div>
+
+  <div class="card">
+    <h2>Coverage by module</h2>
+    <table>
+      <thead><tr><th>Module</th><th class="num">Total</th><th class="num">Pass</th><th class="num">Fail</th><th class="num">Blocked</th><th class="num">Skipped</th><th class="num">Not run</th><th class="num">Executed</th></tr></thead>
+      <tbody><tr>
+        <td>All Companies</td>
+        <td class="num">7</td>
+        <td class="num pass">7</td>
+        <td class="num fail">0</td>
+        <td class="num blocked">0</td>
+        <td class="num" style="color:var(--skipped)">0</td>
+        <td class="num notrun">0</td>
+        <td class="num">100.0%</td>
+        </tr><tr>
+        <td>Login</td>
+        <td class="num">1</td>
+        <td class="num pass">1</td>
+        <td class="num fail">0</td>
+        <td class="num blocked">0</td>
+        <td class="num" style="color:var(--skipped)">0</td>
+        <td class="num notrun">0</td>
+        <td class="num">100.0%</td>
+        </tr></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>All test cases</h2>
+    <div class="controls">
+      <input id="search" type="text" placeholder="Search Test Case ID or title...">
+      <select id="moduleFilter"><option value="">All modules</option><option value="All Companies">All Companies</option><option value="Login">Login</option></select>
+      <select id="statusFilter">
+        <option value="">All statuses</option>
+        <option value="pass">Pass</option>
+        <option value="fail">Fail</option>
+        <option value="blocked-env">Blocked (environment)</option>
+        <option value="skipped">Skipped</option>
+        <option value="not-run">Not run</option>
+      </select>
+    </div>
+    <div class="table-scroll">
+      <table id="tcTable">
+        <thead><tr><th>Test Case ID</th><th>Module</th><th>Title</th><th>Priority</th><th>Status</th><th>Last executed (KL)</th><th>Duration</th><th>Evidence</th><th>Notes</th></tr></thead>
+        <tbody><tr data-module="Login" data-status="pass"
+            data-search="TC-APH-001 Login with valid User ID and Password">
+            <td class="mono">TC-APH-001</td>
+            <td>Login</td>
+            <td>Login with valid User ID and Password</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:32:17+08:00</td>
+            <td class="num">21.21s</td>
+            <td><a href="evidence/TC-APH-001/01-login-page.png" data-gallery="TC-APH-001">screenshots (4)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="All Companies" data-status="pass"
+            data-search="TC-APH-002 Scenario sync company">
+            <td class="mono">TC-APH-002</td>
+            <td>All Companies</td>
+            <td>Scenario sync company</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:30:08+08:00</td>
+            <td class="num">5.22s</td>
+            <td><a href="evidence/TC-APH-002/01-login-page.png" data-gallery="TC-APH-002">screenshots (6)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="All Companies" data-status="pass"
+            data-search="TC-APH-003 Filter date from Jan 2026 to Current &amp; Status is Suspended">
+            <td class="mono">TC-APH-003</td>
+            <td>All Companies</td>
+            <td>Filter date from Jan 2026 to Current &amp; Status is Suspended</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:30:13+08:00</td>
+            <td class="num">8.37s</td>
+            <td><a href="evidence/TC-APH-003/01-login-page.png" data-gallery="TC-APH-003">screenshots (7)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="All Companies" data-status="pass"
+            data-search="TC-APH-004 Add a company with 3 MIDs on different Service Providers">
+            <td class="mono">TC-APH-004</td>
+            <td>All Companies</td>
+            <td>Add a company with 3 MIDs on different Service Providers</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:30:22+08:00</td>
+            <td class="num">25.84s</td>
+            <td><a href="evidence/TC-APH-004/01-login-page.png" data-gallery="TC-APH-004">screenshots (12)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="All Companies" data-status="pass"
+            data-search="TC-APH-005 Search parent company test_kw_master and view its details">
+            <td class="mono">TC-APH-005</td>
+            <td>All Companies</td>
+            <td>Search parent company test_kw_master and view its details</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:30:48+08:00</td>
+            <td class="num">30.58s</td>
+            <td><a href="evidence/TC-APH-005/01-login-page.png" data-gallery="TC-APH-005">screenshots (7)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="All Companies" data-status="pass"
+            data-search="TC-APH-006 Filter date from Jan 2026 to Current &amp; Status is Suspended - Parent Company">
+            <td class="mono">TC-APH-006</td>
+            <td>All Companies</td>
+            <td>Filter date from Jan 2026 to Current &amp; Status is Suspended - Parent Company</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:31:18+08:00</td>
+            <td class="num">11.91s</td>
+            <td><a href="evidence/TC-APH-006/01-login-page.png" data-gallery="TC-APH-006">screenshots (5)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="All Companies" data-status="pass"
+            data-search="TC-APH-007 Add a parent company - Master Merchant">
+            <td class="mono">TC-APH-007</td>
+            <td>All Companies</td>
+            <td>Add a parent company - Master Merchant</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:31:30+08:00</td>
+            <td class="num">20.07s</td>
+            <td><a href="evidence/TC-APH-007/01-login-page.png" data-gallery="TC-APH-007">screenshots (11)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="All Companies" data-status="pass"
+            data-search="TC-APH-008 Add a parent company - HQ Merchant">
+            <td class="mono">TC-APH-008</td>
+            <td>All Companies</td>
+            <td>Add a parent company - HQ Merchant</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:31:50+08:00</td>
+            <td class="num">26.41s</td>
+            <td><a href="evidence/TC-APH-008/01-login-page.png" data-gallery="TC-APH-008">screenshots (11)</a></td>
+            <td class="notes" title=""></td>
+        </tr></tbody>
+      </table>
+    </div>
+    <div class="count-note" id="countNote"></div>
+  </div>  <div class="card">
+    <h2>Human Action Required</h2>
+    <div class="card-note">Test cases that could not be automated and need a manual or different approach.</div>
+    <div class="table-scroll-x">
+      <table>
+        <thead><tr><th>Test Case ID</th><th>Module</th><th>Title</th><th>Reason</th><th>Recommended Handling</th></tr></thead>
+        <tbody><tr>
+          <td class="mono">—</td>
+          <td>-</td>
+          <td>No human action required</td>
+          <td class="wraptext">Nothing needs manual follow-up for this run.</td>
+          <td class="wraptext">None.</td>
+          </tr></tbody>
+      </table>
+    </div>
+  </div>  <div class="card">
+    <h2>Open Gaps / Limitations</h2>
+    <div class="card-note">Gaps and limitations noted during testing.</div>
+    <div class="table-scroll-x">
+      <table>
+        <thead><tr><th>Gap ID</th><th>Status</th><th>Description</th><th>Impact</th></tr></thead>
+        <tbody><tr id="gap-GAP-000">
+          <td class="mono">GAP-000</td>
+          <td><span class="badge badge-neutral">None</span></td>
+          <td class="wraptext">No open gaps or limitations are recorded.</td>
+          <td class="wraptext">None.</td>
+          </tr></tbody>
+      </table>
+    </div>
+  </div></div>
+<script>
+  const search = document.getElementById('search');
+  const moduleFilter = document.getElementById('moduleFilter');
+  const statusFilter = document.getElementById('statusFilter');
+  const rows = Array.from(document.querySelectorAll('#tcTable tbody tr'));
+  const countNote = document.getElementById('countNote');
+  function applyFilters() {
+    const q = search.value.trim().toLowerCase();
+    const m = moduleFilter.value;
+    const s = statusFilter.value;
+    let visible = 0;
+    rows.forEach(r => {
+      const okQ = !q || r.dataset.search.toLowerCase().includes(q);
+      const okM = !m || r.dataset.module === m;
+      const okS = !s || r.dataset.status === s;
+      const show = okQ && okM && okS;
+      r.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    countNote.textContent = `Showing ${visible} of ${rows.length} test cases`;
+  }
+  [search, moduleFilter, statusFilter].forEach(el => el.addEventListener('input', applyFilters));
+  applyFilters();
+</script>
+
+<style>
+  /* Coverage by module: center the number columns and their headers */
+  th.num,
+  table:has(th.num) td.num { text-align: center; }
+  a[data-gallery] { white-space: nowrap; }
+  td { vertical-align: baseline; }
+
+  /* Screenshot gallery */
+  #screenshot-viewer {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 16px 24px; box-sizing: border-box;
+    background: #141414;
+  }
+  #screenshot-viewer[hidden] { display: none; }
+  #screenshot-viewer .sv-bar {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    color: #fff; font-size: 15px;
+  }
+  #screenshot-viewer .sv-caption { flex: 1; min-width: 200px; font-weight: 600; }
+  #screenshot-viewer button {
+    font: inherit; font-size: 14px; padding: 6px 14px; cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 6px;
+    background: rgba(255, 255, 255, 0.12); color: #fff;
+  }
+  #screenshot-viewer button:disabled { opacity: 0.35; cursor: default; }
+  #screenshot-viewer .sv-body { flex: 1; overflow: auto; text-align: center; }
+  #screenshot-viewer .sv-body img {
+    max-width: 100%; background: #fff; border-radius: 6px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+  #screenshot-viewer .sv-hint { margin: 0; color: #ddd; font-size: 13px; text-align: center; }
+</style>
+<div id="screenshot-viewer" hidden>
+  <div class="sv-bar">
+    <button type="button" data-sv="prev">&#8249; Previous</button>
+    <span class="sv-caption"></span>
+    <button type="button" data-sv="next">Next &#8250;</button>
+    <button type="button" data-sv="close">&#10005; Close</button>
+  </div>
+  <div class="sv-body"><img alt="Test screenshot"></div>
+  <p class="sv-hint">Use &larr; &rarr; to move between screens &middot; Esc to close</p>
+</div>
+<script>
+(function () {
+  var galleries = {"TC-APH-001":[{"src":"evidence/TC-APH-001/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-APH-001/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-APH-001/03-console-after-login.png","caption":"Console after login"},{"src":"evidence/TC-APH-001/04-back-on-login-page-after-logout.png","caption":"Back on login page after logout"}],"TC-APH-002":[{"src":"evidence/TC-APH-002/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-APH-002/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-APH-002/03-console-after-login.png","caption":"Console after login"},{"src":"evidence/TC-APH-002/04-sync-company-search-result.png","caption":"Sync company search result"},{"src":"evidence/TC-APH-002/05-quicklink-view-details-chosen.png","caption":"Quicklink \"View Details\" chosen"},{"src":"evidence/TC-APH-002/06-sync-company-details.png","caption":"Sync company details"}],"TC-APH-003":[{"src":"evidence/TC-APH-003/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-APH-003/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-APH-003/03-console-after-login.png","caption":"Console after login"},{"src":"evidence/TC-APH-003/04-filter-set.png","caption":"Filter set"},{"src":"evidence/TC-APH-003/05-suspended-companies-jan-2026-to-today.png","caption":"Suspended companies Jan 2026 to today"},{"src":"evidence/TC-APH-003/06-quicklink-view-details-chosen.png","caption":"Quicklink \"View Details\" chosen"},{"src":"evidence/TC-APH-003/07-details-of-202610011010004-acs.png","caption":"Details of 202610011010004-ACS"}],"TC-APH-004":[{"src":"evidence/TC-APH-004/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-APH-004/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-APH-004/03-console-after-login.png","caption":"Console after login"},{"src":"evidence/TC-APH-004/04-add-a-company-empty-form.png","caption":"Add a Company - empty form"},{"src":"evidence/TC-APH-004/05-company-details-business-authoriser.png","caption":"Company details - business, authoriser"},{"src":"evidence/TC-APH-004/06-mid-1-649690287861243-aeon-credit.png","caption":"MID 1: 649690287861243 (Aeon Credit)"},{"src":"evidence/TC-APH-004/07-mid-2-849690287868150-hong-leong-bank.png","caption":"MID 2: 849690287868150 (Hong Leong Bank)"},{"src":"evidence/TC-APH-004/08-mid-3-949690287865911-ambank.png","caption":"MID 3: 949690287865911 (AmBank)"},{"src":"evidence/TC-APH-004/09-company-details-mid-and-settings.png","caption":"Company details - MID and settings"},{"src":"evidence/TC-APH-004/10-review-confirm.png","caption":"Review & Confirm"},{"src":"evidence/TC-APH-004/11-complete-company-added.png","caption":"Complete - company added"},{"src":"evidence/TC-APH-004/12-new-company-in-all-companies.png","caption":"New company in All Companies"}],"TC-APH-005":[{"src":"evidence/TC-APH-005/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-APH-005/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-APH-005/03-console-after-login.png","caption":"Console after login"},{"src":"evidence/TC-APH-005/04-parent-company-search-result.png","caption":"Parent company search result"},{"src":"evidence/TC-APH-005/05-quicklink-view-details-chosen.png","caption":"Quicklink \"View Details\" chosen"},{"src":"evidence/TC-APH-005/06-parent-company-details.png","caption":"Parent company details"},{"src":"evidence/TC-APH-005/07-child-companies.png","caption":"Child companies"}],"TC-APH-006":[{"src":"evidence/TC-APH-006/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-APH-006/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-APH-006/03-console-after-login.png","caption":"Console after login"},{"src":"evidence/TC-APH-006/04-filter-set.png","caption":"Filter set"},{"src":"evidence/TC-APH-006/05-suspended-parent-companies-jan-2026-to-today.png","caption":"Suspended parent companies Jan 2026 to today"}],"TC-APH-007":[{"src":"evidence/TC-APH-007/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-APH-007/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-APH-007/03-console-after-login.png","caption":"Console after login"},{"src":"evidence/TC-APH-007/04-add-a-parent-company-empty-form.png","caption":"Add a Parent Company - empty form"},{"src":"evidence/TC-APH-007/05-parent-company-business-details.png","caption":"Parent company - business details"},{"src":"evidence/TC-APH-007/06-parent-company-authoriser-settings-master-merchant.png","caption":"Parent company - authoriser, settings, Master Merchant"},{"src":"evidence/TC-APH-007/07-review-confirm.png","caption":"Review & Confirm"},{"src":"evidence/TC-APH-007/08-complete-company-added.png","caption":"Complete - company added"},{"src":"evidence/TC-APH-007/09-new-parent-company-in-parent-company-summary.png","caption":"New parent company in Parent Company Summary"},{"src":"evidence/TC-APH-007/10-quicklink-view-details-chosen.png","caption":"Quicklink \"View Details\" chosen"},{"src":"evidence/TC-APH-007/11-new-parent-company-details.png","caption":"New parent company details"}],"TC-APH-008":[{"src":"evidence/TC-APH-008/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-APH-008/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-APH-008/03-console-after-login.png","caption":"Console after login"},{"src":"evidence/TC-APH-008/04-add-a-parent-company-empty-form.png","caption":"Add a Parent Company - empty form"},{"src":"evidence/TC-APH-008/05-parent-company-business-details.png","caption":"Parent company - business details"},{"src":"evidence/TC-APH-008/06-parent-company-authoriser-settings-hq-merchant.png","caption":"Parent company - authoriser, settings, HQ Merchant"},{"src":"evidence/TC-APH-008/07-review-confirm.png","caption":"Review & Confirm"},{"src":"evidence/TC-APH-008/08-complete-company-added.png","caption":"Complete - company added"},{"src":"evidence/TC-APH-008/09-new-parent-company-in-parent-company-summary.png","caption":"New parent company in Parent Company Summary"},{"src":"evidence/TC-APH-008/10-quicklink-view-details-chosen.png","caption":"Quicklink \"View Details\" chosen"},{"src":"evidence/TC-APH-008/11-new-parent-company-details.png","caption":"New parent company details"}]};
+  var viewer = document.getElementById('screenshot-viewer');
+  var body = viewer.querySelector('.sv-body');
+  var image = viewer.querySelector('img');
+  var caption = viewer.querySelector('.sv-caption');
+  var prev = viewer.querySelector('[data-sv="prev"]');
+  var next = viewer.querySelector('[data-sv="next"]');
+  var current = null;
+  var index = 0;
+
+  function show() {
+    var images = galleries[current];
+    image.src = images[index].src;
+    caption.textContent = (index + 1) + ' of ' + images.length + ' · ' + images[index].caption;
+    prev.hidden = next.hidden = images.length < 2;
+    prev.disabled = index === 0;
+    next.disabled = index === images.length - 1;
+    body.scrollTop = 0;
+  }
+
+  function move(step) {
+    var images = galleries[current];
+    index = Math.min(images.length - 1, Math.max(0, index + step));
+    show();
+  }
+
+  function close() {
+    viewer.hidden = true;
+    image.removeAttribute('src');
+  }
+
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest('a[data-gallery]');
+    if (link) {
+      event.preventDefault();
+      current = link.getAttribute('data-gallery');
+      index = 0;
+      viewer.hidden = false;
+      show();
+      return;
+    }
+    if (viewer.hidden) return;
+
+    var action = event.target.closest('[data-sv]');
+    if (action) {
+      var name = action.getAttribute('data-sv');
+      if (name === 'prev') move(-1);
+      if (name === 'next') move(1);
+      if (name === 'close') close();
+    } else if (event.target === viewer || event.target === body) {
+      close();
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (viewer.hidden) return;
+    if (event.key === 'Escape') close();
+    if (event.key === 'ArrowLeft') move(-1);
+    if (event.key === 'ArrowRight') move(1);
+  });
+})();
+</script>
+</body></html>

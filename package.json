@@ -1,0 +1,24 @@
+{
+  "name": "bcp-automation",
+  "version": "2.0.0",
+  "description": "BCP System Portal test automation: one codebase for APH and FassBayar (Playwright + TypeScript)",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "playwright test",
+    "test:aph": "node scripts/pw.js UAT-APH",
+    "test:fassbayar": "node scripts/pw.js UAT-FASSBAYAR",
+    "test:all": "node scripts/pw.js UAT-APH && node scripts/pw.js UAT-FASSBAYAR",
+    "report:aph": "playwright show-report reports/UAT-APH/playwright-report",
+    "report:fassbayar": "playwright show-report reports/UAT-FASSBAYAR/playwright-report",
+    "report:rebuild": "playwright test --list",
+    "explore:aph": "node scripts/pw.js UAT-APH test --config explore/explore.config.ts",
+    "explore:fassbayar": "node scripts/pw.js UAT-FASSBAYAR test --config explore/explore.config.ts",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6",
+    "typescript": "^5.9.3"
+  }
+}

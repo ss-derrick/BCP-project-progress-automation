@@ -1,0 +1,270 @@
+{
+  "TC-APH-002": [
+    {
+      "file": "evidence/TC-APH-002/01-login-page.png",
+      "caption": "Login page"
+    },
+    {
+      "file": "evidence/TC-APH-002/02-login-form-filled.png",
+      "caption": "Login form filled"
+    },
+    {
+      "file": "evidence/TC-APH-002/03-console-after-login.png",
+      "caption": "Console after login"
+    },
+    {
+      "file": "evidence/TC-APH-002/04-sync-company-search-result.png",
+      "caption": "Sync company search result"
+    },
+    {
+      "file": "evidence/TC-APH-002/05-quicklink-view-details-chosen.png",
+      "caption": "Quicklink \"View Details\" chosen"
+    },
+    {
+      "file": "evidence/TC-APH-002/06-sync-company-details.png",
+      "caption": "Sync company details"
+    }
+  ],
+  "TC-APH-003": [
+    {
+      "file": "evidence/TC-APH-003/01-login-page.png",
+      "caption": "Login page"
+    },
+    {
+      "file": "evidence/TC-APH-003/02-login-form-filled.png",
+      "caption": "Login form filled"
+    },
+    {
+      "file": "evidence/TC-APH-003/03-console-after-login.png",
+      "caption": "Console after login"
+    },
+    {
+      "file": "evidence/TC-APH-003/04-filter-set.png",
+      "caption": "Filter set"
+    },
+    {
+      "file": "evidence/TC-APH-003/05-suspended-companies-jan-2026-to-today.png",
+      "caption": "Suspended companies Jan 2026 to today"
+    },
+    {
+      "file": "evidence/TC-APH-003/06-quicklink-view-details-chosen.png",
+      "caption": "Quicklink \"View Details\" chosen"
+    },
+    {
+      "file": "evidence/TC-APH-003/07-details-of-202610011010004-acs.png",
+      "caption": "Details of 202610011010004-ACS"
+    }
+  ],
+  "TC-APH-004": [
+    {
+      "file": "evidence/TC-APH-004/01-login-page.png",
+      "caption": "Login page"
+    },
+    {
+      "file": "evidence/TC-APH-004/02-login-form-filled.png",
+      "caption": "Login form filled"
+    },
+    {
+      "file": "evidence/TC-APH-004/03-console-after-login.png",
+      "caption": "Console after login"
+    },
+    {
+      "file": "evidence/TC-APH-004/04-add-a-company-empty-form.png",
+      "caption": "Add a Company - empty form"
+    },
+    {
+      "file": "evidence/TC-APH-004/05-company-details-business-authoriser.png",
+      "caption": "Company details - business, authoriser"
+    },
+    {
+      "file": "evidence/TC-APH-004/06-mid-1-649690287861243-aeon-credit.png",
+      "caption": "MID 1: 649690287861243 (Aeon Credit)"
+    },
+    {
+      "file": "evidence/TC-APH-004/07-mid-2-849690287868150-hong-leong-bank.png",
+      "caption": "MID 2: 849690287868150 (Hong Leong Bank)"
+    },
+    {
+      "file": "evidence/TC-APH-004/08-mid-3-949690287865911-ambank.png",
+      "caption": "MID 3: 949690287865911 (AmBank)"
+    },
+    {
+      "file": "evidence/TC-APH-004/09-company-details-mid-and-settings.png",
+      "caption": "Company details - MID and settings"
+    },
+    {
+      "file": "evidence/TC-APH-004/10-review-confirm.png",
+      "caption": "Review & Confirm"
+    },
+    {
+      "file": "evidence/TC-APH-004/11-complete-company-added.png",
+      "caption": "Complete - company added"
+    },
+    {
+      "file": "evidence/TC-APH-004/12-new-company-in-all-companies.png",
+      "caption": "New company in All Companies"
+    }
+  ],
+  "TC-APH-005": [
+    {
+      "file": "evidence/TC-APH-005/01-login-page.png",
+      "caption": "Login page"
+    },
+    {
+      "file": "evidence/TC-APH-005/02-login-form-filled.png",
+      "caption": "Login form filled"
+    },
+    {
+      "file": "evidence/TC-APH-005/03-console-after-login.png",
+      "caption": "Console after login"
+    },
+    {
+      "file": "evidence/TC-APH-005/04-parent-company-search-result.png",
+      "caption": "Parent company search result"
+    },
+    {
+      "file": "evidence/TC-APH-005/05-quicklink-view-details-chosen.png",
+      "caption": "Quicklink \"View Details\" chosen"
+    },
+    {
+      "file": "evidence/TC-APH-005/06-parent-company-details.png",
+      "caption": "Parent company details"
+    },
+    {
+      "file": "evidence/TC-APH-005/07-child-companies.png",
+      "caption": "Child companies"
+    }
+  ],
+  "TC-APH-006": [
+    {
+      "file": "evidence/TC-APH-006/01-login-page.png",
+      "caption": "Login page"
+    },
+    {
+      "file": "evidence/TC-APH-006/02-login-form-filled.png",
+      "caption": "Login form filled"
+    },
+    {
+      "file": "evidence/TC-APH-006/03-console-after-login.png",
+      "caption": "Console after login"
+    },
+    {
+      "file": "evidence/TC-APH-006/04-filter-set.png",
+      "caption": "Filter set"
+    },
+    {
+      "file": "evidence/TC-APH-006/05-suspended-parent-companies-jan-2026-to-today.png",
+      "caption": "Suspended parent companies Jan 2026 to today"
+    }
+  ],
+  "TC-APH-007": [
+    {
+      "file": "evidence/TC-APH-007/01-login-page.png",
+      "caption": "Login page"
+    },
+    {
+      "file": "evidence/TC-APH-007/02-login-form-filled.png",
+      "caption": "Login form filled"
+    },
+    {
+      "file": "evidence/TC-APH-007/03-console-after-login.png",
+      "caption": "Console after login"
+    },
+    {
+      "file": "evidence/TC-APH-007/04-add-a-parent-company-empty-form.png",
+      "caption": "Add a Parent Company - empty form"
+    },
+    {
+      "file": "evidence/TC-APH-007/05-parent-company-business-details.png",
+      "caption": "Parent company - business details"
+    },
+    {
+      "file": "evidence/TC-APH-007/06-parent-company-authoriser-settings-master-merchant.png",
+      "caption": "Parent company - authoriser, settings, Master Merchant"
+    },
+    {
+      "file": "evidence/TC-APH-007/07-review-confirm.png",
+      "caption": "Review & Confirm"
+    },
+    {
+      "file": "evidence/TC-APH-007/08-complete-company-added.png",
+      "caption": "Complete - company added"
+    },
+    {
+      "file": "evidence/TC-APH-007/09-new-parent-company-in-parent-company-summary.png",
+      "caption": "New parent company in Parent Company Summary"
+    },
+    {
+      "file": "evidence/TC-APH-007/10-quicklink-view-details-chosen.png",
+      "caption": "Quicklink \"View Details\" chosen"
+    },
+    {
+      "file": "evidence/TC-APH-007/11-new-parent-company-details.png",
+      "caption": "New parent company details"
+    }
+  ],
+  "TC-APH-008": [
+    {
+      "file": "evidence/TC-APH-008/01-login-page.png",
+      "caption": "Login page"
+    },
+    {
+      "file": "evidence/TC-APH-008/02-login-form-filled.png",
+      "caption": "Login form filled"
+    },
+    {
+      "file": "evidence/TC-APH-008/03-console-after-login.png",
+      "caption": "Console after login"
+    },
+    {
+      "file": "evidence/TC-APH-008/04-add-a-parent-company-empty-form.png",
+      "caption": "Add a Parent Company - empty form"
+    },
+    {
+      "file": "evidence/TC-APH-008/05-parent-company-business-details.png",
+      "caption": "Parent company - business details"
+    },
+    {
+      "file": "evidence/TC-APH-008/06-parent-company-authoriser-settings-hq-merchant.png",
+      "caption": "Parent company - authoriser, settings, HQ Merchant"
+    },
+    {
+      "file": "evidence/TC-APH-008/07-review-confirm.png",
+      "caption": "Review & Confirm"
+    },
+    {
+      "file": "evidence/TC-APH-008/08-complete-company-added.png",
+      "caption": "Complete - company added"
+    },
+    {
+      "file": "evidence/TC-APH-008/09-new-parent-company-in-parent-company-summary.png",
+      "caption": "New parent company in Parent Company Summary"
+    },
+    {
+      "file": "evidence/TC-APH-008/10-quicklink-view-details-chosen.png",
+      "caption": "Quicklink \"View Details\" chosen"
+    },
+    {
+      "file": "evidence/TC-APH-008/11-new-parent-company-details.png",
+      "caption": "New parent company details"
+    }
+  ],
+  "TC-APH-001": [
+    {
+      "file": "evidence/TC-APH-001/01-login-page.png",
+      "caption": "Login page"
+    },
+    {
+      "file": "evidence/TC-APH-001/02-login-form-filled.png",
+      "caption": "Login form filled"
+    },
+    {
+      "file": "evidence/TC-APH-001/03-console-after-login.png",
+      "caption": "Console after login"
+    },
+    {
+      "file": "evidence/TC-APH-001/04-back-on-login-page-after-logout.png",
+      "caption": "Back on login page after logout"
+    }
+  ]
+}

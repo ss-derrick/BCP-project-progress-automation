@@ -1,0 +1,16 @@
+node_modules/
+test-results/
+blob-report/
+playwright/.cache/
+playwright/.auth/
+explore/explore-dumps/
+reports/*/playwright-report/
+
+# Execution reports ARE kept (report page + evidence screenshots).
+# Only the single-file shareable copies are left out (can pass 100 MB).
+Test_Execution_Report_*.html
+
+# Local environment / secrets (never commit)
+.env
+.env.*
+!.env.example

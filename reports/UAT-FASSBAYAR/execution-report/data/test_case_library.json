@@ -1,0 +1,74 @@
+[
+  {
+    "id": "TC-FASSBAYAR-001",
+    "module": "Company Management",
+    "title": "Add a new company with random unique details and verify it is enabled",
+    "priority": "High"
+  },
+  {
+    "id": "TC-FASSBAYAR-002",
+    "module": "Company Management",
+    "title": "Search a company by MID and open View Details",
+    "priority": "High"
+  },
+  {
+    "id": "TC-FASSBAYAR-003",
+    "module": "Company Management",
+    "title": "Download the bulk company upload template",
+    "priority": "Medium"
+  },
+  {
+    "id": "TC-FASSBAYAR-004",
+    "module": "Company Management",
+    "title": "Upload the downloaded bulk company template",
+    "priority": "High"
+  },
+  {
+    "id": "TC-FASSBAYAR-005",
+    "module": "Company Management",
+    "title": "Download the bulk company edit template",
+    "priority": "Medium"
+  },
+  {
+    "id": "TC-FASSBAYAR-006",
+    "module": "Company Management",
+    "title": "Upload the edit template with new special fields and apply changes",
+    "priority": "High"
+  },
+  {
+    "id": "TC-FASSBAYAR-007",
+    "module": "Company Management",
+    "title": "Upload the edit template unchanged is rejected (sample company does not exist)",
+    "priority": "Medium"
+  },
+  {
+    "id": "TC-FASSBAYAR-008",
+    "module": "Company Management",
+    "title": "Add a new parent company with random unique details",
+    "priority": "High"
+  },
+  {
+    "id": "TC-FASSBAYAR-009",
+    "module": "Company Management",
+    "title": "Search a parent company by business name",
+    "priority": "High"
+  },
+  {
+    "id": "TC-FASSBAYAR-010",
+    "module": "Company Management",
+    "title": "Search a parent company by authoriser",
+    "priority": "High"
+  },
+  {
+    "id": "TC-FASSBAYAR-011",
+    "module": "Company Management",
+    "title": "Upload a company logo for one company",
+    "priority": "Medium"
+  },
+  {
+    "id": "TC-FASSBAYAR-012",
+    "module": "Company Management",
+    "title": "Remove the logo of one company",
+    "priority": "Medium"
+  }
+]

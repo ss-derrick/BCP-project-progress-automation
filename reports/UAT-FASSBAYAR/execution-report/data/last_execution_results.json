@@ -1,0 +1,98 @@
+[
+  {
+    "id": "TC-FASSBAYAR-001",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:32:51+08:00",
+    "duration_seconds": 59.98,
+    "evidence": "evidence/TC-FASSBAYAR-001/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-FASSBAYAR-002",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:36:14+08:00",
+    "duration_seconds": 14.53,
+    "evidence": "evidence/TC-FASSBAYAR-002/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-FASSBAYAR-003",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:35:06+08:00",
+    "duration_seconds": 16.77,
+    "evidence": "evidence/TC-FASSBAYAR-003/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-FASSBAYAR-004",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:35:23+08:00",
+    "duration_seconds": 12.79,
+    "evidence": "evidence/TC-FASSBAYAR-004/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-FASSBAYAR-005",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:34:16+08:00",
+    "duration_seconds": 13.9,
+    "evidence": "evidence/TC-FASSBAYAR-005/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-FASSBAYAR-006",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:34:30+08:00",
+    "duration_seconds": 18.64,
+    "evidence": "evidence/TC-FASSBAYAR-006/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-FASSBAYAR-007",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:34:48+08:00",
+    "duration_seconds": 17.55,
+    "evidence": "evidence/TC-FASSBAYAR-007/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-FASSBAYAR-008",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:33:52+08:00",
+    "duration_seconds": 24.08,
+    "evidence": "evidence/TC-FASSBAYAR-008/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-FASSBAYAR-009",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:35:36+08:00",
+    "duration_seconds": 11.69,
+    "evidence": "evidence/TC-FASSBAYAR-009/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-FASSBAYAR-010",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:35:47+08:00",
+    "duration_seconds": 13.03,
+    "evidence": "evidence/TC-FASSBAYAR-010/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-FASSBAYAR-011",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:36:29+08:00",
+    "duration_seconds": 19.27,
+    "evidence": "evidence/TC-FASSBAYAR-011/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-FASSBAYAR-012",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:36:00+08:00",
+    "duration_seconds": 13.75,
+    "evidence": "evidence/TC-FASSBAYAR-012/01-login-page.png",
+    "notes": ""
+  }
+]

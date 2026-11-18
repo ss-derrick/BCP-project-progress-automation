@@ -1,0 +1,49 @@
+[
+  {
+    "id": "TC-FASSBAYAR-009",
+    "module": "Company Management",
+    "title": "Parent Company Summary - search by business name shows an error page (BUG)",
+    "reason": "Searching for a parent company that exists shows \"An error has occurred. Please try again.\" instead of the results. It only happens when the search finds something; a search with no matches loads normally. The same name searched on Company Summary works.",
+    "recommended_handling": "Report to the developers: /company/searchParent redirects (302) to /issue/generalError whenever the search has matches. Rerun TC-FASSBAYAR-009 and TC-FASSBAYAR-010 after the fix."
+  },
+  {
+    "id": "TC-FASSBAYAR-010",
+    "module": "Company Management",
+    "title": "Parent Company Summary - search by authoriser shows an error page (BUG)",
+    "reason": "Same problem as TC-FASSBAYAR-009, searching by the authoriser's name.",
+    "recommended_handling": "Same fix as TC-FASSBAYAR-009. Rerun both tests after the fix."
+  },
+  {
+    "id": "TC-FASSBAYAR-001",
+    "module": "Company Management",
+    "title": "City field limit is different on the two company forms",
+    "reason": "Add a Company only accepts 15 characters in City and silently cuts longer names (\"Kuala Terengganu\" is saved as \"Kuala Terenggan\"). Add a Parent Company accepts 50 characters in the box but then rejects the same name with \"Please enter valid City\".",
+    "recommended_handling": "Ask the developers or business analyst what the correct City limit is, and make both forms behave the same. Real Malaysian city names can be longer than 15 characters."
+  },
+  {
+    "id": "TC-FASSBAYAR-001",
+    "module": "Company Management",
+    "title": "Card Scheme list sometimes does not load after choosing a Service Provider",
+    "reason": "On Add a Company, choosing a Service Provider should load the Card Scheme list. Occasionally the provider shows as selected but the list stays empty and the Payment Type boxes stay disabled. The test works around this by choosing the provider again.",
+    "recommended_handling": "Report to the developers as an intermittent problem. A user who meets it would have to re-select the provider."
+  },
+  {
+    "id": "TC-FASSBAYAR-008",
+    "module": "Company Management",
+    "title": "Confirm on Add a Parent Company once took over 60 seconds and did not save",
+    "reason": "In one run the page stayed blank after Confirm and the parent company was not created. It did not happen again in later runs.",
+    "recommended_handling": "Keep an eye on it. If it happens again, report it to the developers with the time of the run."
+  },
+  {
+    "module": "Test setup",
+    "title": "Each tester needs their own portal login",
+    "reason": "The portal allows only one login session per user. If two people run the tests with the same account at the same time, one of them is logged out and their tests fail.",
+    "recommended_handling": "Each tester puts their own user ID and password in a .env file in the project folder. Never share your .env file."
+  },
+  {
+    "module": "Test setup",
+    "title": "Confirm the test case ID format",
+    "reason": "The tests use IDs TC-FASSBAYAR-001 to TC-FASSBAYAR-012 as a placeholder. They are not yet linked to a test case sheet.",
+    "recommended_handling": "Confirm the ID format and share the test case sheet, so each report row can link to its test case."
+  }
+]

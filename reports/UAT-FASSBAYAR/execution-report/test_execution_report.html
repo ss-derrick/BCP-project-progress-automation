@@ -1,0 +1,481 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>FassBayar Test Automation — Test Execution Report</title>
+<style>
+  :root {
+    --bg: #f7f8fa; --card-bg: #ffffff; --text: #1a1d23; --text-dim: #5b6270;
+    --border: #e2e5ea; --accent: #2f6fed;
+    --pass: #1a7f37; --pass-bg: #dcfce7;
+    --fail: #b42318; --fail-bg: #fee4e2;
+    --blocked-env: #6b7280; --blocked-env-bg: #eef0f3;
+    --notrun: #4b5563; --notrun-bg: #eef0f3;
+    --skipped: #6b21a8; --skipped-bg: #f3e8ff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161a; --card-bg: #1c1f26; --text: #e7e9ee; --text-dim: #9aa2b1;
+      --border: #2b2f38; --accent: #6d9bff;
+      --pass: #4ade80; --pass-bg: #14351f;
+      --fail: #f87171; --fail-bg: #3a1715;
+      --blocked-env: #b8bfcb; --blocked-env-bg: #262a32;
+      --notrun: #b8bfcb; --notrun-bg: #262a32;
+      --skipped: #d8b4fe; --skipped-bg: #2c1c3d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161a; --card-bg: #1c1f26; --text: #e7e9ee; --text-dim: #9aa2b1;
+    --border: #2b2f38; --accent: #6d9bff;
+    --pass: #4ade80; --pass-bg: #14351f;
+    --fail: #f87171; --fail-bg: #3a1715;
+    --blocked-env: #b8bfcb; --blocked-env-bg: #262a32;
+    --notrun: #b8bfcb; --notrun-bg: #262a32;
+    --skipped: #d8b4fe; --skipped-bg: #2c1c3d;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 24px; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .subtitle { color: var(--text-dim); font-size: 13px; margin-bottom: 20px; }
+  .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 18px; }
+  .card h2 { font-size: 15px; margin: 0 0 10px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .stat { border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; min-width: 0; }
+  .stat .n { font-size: 22px; font-weight: 700; }
+  .stat .l { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--text-dim); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: .02em; position: sticky; top: 0; background: var(--card-bg); }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.mono { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; white-space: nowrap; }
+  td.small { font-size: 11px; color: var(--text-dim); }
+  td.notes { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-dim); }
+  td.wraptext { color: var(--text-dim); overflow-wrap: anywhere; }
+  .pass { color: var(--pass); } .fail { color: var(--fail); } .blocked { color: var(--blocked-env); } .notrun { color: var(--notrun); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge-pass { color: var(--pass); background: var(--pass-bg); }
+  .badge-fail { color: var(--fail); background: var(--fail-bg); }
+  .badge-blocked-env { color: var(--blocked-env); background: var(--blocked-env-bg); }
+  .badge-not-run { color: var(--notrun); background: var(--notrun-bg); }
+  .badge-skipped { color: var(--skipped); background: var(--skipped-bg); }
+  .badge-good { color: var(--pass); background: var(--pass-bg); }
+  .badge-bad { color: var(--fail); background: var(--fail-bg); }
+  .badge-warn { color: var(--skipped); background: var(--skipped-bg); }
+  .badge-neutral { color: var(--notrun); background: var(--notrun-bg); }
+  .empty-state { color: var(--text-dim); font-style: italic; }
+  .card-note { color: var(--text-dim); font-size: 12px; margin: -4px 0 10px; }
+  .controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .controls input, .controls select { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: 12.5px; }
+  .controls input { flex: 1; min-width: 180px; }
+  .table-scroll { max-height: 640px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .table-scroll-x { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .count-note { color: var(--text-dim); font-size: 11.5px; margin-top: 6px; }
+  a { color: var(--accent); }
+</style>
+</head><body>
+<div class="wrap">
+  <h1>FassBayar Test Automation &mdash; Test Execution Report</h1>
+  <div class="subtitle">UAT-FASSBAYAR (https://10.0.1.30:36190/) &middot; auto-generated 2026-11-18 10:36:50 +0800 (Asia/Kuala_Lumpur) after the last Playwright run &middot; source: data/last_execution_results.json + data/test_case_library.json</div>
+
+  <div class="card">
+    <h2>Summary &mdash; 12 test cases</h2>
+    <div class="stats">      <div class="stat"><div class="n">12</div><div class="l">Total</div></div>      <div class="stat"><div class="n pass">12</div><div class="l">Pass</div></div>      <div class="stat"><div class="n fail">0</div><div class="l">Fail</div></div>      <div class="stat"><div class="n blocked">0</div><div class="l">Blocked (environment)</div></div>      <div class="stat"><div class="n" style="color:var(--skipped)">0</div><div class="l">Skipped</div></div>      <div class="stat"><div class="n notrun">0</div><div class="l">Not run</div></div>    </div>
+  </div>
+
+  <div class="card">
+    <h2>Coverage by module</h2>
+    <table>
+      <thead><tr><th>Module</th><th class="num">Total</th><th class="num">Pass</th><th class="num">Fail</th><th class="num">Blocked</th><th class="num">Skipped</th><th class="num">Not run</th><th class="num">Executed</th></tr></thead>
+      <tbody><tr>
+        <td>Company Management</td>
+        <td class="num">12</td>
+        <td class="num pass">12</td>
+        <td class="num fail">0</td>
+        <td class="num blocked">0</td>
+        <td class="num" style="color:var(--skipped)">0</td>
+        <td class="num notrun">0</td>
+        <td class="num">100.0%</td>
+        </tr></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>All test cases</h2>
+    <div class="controls">
+      <input id="search" type="text" placeholder="Search Test Case ID or title...">
+      <select id="moduleFilter"><option value="">All modules</option><option value="Company Management">Company Management</option></select>
+      <select id="statusFilter">
+        <option value="">All statuses</option>
+        <option value="pass">Pass</option>
+        <option value="fail">Fail</option>
+        <option value="blocked-env">Blocked (environment)</option>
+        <option value="skipped">Skipped</option>
+        <option value="not-run">Not run</option>
+      </select>
+    </div>
+    <div class="table-scroll">
+      <table id="tcTable">
+        <thead><tr><th>Test Case ID</th><th>Module</th><th>Title</th><th>Priority</th><th>Status</th><th>Last executed (KL)</th><th>Duration</th><th>Evidence</th><th>Notes</th></tr></thead>
+        <tbody><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-001 Add a new company with random unique details and verify it is enabled">
+            <td class="mono">TC-FASSBAYAR-001</td>
+            <td>Company Management</td>
+            <td>Add a new company with random unique details and verify it is enabled</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:32:51+08:00</td>
+            <td class="num">59.98s</td>
+            <td><a href="evidence/TC-FASSBAYAR-001/01-login-page.png" data-gallery="TC-FASSBAYAR-001">screenshots (11)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-002 Search a company by MID and open View Details">
+            <td class="mono">TC-FASSBAYAR-002</td>
+            <td>Company Management</td>
+            <td>Search a company by MID and open View Details</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:36:14+08:00</td>
+            <td class="num">14.53s</td>
+            <td><a href="evidence/TC-FASSBAYAR-002/01-login-page.png" data-gallery="TC-FASSBAYAR-002">screenshots (7)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-003 Download the bulk company upload template">
+            <td class="mono">TC-FASSBAYAR-003</td>
+            <td>Company Management</td>
+            <td>Download the bulk company upload template</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:35:06+08:00</td>
+            <td class="num">16.77s</td>
+            <td><a href="evidence/TC-FASSBAYAR-003/01-login-page.png" data-gallery="TC-FASSBAYAR-003">screenshots (5)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-004 Upload the downloaded bulk company template">
+            <td class="mono">TC-FASSBAYAR-004</td>
+            <td>Company Management</td>
+            <td>Upload the downloaded bulk company template</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:35:23+08:00</td>
+            <td class="num">12.79s</td>
+            <td><a href="evidence/TC-FASSBAYAR-004/01-login-page.png" data-gallery="TC-FASSBAYAR-004">screenshots (7)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-005 Download the bulk company edit template">
+            <td class="mono">TC-FASSBAYAR-005</td>
+            <td>Company Management</td>
+            <td>Download the bulk company edit template</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:34:16+08:00</td>
+            <td class="num">13.9s</td>
+            <td><a href="evidence/TC-FASSBAYAR-005/01-login-page.png" data-gallery="TC-FASSBAYAR-005">screenshots (5)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-006 Upload the edit template with new special fields and apply changes">
+            <td class="mono">TC-FASSBAYAR-006</td>
+            <td>Company Management</td>
+            <td>Upload the edit template with new special fields and apply changes</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:34:30+08:00</td>
+            <td class="num">18.64s</td>
+            <td><a href="evidence/TC-FASSBAYAR-006/01-login-page.png" data-gallery="TC-FASSBAYAR-006">screenshots (9)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-007 Upload the edit template unchanged is rejected (sample company does not exist)">
+            <td class="mono">TC-FASSBAYAR-007</td>
+            <td>Company Management</td>
+            <td>Upload the edit template unchanged is rejected (sample company does not exist)</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:34:48+08:00</td>
+            <td class="num">17.55s</td>
+            <td><a href="evidence/TC-FASSBAYAR-007/01-login-page.png" data-gallery="TC-FASSBAYAR-007">screenshots (8)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-008 Add a new parent company with random unique details">
+            <td class="mono">TC-FASSBAYAR-008</td>
+            <td>Company Management</td>
+            <td>Add a new parent company with random unique details</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:33:52+08:00</td>
+            <td class="num">24.08s</td>
+            <td><a href="evidence/TC-FASSBAYAR-008/01-login-page.png" data-gallery="TC-FASSBAYAR-008">screenshots (9)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-009 Search a parent company by business name">
+            <td class="mono">TC-FASSBAYAR-009</td>
+            <td>Company Management</td>
+            <td>Search a parent company by business name</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:35:36+08:00</td>
+            <td class="num">11.69s</td>
+            <td><a href="evidence/TC-FASSBAYAR-009/01-login-page.png" data-gallery="TC-FASSBAYAR-009">screenshots (5)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-010 Search a parent company by authoriser">
+            <td class="mono">TC-FASSBAYAR-010</td>
+            <td>Company Management</td>
+            <td>Search a parent company by authoriser</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:35:47+08:00</td>
+            <td class="num">13.03s</td>
+            <td><a href="evidence/TC-FASSBAYAR-010/01-login-page.png" data-gallery="TC-FASSBAYAR-010">screenshots (5)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-011 Upload a company logo for one company">
+            <td class="mono">TC-FASSBAYAR-011</td>
+            <td>Company Management</td>
+            <td>Upload a company logo for one company</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:36:29+08:00</td>
+            <td class="num">19.27s</td>
+            <td><a href="evidence/TC-FASSBAYAR-011/01-login-page.png" data-gallery="TC-FASSBAYAR-011">screenshots (8)</a></td>
+            <td class="notes" title=""></td>
+        </tr><tr data-module="Company Management" data-status="pass"
+            data-search="TC-FASSBAYAR-012 Remove the logo of one company">
+            <td class="mono">TC-FASSBAYAR-012</td>
+            <td>Company Management</td>
+            <td>Remove the logo of one company</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td class="mono small">2026-11-18T10:36:00+08:00</td>
+            <td class="num">13.75s</td>
+            <td><a href="evidence/TC-FASSBAYAR-012/01-login-page.png" data-gallery="TC-FASSBAYAR-012">screenshots (7)</a></td>
+            <td class="notes" title=""></td>
+        </tr></tbody>
+      </table>
+    </div>
+    <div class="count-note" id="countNote"></div>
+  </div>  <div class="card">
+    <h2>Human Action Required</h2>
+    <div class="card-note">Test cases that could not be automated and need a manual or different approach.</div>
+    <div class="table-scroll-x">
+      <table>
+        <thead><tr><th>Test Case ID</th><th>Module</th><th>Title</th><th>Reason</th><th>Recommended Handling</th></tr></thead>
+        <tbody><tr>
+          <td class="mono">TC-FASSBAYAR-009</td>
+          <td>Company Management</td>
+          <td>Parent Company Summary - search by business name shows an error page (BUG)</td>
+          <td class="wraptext">Searching for a parent company that exists shows &#34;An error has occurred. Please try again.&#34; instead of the results. It only happens when the search finds something; a search with no matches loads normally. The same name searched on Company Summary works.</td>
+          <td class="wraptext">Report to the developers: /company/searchParent redirects (302) to /issue/generalError whenever the search has matches. Rerun TC-FASSBAYAR-009 and TC-FASSBAYAR-010 after the fix.</td>
+          </tr><tr>
+          <td class="mono">TC-FASSBAYAR-010</td>
+          <td>Company Management</td>
+          <td>Parent Company Summary - search by authoriser shows an error page (BUG)</td>
+          <td class="wraptext">Same problem as TC-FASSBAYAR-009, searching by the authoriser&#39;s name.</td>
+          <td class="wraptext">Same fix as TC-FASSBAYAR-009. Rerun both tests after the fix.</td>
+          </tr><tr>
+          <td class="mono">TC-FASSBAYAR-001</td>
+          <td>Company Management</td>
+          <td>City field limit is different on the two company forms</td>
+          <td class="wraptext">Add a Company only accepts 15 characters in City and silently cuts longer names (&#34;Kuala Terengganu&#34; is saved as &#34;Kuala Terenggan&#34;). Add a Parent Company accepts 50 characters in the box but then rejects the same name with &#34;Please enter valid City&#34;.</td>
+          <td class="wraptext">Ask the developers or business analyst what the correct City limit is, and make both forms behave the same. Real Malaysian city names can be longer than 15 characters.</td>
+          </tr><tr>
+          <td class="mono">TC-FASSBAYAR-001</td>
+          <td>Company Management</td>
+          <td>Card Scheme list sometimes does not load after choosing a Service Provider</td>
+          <td class="wraptext">On Add a Company, choosing a Service Provider should load the Card Scheme list. Occasionally the provider shows as selected but the list stays empty and the Payment Type boxes stay disabled. The test works around this by choosing the provider again.</td>
+          <td class="wraptext">Report to the developers as an intermittent problem. A user who meets it would have to re-select the provider.</td>
+          </tr><tr>
+          <td class="mono">TC-FASSBAYAR-008</td>
+          <td>Company Management</td>
+          <td>Confirm on Add a Parent Company once took over 60 seconds and did not save</td>
+          <td class="wraptext">In one run the page stayed blank after Confirm and the parent company was not created. It did not happen again in later runs.</td>
+          <td class="wraptext">Keep an eye on it. If it happens again, report it to the developers with the time of the run.</td>
+          </tr><tr>
+          <td class="mono">—</td>
+          <td>Test setup</td>
+          <td>Each tester needs their own portal login</td>
+          <td class="wraptext">The portal allows only one login session per user. If two people run the tests with the same account at the same time, one of them is logged out and their tests fail.</td>
+          <td class="wraptext">Each tester puts their own user ID and password in a .env file in the project folder. Never share your .env file.</td>
+          </tr><tr>
+          <td class="mono">—</td>
+          <td>Test setup</td>
+          <td>Confirm the test case ID format</td>
+          <td class="wraptext">The tests use IDs TC-FASSBAYAR-001 to TC-FASSBAYAR-012 as a placeholder. They are not yet linked to a test case sheet.</td>
+          <td class="wraptext">Confirm the ID format and share the test case sheet, so each report row can link to its test case.</td>
+          </tr></tbody>
+      </table>
+    </div>
+  </div>  <div class="card">
+    <h2>Open Gaps / Limitations</h2>
+    <div class="card-note">Gaps and limitations noted during testing.</div>
+    <div class="table-scroll-x">
+      <table>
+        <thead><tr><th>Gap ID</th><th>Status</th><th>Description</th><th>Impact</th></tr></thead>
+        <tbody><tr id="gap-GAP-001">
+          <td class="mono">GAP-001</td>
+          <td><span class="badge badge-bad">Open</span></td>
+          <td class="wraptext">Bulk Company Upload (Create) is only checked up to the &#34;File successfully uploaded&#34; page. The portal processes the file later and sends the result by email.</td>
+          <td class="wraptext">The test does not confirm that the companies in the file were actually created. It also re-uploads the template&#39;s own sample company every run, which may be rejected as a duplicate without the test noticing.</td>
+          </tr><tr id="gap-GAP-002">
+          <td class="mono">GAP-002</td>
+          <td><span class="badge badge-bad">Open</span></td>
+          <td class="wraptext">Emails sent by the portal are not checked: the system-generated password for a new company or parent company, and the bulk upload result email.</td>
+          <td class="wraptext">If these emails stop being sent or contain wrong details, the automated tests will not catch it. The test authoriser emails use example.com addresses, so they are not delivered anywhere.</td>
+          </tr><tr id="gap-GAP-003">
+          <td class="mono">GAP-003</td>
+          <td><span class="badge badge-bad">Open</span></td>
+          <td class="wraptext">Add a Company is tested with one merchant setup only: Service Provider TPA, Card Schemes VISA and MasterCard, Payment Types TPA and PreAuth.</td>
+          <td class="wraptext">Other service providers (e.g. Aeon Credit, Hong Leong Bank, Maybank), card schemes, payment types, and companies with more than one MID are not tested.</td>
+          </tr><tr id="gap-GAP-004">
+          <td class="mono">GAP-004</td>
+          <td><span class="badge badge-bad">Open</span></td>
+          <td class="wraptext">Mostly the normal (successful) paths are tested. Only one error case is covered: a bulk edit file with a company that does not exist.</td>
+          <td class="wraptext">There are no automated checks for wrong or missing input, for example empty required fields, an invalid or duplicate MID, an invalid email, or uploading a file in the wrong format.</td>
+          </tr><tr id="gap-GAP-005">
+          <td class="mono">GAP-005</td>
+          <td><span class="badge badge-bad">Open</span></td>
+          <td class="wraptext">City names longer than 15 characters cannot be tested (e.g. &#34;Kuala Terengganu&#34;). The test data only uses shorter city names.</td>
+          <td class="wraptext">Add a Company silently cuts long city names to 15 characters, and Add a Parent Company rejects them. Until the intended limit is confirmed, this behaviour is not covered by a test.</td>
+          </tr><tr id="gap-GAP-006">
+          <td class="mono">GAP-006</td>
+          <td><span class="badge badge-bad">Open</span></td>
+          <td class="wraptext">The tests can only run from a computer on the office network (the portal is at an internal address, 10.0.1.30).</td>
+          <td class="wraptext">There are no scheduled or automatic runs (for example overnight, or after each release). Someone has to start the tests by hand.</td>
+          </tr><tr id="gap-GAP-007">
+          <td class="mono">GAP-007</td>
+          <td><span class="badge badge-bad">Open</span></td>
+          <td class="wraptext">Test data is not cleaned up. Every run adds a new company and a new parent company to the UAT portal, and changes the logo and reference fields of companies the automation created.</td>
+          <td class="wraptext">The UAT company lists keep growing. Only companies created by the automation are changed; no real merchant data is touched.</td>
+          </tr></tbody>
+      </table>
+    </div>
+  </div></div>
+<script>
+  const search = document.getElementById('search');
+  const moduleFilter = document.getElementById('moduleFilter');
+  const statusFilter = document.getElementById('statusFilter');
+  const rows = Array.from(document.querySelectorAll('#tcTable tbody tr'));
+  const countNote = document.getElementById('countNote');
+  function applyFilters() {
+    const q = search.value.trim().toLowerCase();
+    const m = moduleFilter.value;
+    const s = statusFilter.value;
+    let visible = 0;
+    rows.forEach(r => {
+      const okQ = !q || r.dataset.search.toLowerCase().includes(q);
+      const okM = !m || r.dataset.module === m;
+      const okS = !s || r.dataset.status === s;
+      const show = okQ && okM && okS;
+      r.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    countNote.textContent = `Showing ${visible} of ${rows.length} test cases`;
+  }
+  [search, moduleFilter, statusFilter].forEach(el => el.addEventListener('input', applyFilters));
+  applyFilters();
+</script>
+
+<style>
+  /* Coverage by module: center the number columns and their headers */
+  th.num,
+  table:has(th.num) td.num { text-align: center; }
+  a[data-gallery] { white-space: nowrap; }
+  td { vertical-align: baseline; }
+
+  /* Screenshot gallery */
+  #screenshot-viewer {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 16px 24px; box-sizing: border-box;
+    background: #141414;
+  }
+  #screenshot-viewer[hidden] { display: none; }
+  #screenshot-viewer .sv-bar {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    color: #fff; font-size: 15px;
+  }
+  #screenshot-viewer .sv-caption { flex: 1; min-width: 200px; font-weight: 600; }
+  #screenshot-viewer button {
+    font: inherit; font-size: 14px; padding: 6px 14px; cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 6px;
+    background: rgba(255, 255, 255, 0.12); color: #fff;
+  }
+  #screenshot-viewer button:disabled { opacity: 0.35; cursor: default; }
+  #screenshot-viewer .sv-body { flex: 1; overflow: auto; text-align: center; }
+  #screenshot-viewer .sv-body img {
+    max-width: 100%; background: #fff; border-radius: 6px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+  #screenshot-viewer .sv-hint { margin: 0; color: #ddd; font-size: 13px; text-align: center; }
+</style>
+<div id="screenshot-viewer" hidden>
+  <div class="sv-bar">
+    <button type="button" data-sv="prev">&#8249; Previous</button>
+    <span class="sv-caption"></span>
+    <button type="button" data-sv="next">Next &#8250;</button>
+    <button type="button" data-sv="close">&#10005; Close</button>
+  </div>
+  <div class="sv-body"><img alt="Test screenshot"></div>
+  <p class="sv-hint">Use &larr; &rarr; to move between screens &middot; Esc to close</p>
+</div>
+<script>
+(function () {
+  var galleries = {"TC-FASSBAYAR-001":[{"src":"evidence/TC-FASSBAYAR-001/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-001/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-001/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-001/04-add-a-company-empty-form.png","caption":"Add a Company - empty form"},{"src":"evidence/TC-FASSBAYAR-001/05-company-details-business-authoriser.png","caption":"Company details - business, authoriser"},{"src":"evidence/TC-FASSBAYAR-001/06-mid-1-849691725145485-tpa.png","caption":"MID 1: 849691725145485 (TPA)"},{"src":"evidence/TC-FASSBAYAR-001/07-company-details-mid-and-settings.png","caption":"Company details - MID and settings"},{"src":"evidence/TC-FASSBAYAR-001/08-review-confirm.png","caption":"Review & Confirm"},{"src":"evidence/TC-FASSBAYAR-001/09-complete-company-added.png","caption":"Complete - company added"},{"src":"evidence/TC-FASSBAYAR-001/10-company-details.png","caption":"Company details"},{"src":"evidence/TC-FASSBAYAR-001/11-mid-settings-active.png","caption":"MID settings - Active"}],"TC-FASSBAYAR-002":[{"src":"evidence/TC-FASSBAYAR-002/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-002/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-002/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-002/04-all-companies.png","caption":"All Companies"},{"src":"evidence/TC-FASSBAYAR-002/05-search-results-000452839489382.png","caption":"Search results - 000452839489382"},{"src":"evidence/TC-FASSBAYAR-002/06-quicklink-view-details-selected.png","caption":"Quicklink \"View Details\" selected"},{"src":"evidence/TC-FASSBAYAR-002/07-company-details.png","caption":"Company details"}],"TC-FASSBAYAR-003":[{"src":"evidence/TC-FASSBAYAR-003/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-003/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-003/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-003/04-bulk-company-upload-create.png","caption":"Bulk Company Upload (Create)"},{"src":"evidence/TC-FASSBAYAR-003/05-template-downloaded.png","caption":"Template downloaded"}],"TC-FASSBAYAR-004":[{"src":"evidence/TC-FASSBAYAR-004/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-004/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-004/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-004/04-bulk-company-upload-create.png","caption":"Bulk Company Upload (Create)"},{"src":"evidence/TC-FASSBAYAR-004/05-template-downloaded.png","caption":"Template downloaded"},{"src":"evidence/TC-FASSBAYAR-004/06-csv-file-chosen.png","caption":"CSV file chosen"},{"src":"evidence/TC-FASSBAYAR-004/07-file-successfully-uploaded.png","caption":"File successfully uploaded"}],"TC-FASSBAYAR-005":[{"src":"evidence/TC-FASSBAYAR-005/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-005/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-005/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-005/04-bulk-company-upload-edit.png","caption":"Bulk Company Upload (Edit)"},{"src":"evidence/TC-FASSBAYAR-005/05-template-downloaded.png","caption":"Template downloaded"}],"TC-FASSBAYAR-006":[{"src":"evidence/TC-FASSBAYAR-006/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-006/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-006/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-006/04-bulk-company-upload-edit.png","caption":"Bulk Company Upload (Edit)"},{"src":"evidence/TC-FASSBAYAR-006/05-template-downloaded.png","caption":"Template downloaded"},{"src":"evidence/TC-FASSBAYAR-006/06-csv-file-chosen.png","caption":"CSV file chosen"},{"src":"evidence/TC-FASSBAYAR-006/07-csv-list.png","caption":"CSV List"},{"src":"evidence/TC-FASSBAYAR-006/08-special-fields-updated-successfully.png","caption":"Special fields updated successfully"},{"src":"evidence/TC-FASSBAYAR-006/09-special-fields.png","caption":"Special fields"}],"TC-FASSBAYAR-007":[{"src":"evidence/TC-FASSBAYAR-007/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-007/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-007/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-007/04-bulk-company-upload-edit.png","caption":"Bulk Company Upload (Edit)"},{"src":"evidence/TC-FASSBAYAR-007/05-template-downloaded.png","caption":"Template downloaded"},{"src":"evidence/TC-FASSBAYAR-007/06-csv-file-chosen.png","caption":"CSV file chosen"},{"src":"evidence/TC-FASSBAYAR-007/07-csv-list.png","caption":"CSV List"},{"src":"evidence/TC-FASSBAYAR-007/08-file-has-errors-no-changes-made.png","caption":"File has errors - no changes made"}],"TC-FASSBAYAR-008":[{"src":"evidence/TC-FASSBAYAR-008/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-008/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-008/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-008/04-add-a-parent-company-empty-form.png","caption":"Add a Parent Company - empty form"},{"src":"evidence/TC-FASSBAYAR-008/05-parent-company-business-details.png","caption":"Parent company - business details"},{"src":"evidence/TC-FASSBAYAR-008/06-parent-company-authoriser-settings-master-merchant.png","caption":"Parent company - authoriser, settings, Master Merchant"},{"src":"evidence/TC-FASSBAYAR-008/07-review-confirm.png","caption":"Review & Confirm"},{"src":"evidence/TC-FASSBAYAR-008/08-complete-company-added.png","caption":"Complete - company added"},{"src":"evidence/TC-FASSBAYAR-008/09-parent-company-details.png","caption":"Parent company details"}],"TC-FASSBAYAR-009":[{"src":"evidence/TC-FASSBAYAR-009/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-009/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-009/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-009/04-parent-company-summary.png","caption":"Parent Company Summary"},{"src":"evidence/TC-FASSBAYAR-009/05-search-results-chicken-rice-bistro-c3t46l.png","caption":"Search results - Chicken Rice Bistro C3T46L"}],"TC-FASSBAYAR-010":[{"src":"evidence/TC-FASSBAYAR-010/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-010/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-010/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-010/04-parent-company-summary.png","caption":"Parent Company Summary"},{"src":"evidence/TC-FASSBAYAR-010/05-search-results-hafiz-raj.png","caption":"Search results - Hafiz Raj"}],"TC-FASSBAYAR-011":[{"src":"evidence/TC-FASSBAYAR-011/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-011/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-011/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-011/04-upload-company-logo.png","caption":"Upload Company Logo"},{"src":"evidence/TC-FASSBAYAR-011/05-logo-chosen-logo-fgysjh-png.png","caption":"Logo chosen - logo-FGYSJH.png"},{"src":"evidence/TC-FASSBAYAR-011/06-company-moved-rendang-cafe-atk2yk.png","caption":"Company moved - Rendang Cafe ATK2YK"},{"src":"evidence/TC-FASSBAYAR-011/07-review-confirm.png","caption":"Review & Confirm"},{"src":"evidence/TC-FASSBAYAR-011/08-complete-request-successful.png","caption":"Complete - request successful"}],"TC-FASSBAYAR-012":[{"src":"evidence/TC-FASSBAYAR-012/01-login-page.png","caption":"Login page"},{"src":"evidence/TC-FASSBAYAR-012/02-login-form-filled.png","caption":"Login form filled"},{"src":"evidence/TC-FASSBAYAR-012/03-home-logged-in.png","caption":"Home - logged in"},{"src":"evidence/TC-FASSBAYAR-012/04-remove-company-logo.png","caption":"Remove Company Logo"},{"src":"evidence/TC-FASSBAYAR-012/05-company-moved-roti-canai-bistro-zyiodl.png","caption":"Company moved - Roti Canai Bistro ZYIODL"},{"src":"evidence/TC-FASSBAYAR-012/06-review-confirm.png","caption":"Review & Confirm"},{"src":"evidence/TC-FASSBAYAR-012/07-complete-request-successful.png","caption":"Complete - request successful"}]};
+  var viewer = document.getElementById('screenshot-viewer');
+  var body = viewer.querySelector('.sv-body');
+  var image = viewer.querySelector('img');
+  var caption = viewer.querySelector('.sv-caption');
+  var prev = viewer.querySelector('[data-sv="prev"]');
+  var next = viewer.querySelector('[data-sv="next"]');
+  var current = null;
+  var index = 0;
+
+  function show() {
+    var images = galleries[current];
+    image.src = images[index].src;
+    caption.textContent = (index + 1) + ' of ' + images.length + ' · ' + images[index].caption;
+    prev.hidden = next.hidden = images.length < 2;
+    prev.disabled = index === 0;
+    next.disabled = index === images.length - 1;
+    body.scrollTop = 0;
+  }
+
+  function move(step) {
+    var images = galleries[current];
+    index = Math.min(images.length - 1, Math.max(0, index + step));
+    show();
+  }
+
+  function close() {
+    viewer.hidden = true;
+    image.removeAttribute('src');
+  }
+
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest('a[data-gallery]');
+    if (link) {
+      event.preventDefault();
+      current = link.getAttribute('data-gallery');
+      index = 0;
+      viewer.hidden = false;
+      show();
+      return;
+    }
+    if (viewer.hidden) return;
+
+    var action = event.target.closest('[data-sv]');
+    if (action) {
+      var name = action.getAttribute('data-sv');
+      if (name === 'prev') move(-1);
+      if (name === 'next') move(1);
+      if (name === 'close') close();
+    } else if (event.target === viewer || event.target === body) {
+      close();
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (viewer.hidden) return;
+    if (event.key === 'Escape') close();
+    if (event.key === 'ArrowLeft') move(-1);
+    if (event.key === 'ArrowRight') move(1);
+  });
+})();
+</script>
+</body></html>

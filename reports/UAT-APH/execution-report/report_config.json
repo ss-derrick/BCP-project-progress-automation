@@ -1,0 +1,12 @@
+{
+  "report_type": "lite",
+  "project_name": "APH Automation",
+  "system_label": "UAT-APH (https://10.0.1.30:35190)",
+  "run_context": "after the last Playwright run",
+  "timezone": "Asia/Kuala_Lumpur",
+  "timezone_short": "KL",
+  "library_path": "data/test_case_library.json",
+  "results_path": "data/last_execution_results.json",
+  "human_action_path": "C:\\Users\\derrick.abbassy\\Documents\\BCP Project\\test-results\\report-notes-none\\human_action_items.json",
+  "gaps_path": "C:\\Users\\derrick.abbassy\\Documents\\BCP Project\\test-results\\report-notes-none\\gaps.json"
+}

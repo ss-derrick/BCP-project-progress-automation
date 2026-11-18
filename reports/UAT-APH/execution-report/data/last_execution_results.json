@@ -1,0 +1,66 @@
+[
+  {
+    "id": "TC-APH-001",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:32:17+08:00",
+    "duration_seconds": 21.21,
+    "evidence": "evidence/TC-APH-001/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-APH-002",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:30:08+08:00",
+    "duration_seconds": 5.22,
+    "evidence": "evidence/TC-APH-002/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-APH-003",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:30:13+08:00",
+    "duration_seconds": 8.37,
+    "evidence": "evidence/TC-APH-003/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-APH-004",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:30:22+08:00",
+    "duration_seconds": 25.84,
+    "evidence": "evidence/TC-APH-004/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-APH-005",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:30:48+08:00",
+    "duration_seconds": 30.58,
+    "evidence": "evidence/TC-APH-005/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-APH-006",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:31:18+08:00",
+    "duration_seconds": 11.91,
+    "evidence": "evidence/TC-APH-006/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-APH-007",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:31:30+08:00",
+    "duration_seconds": 20.07,
+    "evidence": "evidence/TC-APH-007/01-login-page.png",
+    "notes": ""
+  },
+  {
+    "id": "TC-APH-008",
+    "status": "pass",
+    "last_executed": "2026-11-18T10:31:50+08:00",
+    "duration_seconds": 26.41,
+    "evidence": "evidence/TC-APH-008/01-login-page.png",
+    "notes": ""
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "GAP-001",
+    "status": "Open",
+    "description": "Bulk Company Upload (Create) is only checked up to the \"File successfully uploaded\" page. The portal processes the file later and sends the result by email.",
+    "impact": "The test does not confirm that the companies in the file were actually created. It also re-uploads the template's own sample company every run, which may be rejected as a duplicate without the test noticing."
+  },
+  {
+    "id": "GAP-002",
+    "status": "Open",
+    "description": "Emails sent by the portal are not checked: the system-generated password for a new company or parent company, and the bulk upload result email.",
+    "impact": "If these emails stop being sent or contain wrong details, the automated tests will not catch it. The test authoriser emails use example.com addresses, so they are not delivered anywhere."
+  },
+  {
+    "id": "GAP-003",
+    "status": "Open",
+    "description": "Add a Company is tested with one merchant setup only: Service Provider TPA, Card Schemes VISA and MasterCard, Payment Types TPA and PreAuth.",
+    "impact": "Other service providers (e.g. Aeon Credit, Hong Leong Bank, Maybank), card schemes, payment types, and companies with more than one MID are not tested."
+  },
+  {
+    "id": "GAP-004",
+    "status": "Open",
+    "description": "Mostly the normal (successful) paths are tested. Only one error case is covered: a bulk edit file with a company that does not exist.",
+    "impact": "There are no automated checks for wrong or missing input, for example empty required fields, an invalid or duplicate MID, an invalid email, or uploading a file in the wrong format."
+  },
+  {
+    "id": "GAP-005",
+    "status": "Open",
+    "description": "City names longer than 15 characters cannot be tested (e.g. \"Kuala Terengganu\"). The test data only uses shorter city names.",
+    "impact": "Add a Company silently cuts long city names to 15 characters, and Add a Parent Company rejects them. Until the intended limit is confirmed, this behaviour is not covered by a test."
+  },
+  {
+    "id": "GAP-006",
+    "status": "Open",
+    "description": "The tests can only run from a computer on the office network (the portal is at an internal address, 10.0.1.30).",
+    "impact": "There are no scheduled or automatic runs (for example overnight, or after each release). Someone has to start the tests by hand."
+  },
+  {
+    "id": "GAP-007",
+    "status": "Open",
+    "description": "Test data is not cleaned up. Every run adds a new company and a new parent company to the UAT portal, and changes the logo and reference fields of companies the automation created.",
+    "impact": "The UAT company lists keep growing. Only companies created by the automation are changed; no real merchant data is touched."
+  }
+]
