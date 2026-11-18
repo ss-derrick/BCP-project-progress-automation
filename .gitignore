@@ -1,0 +1,21 @@
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# Shareable single-file report copies: every screenshot packed inside,
+# can pass GitHub's 100 MB file limit. Recreate with: npm run report:rebuild
+Test_Execution_Report_*.html
+
+# Local environment / secrets (never commit)
+.env
+.env.*
+!.env.example
+
+# Generated reports and explore output
+/execution-report*/
+/test_summary.html
+/explore-dumps/

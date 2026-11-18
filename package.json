@@ -1,0 +1,20 @@
+{
+  "name": "system-portal-automation",
+  "version": "1.0.0",
+  "description": "One Playwright + TypeScript codebase for the System Portal on APH and Fassbayar",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "playwright test",
+    "report": "playwright show-report",
+    "report:rebuild": "playwright test --list",
+    "report:summary": "playwright test --list --reporter=./common/reporters/summaryReport.ts",
+    "scan": "playwright test --config explore/scan/scan.config.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6",
+    "typescript": "^5.9.3"
+  }
+}

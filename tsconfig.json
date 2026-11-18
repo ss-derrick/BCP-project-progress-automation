@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": [
+      "node",
+      "@playwright/test"
+    ],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "portals.config.ts",
+    "playwright.config.ts",
+    "common/**/*.ts",
+    "aph/**/*.ts",
+    "fassbayar/**/*.ts",
+    "explore/**/*.ts"
+  ]
+}
