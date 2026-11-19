@@ -5,6 +5,7 @@ One Playwright + TypeScript codebase for the Softspace **System Portal** on two 
 the environment decides the portal, its hosts and its features (`portals.config.ts`).
 
 Structure report and diagrams: "One Codebase, Two Portals" (team doc).
+**What changed, where and why: [CHANGELOG.md](CHANGELOG.md)** (every change is recorded there).
 
 ## Structure
 
@@ -51,7 +52,10 @@ npm install
 $env:ENV_NAME='UAT-APH';       npx playwright test    # common/tests + aph/tests
 $env:ENV_NAME='UAT-Fassbayar'; npx playwright test    # common/tests + fassbayar/tests
 $env:DEMO='false'; ...                                # fast, headless (needed for Add a Company runs)
-npm run report:summary                                # rebuild test_summary.html without running
+npm run test:all                                      # APH, then Fassbayar -> summary shows BOTH
+npm run test:aph                                      # APH only            -> summary shows APH only
+npm run test:fassbayar                                # Fassbayar only      -> summary shows Fassbayar only
+npm run report:summary                                # rebuild test_summary.html (every portal) without running
 npm run typecheck
 ```
 

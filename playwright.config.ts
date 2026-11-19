@@ -27,7 +27,22 @@ import {
 const phone = MOBILE_MODE ? devices[MOBILE_DEVICE] : undefined;
 
 // Per-environment folders, e.g. UAT-APH -> uat-aph, UAT-Fassbayar -> uat-fassbayar
-const envFolder = ENV_NAME.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+const folderOf = (env: string) => env.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+const envFolder = folderOf(ENV_NAME);
+const reportFolderOf = (env: string) =>
+  MOBILE_MODE ? `execution-report-mobile-${folderOf(env)}` : `execution-report-${folderOf(env)}`;
+const reportDir = process.env.REPORT_DIR ?? reportFolderOf(ENV_NAME);
+
+// Which portals test_summary.html shows:
+//   default                      -> only the environment of THIS run
+//   SUMMARY_ENVS=UAT-APH,UAT-FASSBAYAR -> those (npm run test:all sets it on its last run)
+//   SUMMARY_ENVS=all             -> every execution-report-* folder
+const summaryEnvs = process.env.SUMMARY_ENVS?.trim();
+const summaryFolders = summaryEnvs === 'all'
+  ? undefined
+  : summaryEnvs
+    ? summaryEnvs.split(',').map((e) => reportFolderOf(e.trim())).filter(Boolean)
+    : [reportDir];
 
 // Report notes (gaps / human action cards) per environment if that folder
 // exists, e.g. report-notes/uat-fassbayar/; otherwise report-notes/
@@ -118,8 +133,7 @@ export default defineConfig({
     //   (mobile: execution-report-mobile-uat-aph/ ...)
     // REPORT_DIR overrides the folder:  $env:REPORT_DIR='execution-report-sit'
     ['./common/reporters/executionReport.ts', {
-      outputDir: process.env.REPORT_DIR
-        ?? (MOBILE_MODE ? `execution-report-mobile-${envFolder}` : `execution-report-${envFolder}`),
+      outputDir: reportDir,
       notesDir,
       projectName: PROJECT_NAME,
       systemLabel: MOBILE_MODE
@@ -135,6 +149,7 @@ export default defineConfig({
     // Test Execution Report above (it reads what that one writes).
     ['./common/reporters/summaryReport.ts', {
       title: `${PROJECT_NAME}: Summary`,
+      folders: summaryFolders,
       timezone: REPORT_TIMEZONE,
       timezoneShort: REPORT_TIMEZONE_SHORT
     }]

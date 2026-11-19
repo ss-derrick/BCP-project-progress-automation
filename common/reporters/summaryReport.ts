@@ -23,6 +23,9 @@ export interface SummaryReportOptions {
   outputFile?: string;      // default test_summary.html
   timezone?: string;        // default Asia/Kuala_Lumpur
   timezoneShort?: string;   // default KL
+  // Report folders (execution-report-<env>) to show, e.g. only the portal(s)
+  // of this run. Not set = every execution-report-* folder found.
+  folders?: string[];
 }
 
 interface Result { id: string; status: string; last_executed?: string; notes?: string }
@@ -72,9 +75,13 @@ export default class SummaryReporter implements Reporter {
   }
 
   async onEnd(): Promise<void> {
-    const systems = fs.readdirSync(this.rootDir, { withFileTypes: true })
-      .filter((d) => d.isDirectory() && d.name.startsWith('execution-report-'))
-      .map((d) => this.readSystem(d.name))
+    const folders = this.options.folders
+      ?? fs.readdirSync(this.rootDir, { withFileTypes: true })
+        .filter((d) => d.isDirectory() && d.name.startsWith('execution-report-'))
+        .map((d) => d.name);
+    const systems = folders
+      .filter((f) => fs.existsSync(path.join(this.rootDir, f)))
+      .map((f) => this.readSystem(f))
       .filter((s): s is SystemSummary => s !== null)
       .sort((a, b) => a.name.localeCompare(b.name));
 

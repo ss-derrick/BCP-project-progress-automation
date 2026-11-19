@@ -34,7 +34,16 @@ test.describe('Manage Credit Settlements (shared)', () => {
 
   test(
     'Credit Settlement list shows its search, filters, columns and quicklinks',
-    testCase({ id: 'TC-CS-001', module: MODULE, priority: 'High' }),
+    testCase({
+      id: 'TC-CS-001', module: MODULE, priority: 'High',
+      gaps: [{
+        description: "Only today's settlements are used (the Date filter default); searching other dates with the date picker is not tested.",
+        impact: 'A defect when filtering past dates would not be caught.'
+      }, {
+        description: 'Only page 1 of the results is checked; paging (next / previous page) is not tested.',
+        impact: 'A paging defect would not be caught.'
+      }]
+    }),
     async ({ creditSettlementPage: cs }) => {
       await test.step('Quicklinks: Credit Settlement Summary, Schedule Force Settlement', async () => {
         await expect(cs.quicklinks).toHaveText(['Credit Settlement Summary', 'Schedule Force Settlement']);
@@ -156,7 +165,21 @@ test.describe('Manage Credit Settlements (shared)', () => {
 
   test(
     'View Details opens the batch with its summary and transactions',
-    testCase({ id: 'TC-CS-007', module: MODULE, priority: 'High' }),
+    testCase({
+      id: 'TC-CS-007', module: MODULE, priority: 'High',
+      gaps: [{
+        description: `Batch Details filters (${rules.batchFilters.join(', ')}) are checked to be there but not used to filter transactions.`,
+        impact: "A defect in filtering a batch's transactions would not be caught."
+      }, {
+        description: '"Download Sale Report" of a successful batch and the transaction quicklinks are not tested.',
+        impact: 'A defect in the sale report download would not be caught.'
+      }],
+      manual: rules.settleCreditButton ? [{
+        title: `Settle Credit on a pending batch (${PORTAL_PROFILE.name})`,
+        reason: 'Settle Credit settles a real batch and cannot be undone, so automation never clicks it.',
+        handling: 'Test Settle Credit by hand on a test batch before each release.'
+      }] : []
+    }),
     async ({ creditSettlementPage: cs, page }) => {
       const sample = await firstRowOrSkip(cs);
 
@@ -226,7 +249,14 @@ test.describe('Manage Credit Settlements (shared)', () => {
 
   test(
     'Schedule Force Settlement opens at step 1 (Search company)',
-    testCase({ id: 'TC-CS-009', module: MODULE, priority: 'Medium' }),
+    testCase({
+      id: 'TC-CS-009', module: MODULE, priority: 'Medium',
+      manual: [{
+        title: 'Schedule Force Settlement: Schedule > Review & Confirm > Complete',
+        reason: 'Finishing the wizard schedules a real force settlement for a company, so automation stops at step 1 (Search company).',
+        handling: 'Test scheduling by hand on a test company before each release, or agree a safe test company so it can be automated.'
+      }]
+    }),
     async ({ creditSettlementPage: cs, page }) => {
       await test.step('Quicklinks > Schedule Force Settlement', async () => {
         await cs.openScheduleForceSettlement();

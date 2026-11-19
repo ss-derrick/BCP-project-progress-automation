@@ -15,7 +15,16 @@ test.describe('Add a Company - MID Settings validation (shared)', () => {
 
   test(
     'Global Payment: only Retail or IPP can be selected, one at a time',
-    testCase({ id: 'TC-COMP-002', module: 'Add a Company', priority: 'High' }),
+    testCase({
+      id: 'TC-COMP-002', module: 'Add a Company', priority: 'High',
+      gaps: [{
+        description: 'Payment-type rules are checked for Global Payment only; the rules of the other Service Providers (e.g. AmBank auto-ticks My Debit) are not.',
+        impact: 'A wrong payment-type rule on another host would not be caught.'
+      }, {
+        description: 'Field validation of the company form (lengths, formats, required fields, error messages) is not tested.',
+        impact: 'A validation defect on Business / Authoriser fields would not be caught.'
+      }]
+    }),
     async ({ loginPage, consolePage, homePage, addCompanyFormPage: form }) => {
 
       const host = hostsFor().find((h) => h.code === HOST_CODE);
@@ -61,7 +70,13 @@ test.describe('Add a Company - MID Settings validation (shared)', () => {
 
   test(
     'A MID that already exists is rejected at Submit',
-    testCase({ id: 'TC-COMP-003', module: 'Add a Company', priority: 'High' }),
+    testCase({
+      id: 'TC-COMP-003', module: 'Add a Company', priority: 'High',
+      gaps: [{
+        description: 'Duplicate check is tested for the MID only, with one known MID per environment (common/testdata/existingMids.ts); duplicate Business Name, BRN or User ID Prefix are not tested.',
+        impact: 'A defect in the other duplicate checks would not be caught.'
+      }]
+    }),
     async ({ loginPage, consolePage, homePage, addCompanyFormPage: form }) => {
 
       // Existing MID = data of ONE environment (common/testdata/existingMids.ts)

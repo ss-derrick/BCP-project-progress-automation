@@ -9,9 +9,10 @@ import { createCompanyForHost } from '../creation/hostCompanyData';
 //   APH:       VISA, MasterCard                                   (common/hosts/globalPayment.ts)
 //   Fassbayar: VISA, MasterCard, HSBC VISA, HSBC Mastercard       (portals.config.ts)
 // A scheme added / removed on a portal = one line in those lists.
-// Every portal lists the SAME test cases: one per GP scheme of ANY portal.
-// A scheme this portal doesn't offer is skipped with the reason
-// (e.g. HSBC VISA on APH), so both reports show the same IDs.
+// One test per scheme, created ONLY on a portal that offers that scheme:
+// on APH the HSBC tests don't exist (not run, not counted, not in the report).
+// IDs stay the same on every portal: numbered over the schemes of ALL
+// portals, so HSBC VISA is always TC-COMP-005-03.
 // Read-only: Submit opens the review, Confirm is NEVER clicked, nothing is created.
 
 const HOST_CODE = 'GP';   // Global Payment
@@ -20,11 +21,6 @@ const host = hostsFor().find((h) => h.code === HOST_CODE);
 // GP schemes of every portal, APH's first: VISA, MasterCard, HSBC VISA, HSBC Mastercard
 const allSchemes = [...new Set(Object.values(portals).flatMap(
   (p) => p.hosts.find((h) => h.code === HOST_CODE)?.cardSchemes ?? []))];
-
-// Portals whose GP offers this scheme, e.g. "Fassbayar"
-const portalsOffering = (scheme: string): string => Object.values(portals)
-  .filter((p) => p.hosts.find((h) => h.code === HOST_CODE)?.cardSchemes.includes(scheme))
-  .map((p) => p.name).join(', ');
 
 test.describe('Add a Company - Global Payment card schemes (shared)', () => {
 
@@ -52,19 +48,22 @@ test.describe('Add a Company - Global Payment card schemes (shared)', () => {
     }
   );
 
-  // One test per scheme of ANY portal; run only where this portal offers it
+  // One test per scheme THIS portal offers (ID numbered over all portals' schemes)
   for (const [i, scheme] of allSchemes.entries()) {
+    if (!host?.cardSchemes.includes(scheme)) continue;   // not on this portal: no test at all
     test(
       `Global Payment with card scheme ${scheme}: accepted at Submit and shown on Review`,
-      testCase({ id: `TC-COMP-005-${String(i + 1).padStart(2, '0')}`, module: 'Add a Company', priority: 'Medium' }),
+      testCase({
+        id: `TC-COMP-005-${String(i + 1).padStart(2, '0')}`, module: 'Add a Company', priority: 'Medium',
+        gaps: [{
+          description: 'Card scheme tests stop at Review & Confirm (Confirm is never clicked, same on both portals), so a company is created end-to-end with the first scheme only (TC-COMP-001).',
+          impact: 'A defect that only shows when saving a company with another card scheme would not be caught.'
+        }, {
+          description: 'One card scheme per test: selecting several schemes in one MID row is not tested.',
+          impact: 'A defect with multiple card schemes would not be caught.'
+        }]
+      }),
       async ({ loginPage, consolePage, homePage, addCompanyFormPage: form }) => {
-
-        test.skip(!host, `${HOST_CODE} is not a host of ${ENV_NAME} (portals.config.ts)`);
-        // "Applicable for <portal> only: ..." = not applicable here; the summary
-        // report lists it apart and does not count it as not passed
-        test.skip(!host!.cardSchemes.includes(scheme),
-          `Applicable for ${portalsOffering(scheme)} only: ${scheme} is not offered under ` +
-          `${host!.name} on ${PORTAL_PROFILE.name} (${ENV_NAME})`);
 
         // A valid new company in every field, with this one card scheme
         const data = { ...createCompanyForHost(host!), cardSchemes: [scheme] };

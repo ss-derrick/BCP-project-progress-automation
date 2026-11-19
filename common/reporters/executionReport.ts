@@ -1,6 +1,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { buildNotes, type Declared, type Gap, type HumanAction, type LibraryEntry, type RunResult } from './reportNotes';
 import { spawnSync } from 'node:child_process';
 import type {
   FullConfig,
@@ -139,7 +140,7 @@ export default class ExecutionReportReporter implements Reporter {
       timezone_short: this.options.timezoneShort ?? '',
       library_path: 'data/test_case_library.json',
       results_path: 'data/last_execution_results.json',
-      ...this.optionalCards()
+      ...this.optionalCards(dataDir)
     });
 
     this.renderHtml(configPath, path.join(outputDir, 'test_execution_report.html'));
@@ -303,30 +304,62 @@ export default class ExecutionReportReporter implements Reporter {
     return entries[0].file;
   }
 
-  // Optional report cards, turned on only when their file exists:
-  //   human_action_items.json  -> "Human Action Required"
-  //   investigation_items.json -> "Investigation / Evidence-Gathering Results"
-  //   gaps.json                -> "Open Gaps / Limitations"
-  private optionalCards(): Record<string, string> {
+  // Report cards. Human Action Required + Open Gaps / Limitations are built
+  // AUTOMATICALLY on every run (common/reporters/reportNotes.ts) from:
+  //   - this run's results (skips, environment problems, failures)
+  //   - what tests declare they don't cover (testCase({ gaps, manual }))
+  //   - hand-written report-notes/human_action_items.json / gaps.json (kept)
+  // Nothing at all -> one "none" row, so the card is always there
+  // (the summary page counts "none" rows as 0).
+  // investigation_items.json -> "Investigation ..." card, only when the file exists.
+  private optionalCards(dataDir: string): Record<string, string> {
     const notesDir = path.resolve(
       this.rootDir,
       this.options.notesDir ?? 'report-notes'
     );
-    const cards: Record<string, string> = {};
-
-    const files = {
-      human_action_path: 'human_action_items.json',
-      investigation_path: 'investigation_items.json',
-      gaps_path: 'gaps.json'
+    const readList = <T>(file: string): T[] => {
+      try {
+        const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+        return Array.isArray(data) ? data as T[] : [];
+      } catch {
+        return [];
+      }
     };
 
-    for (const [configKey, fileName] of Object.entries(files)) {
-      const filePath = path.join(notesDir, fileName);
-      if (fs.existsSync(filePath)) {
-        cards[configKey] = filePath;
-      }
-    }
+    const declared: Declared[] = this.tests.map((test) => {
+      const all = test.annotations;
+      const parse = <T>(type: string): T[] => all.filter((a) => a.type === type)
+        .map((a) => { try { return JSON.parse(a.description ?? '') as T; } catch { return null; } })
+        .filter((x): x is T => x !== null);
+      return {
+        id: all.find((a) => a.type === 'id')?.description ?? this.fallbackId(test),
+        gaps: parse('gap'),
+        manual: parse('human-action')
+      };
+    });
 
+    const { humanActions, gaps } = buildNotes(
+      readList<LibraryEntry>(path.join(dataDir, 'test_case_library.json')),
+      readList<RunResult>(path.join(dataDir, 'last_execution_results.json')),
+      declared,
+      readList<HumanAction>(path.join(notesDir, 'human_action_items.json')),
+      readList<Gap>(path.join(notesDir, 'gaps.json'))
+    );
+
+    const humanPath = path.join(dataDir, 'human_action_items.json');
+    const gapsPath = path.join(dataDir, 'gaps.json');
+    this.writeJson(humanPath, humanActions.length ? humanActions : [{
+      id: '-', module: '-', title: 'No human action required',
+      reason: 'Every test case in this run is automated and ran.', recommended_handling: '-'
+    }]);
+    this.writeJson(gapsPath, gaps.length ? gaps : [{
+      id: '-', status: 'None', description: 'No open gaps or limitations recorded.', impact: '-'
+    }]);
+    console.log(`[execution-report] Human action items: ${humanActions.length}, gaps / limitations: ${gaps.length}`);
+
+    const cards: Record<string, string> = { human_action_path: humanPath, gaps_path: gapsPath };
+    const investigation = path.join(notesDir, 'investigation_items.json');
+    if (readList(investigation).length) cards.investigation_path = investigation;
     return cards;
   }
 

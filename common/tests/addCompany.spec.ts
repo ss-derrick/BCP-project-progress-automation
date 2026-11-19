@@ -1,7 +1,7 @@
 import { test } from '../fixtures/portal';
 import { testCase } from '../utils/testCase';
 import { loginAs } from '../flows/loginFlow';
-import { hostsFor, ENV_NAME } from '../../portals.config';
+import { hostsFor, ENV_NAME, PORTAL_PROFILE } from '../../portals.config';
 import { createCompanyForHost } from '../creation/hostCompanyData';
 
 // SHARED: runs on every portal (APH + Fassbayar) from this one file.
@@ -11,12 +11,33 @@ import { createCompanyForHost } from '../creation/hostCompanyData';
 // Dry run without Confirm: explore/scan/addCompanyGp.scan.ts
 
 const HOST_CODE = 'GP';   // Global Payment = the sample host
+const otherHosts = hostsFor().filter((h) => h.code !== HOST_CODE).map((h) => h.name);
 
 test.describe('Add a Company (shared)', () => {
 
   test(
     'Add a company with Global Payment as Service Provider',
-    testCase({ id: 'TC-COMP-001', module: 'Add a Company', priority: 'High' }),
+    testCase({
+      id: 'TC-COMP-001', module: 'Add a Company', priority: 'High',
+      gaps: [
+        {
+          description: `A company is created for Global Payment only. Not created by automation on ${PORTAL_PROFILE.name}: ${otherHosts.join(', ')}.`,
+          impact: 'A defect when adding a company for another Service Provider (MID rule, card schemes, payment types, auto-ticked types) would not be caught.'
+        },
+        {
+          description: 'One MID row only: "Add another MID" (several MIDs / hosts in one company) is not tested.',
+          impact: 'A defect with multi-MID companies would not be caught.'
+        },
+        {
+          description: 'Settings below MID Settings (Contactless, MCCS, Bill Payment, SSO, schedule time, application identifier, QR type, merchant / API settings) keep their defaults.',
+          impact: 'Changing those settings at creation is not verified.'
+        },
+        {
+          description: "After Confirm only the company list row is checked; Company Details, editing the company and the authoriser's activation e-mail are not verified.",
+          impact: 'A defect in what was saved (beyond name and MID) or in the welcome e-mail would not be caught.'
+        }
+      ]
+    }),
     async ({ loginPage, consolePage, homePage, addCompanyFormPage }) => {
 
       const host = hostsFor().find((h) => h.code === HOST_CODE);
