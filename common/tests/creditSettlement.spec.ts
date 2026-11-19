@@ -174,11 +174,13 @@ test.describe('Manage Credit Settlements (shared)', () => {
         description: '"Download Sale Report" of a successful batch and the transaction quicklinks are not tested.',
         impact: 'A defect in the sale report download would not be caught.'
       }],
-      manual: rules.settleCreditButton ? [{
-        title: `Settle Credit on a pending batch (${PORTAL_PROFILE.name})`,
-        reason: 'Settle Credit settles a real batch and cannot be undone, so automation never clicks it.',
-        handling: 'Test Settle Credit by hand on a test batch before each release.'
-      }] : []
+      // Both portals show "Settle Credit" on SOME pending batches (seen on APH 18 Nov,
+      // on Fassbayar batch 000022 on 19 Nov but not batch 485 on 18 Nov): never clicked
+      manual: [{
+        title: 'Settle Credit on a pending batch',
+        reason: 'Settle Credit settles a real batch and cannot be undone, so automation never clicks it. It is shown on some pending batches only (rule not visible on the page).',
+        handling: 'Test Settle Credit by hand on a test batch before each release, and confirm with the team when the button should appear.'
+      }]
     }),
     async ({ creditSettlementPage: cs, page }) => {
       const sample = await firstRowOrSkip(cs);
@@ -195,8 +197,12 @@ test.describe('Manage Credit Settlements (shared)', () => {
       });
 
       if (/pending/i.test(sample.status)) {
-        await test.step(`Pending batch: "Settle Credit" ${rules.settleCreditButton ? 'offered' : 'not offered'} on ${PORTAL_PROFILE.name} (never clicked)`, async () => {
-          await expect(page.getByRole('link', { name: 'Settle Credit' })).toHaveCount(rules.settleCreditButton ? 1 : 0);
+        await test.step('Pending batch: "Settle Credit" shown or not is recorded (never clicked)', async () => {
+          const settle = page.getByRole('link', { name: 'Settle Credit' });
+          const shown = (await settle.count()) > 0;
+          console.log(`${ENV_NAME} | pending batch ${sample.batchNo}: Settle Credit ${shown ? 'shown' : 'not shown'}`);
+          test.info().annotations.push({ type: 'info', description: `Settle Credit ${shown ? 'shown' : 'not shown'} on pending batch ${sample.batchNo}` });
+          if (shown) await expect(settle).toHaveAttribute('href', /settleCredit/);   // looked at, never clicked
         });
       }
 

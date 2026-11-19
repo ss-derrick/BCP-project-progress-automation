@@ -61,7 +61,6 @@ export interface FormRules {
 // (read-only scan of 18 Nov 2026)
 export interface CreditSettlementRules {
   showsRefundedTotal: boolean;        // "Total Refunded Amount" in the batch summary
-  settleCreditButton: boolean;        // "Settle Credit" on a PENDING batch (never clicked by tests)
   batchFilters: string[];             // filter labels on Batch Details, in page order
   transactionStatuses: string[];      // Status filter options on Batch Details
 }
@@ -92,7 +91,6 @@ export const portals: Record<Portal, PortalProfile> = {
     },
     creditSettlement: {
       showsRefundedTotal: false,
-      settleCreditButton: true,
       batchFilters: ['Terminal ID (TID)', 'Approval Code', 'Status', 'Amount', 'Date'],
       transactionStatuses: ['Approved', 'Reversed', 'Voided', 'Pending Signature', 'Settled', 'Refunded', 'Expired']
     },
@@ -126,7 +124,6 @@ export const portals: Record<Portal, PortalProfile> = {
     },
     creditSettlement: {
       showsRefundedTotal: true,
-      settleCreditButton: false,
       batchFilters: ['Terminal ID (TID)', 'Status', 'Date'],
       transactionStatuses: ['Approved', 'Reversed', 'Voided', 'Pending Signature', 'Settled', 'Expired']
     },
