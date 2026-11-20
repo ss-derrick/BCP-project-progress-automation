@@ -1,0 +1,21 @@
+{
+  "_comment": "Links each automated test (Automation ID) to the case(s) with the same scenario in APH_System_Portal_Baseline_Test_Cases_v1.0.xlsx, sheet 'Test Case Library' (row = Excel row). Exact or partial matches only (mapped 20 Nov 2026); tests with no or only a weak match have no link. Used by common/reporters/executionReport.ts.",
+  "workbookUrl": "https://softspace001.sharepoint.com/:x:/r/sites/MobilePOS/_layouts/15/Doc.aspx?sourcedoc=%7B596E5633-36C8-4006-B4A2-5F229CCB1192%7D&file=APH_System_Portal_Baseline_Test_Cases_v1.0.xlsx&action=default&mobileredirect=true",
+  "workbookName": "APH_System_Portal_Baseline_Test_Cases_v1.0.xlsx",
+  "sheet": "Test Case Library",
+  "columnLabel": "Test Case ID (APH Baseline v1.0)",
+  "links": {
+    "TC-APH-001":  [ { "sheetId": "TC-APH-BP-AUTH-002", "row": 3 }, { "sheetId": "TC-APH-BP-AUTH-013", "row": 14 } ],
+    "TC-COMP-001": [ { "sheetId": "TC-APH-BP-CMP-013", "row": 36 }, { "sheetId": "TC-APH-BP-CMP-008", "row": 31 } ],
+    "TC-COMP-002": [ { "sheetId": "TC-APH-BP-CMP-013", "row": 36 } ],
+    "TC-COMP-003": [ { "sheetId": "TC-APH-BP-CMP-020", "row": 43 } ],
+    "TC-CS-001":   [ { "sheetId": "TC-APH-BP-STL-001", "row": 183 } ],
+    "TC-CS-002":   [ { "sheetId": "TC-APH-BP-STL-002", "row": 184 } ],
+    "TC-CS-003":   [ { "sheetId": "TC-APH-BP-STL-002", "row": 184 } ],
+    "TC-CS-004":   [ { "sheetId": "TC-APH-BP-STL-002", "row": 184 } ],
+    "TC-CS-005":   [ { "sheetId": "TC-APH-BP-STL-002", "row": 184 } ],
+    "TC-CS-006":   [ { "sheetId": "TC-APH-BP-XCUT-002", "row": 211 }, { "sheetId": "TC-APH-BP-STL-004", "row": 186 } ],
+    "TC-CS-007":   [ { "sheetId": "TC-APH-BP-STL-003", "row": 185 } ],
+    "TC-CS-009":   [ { "sheetId": "TC-APH-BP-STL-007", "row": 189 } ]
+  }
+}

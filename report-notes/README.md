@@ -45,13 +45,20 @@ without that folder, `report-notes/` is used for every environment.
 ]
 ```
 
-`sheet_links.json`
+`sheet_links.json`: adds a **"Test Case ID (<sheet>)" column** next to the Automation ID in
+"All test cases": the Excel test case ID(s) of the same scenario, each opening the workbook at its row
+(Excel Online). The search box also finds them; tests with no row in the sheet show "-".
+Usually one per portal: `report-notes/uat-aph/sheet_links.json`, `report-notes/uat-fassbayar/sheet_links.json`.
 ```json
 {
   "workbookUrl": "https://<sharepoint link to the .xlsx>",
+  "workbookName": "SSR-xxx_System_Portal_Test_Cases_v1.0.xlsx",
   "sheet": "Sheet name",
+  "columnLabel": "Test Case ID (SSR-xxx v1.0)",
   "links": {
-    "TC-APH-001": [ { "sheetId": "TC-APH-LOGIN-001", "row": 5 } ]
+    "TC-COMP-001": [ { "sheetId": "TC-SP-COMP-001", "row": 5 } ],
+    "TC-CS-005":   [ { "sheetId": "TC-SP-CS-010", "row": 14 }, { "sheetId": "TC-SP-CS-011", "row": 15 } ]
   }
 }
 ```
+`workbookName` (tooltip) and `columnLabel` are optional; `row` = the Excel row number.

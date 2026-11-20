@@ -34,6 +34,10 @@ the **key code**, and **how to run or check it**. Newest first. Flows and diagra
 
 ## Changes
 
+- [2026-11-20: Automated tests mapped to the APH and FassBayar baseline test case workbooks](#2026-11-20-automated-tests-mapped-to-the-aph-and-fassbayar-baseline-test-case-workbooks)
+- [2026-11-20: Report links each test to its row in the Excel test case sheet (from ecom-automation)](#2026-11-20-report-links-each-test-to-its-row-in-the-excel-test-case-sheet-from-ecom-automation)
+- [2026-11-20: Open any Markdown file in the browser (npm run md)](#2026-11-20-open-any-markdown-file-in-the-browser-npm-run-md)
+- [2026-11-20: Site map of both portals: every module, flow and difference](#2026-11-20-site-map-of-both-portals-every-module-flow-and-difference)
 - [2026-11-19: "Settle Credit" can appear on both portals (no longer APH-only)](#2026-11-19-settle-credit-can-appear-on-both-portals-no-longer-aph-only)
 - [2026-11-19: Card scheme tests exist only on the portal that offers the scheme](#2026-11-19-card-scheme-tests-exist-only-on-the-portal-that-offers-the-scheme)
 - [2026-11-19: Human Action and Gaps tables generated automatically on every run](#2026-11-19-human-action-and-gaps-tables-generated-automatically-on-every-run)
@@ -46,6 +50,136 @@ the **key code**, and **how to run or check it**. Newest first. Flows and diagra
 - [2026-11-18: Summary counts "applicable for one portal only" skips separately](#2026-11-18-summary-counts-applicable-for-one-portal-only-skips-separately)
 - [2026-11-18: Global Payment card scheme tests (TC-COMP-004, 005-01 to 04)](#2026-11-18-global-payment-card-scheme-tests-tc-comp-004-005-01-to-04)
 - [2026-11-18: Duplicate MID test runs on Fassbayar too (TC-COMP-003)](#2026-11-18-duplicate-mid-test-runs-on-fassbayar-too-tc-comp-003)
+
+---
+
+### 2026-11-20: Automated tests mapped to the APH and FassBayar baseline test case workbooks
+
+**Why:** each automated test in the report should link to its test case(s) in the team's baseline workbooks.
+
+| File / folder | Change |
+|---|---|
+| `report-notes/uat-aph/sheet_links.json` | **New**: 12 of 16 APH tests -> `APH_System_Portal_Baseline_Test_Cases_v1.0.xlsx`, sheet "Test Case Library" |
+| `report-notes/uat-fassbayar/sheet_links.json` | **New**: 11 of 18 Fassbayar tests -> `FassBayar_System_Portal_Baseline_Test_Cases_v1.0.xlsx`, sheet "Test Case Library" |
+
+Only exact or reasonable partial matches are linked; the rest show "-":
+
+| Automation ID | APH (TC-APH-BP-...) | FassBayar (TC-FB-BP-...) |
+|---|---|---|
+| TC-APH-001 Login / logout | AUTH-002, AUTH-013 | AUTH-002, AUTH-010 |
+| TC-COMP-001 Add company (GP) | CMP-013, CMP-008 | CMP-014, CMP-008 |
+| TC-COMP-002 GP Retail or IPP | CMP-013 | - (no case) |
+| TC-COMP-003 Duplicate MID | CMP-020 | CMP-019 |
+| TC-COMP-004 / 005 card schemes | - (no per-scheme case; no HSBC case) | - |
+| TC-CS-001 list | STL-001 | STL-001 |
+| TC-CS-002..005 filters / batch search | STL-002 | STL-002 |
+| TC-CS-006 no record | XCUT-002, STL-004 | XCUT-002 |
+| TC-CS-007 batch details | STL-003 | STL-003 |
+| TC-CS-008 company settlements | - | - |
+| TC-CS-009 schedule force settlement | STL-007 | STL-006 |
+
+Gaps in the workbooks (no case to link): GP card scheme list / HSBC schemes, "View all credit settlements".
+When a workbook gets new rows, update the `row` numbers (Excel row of the case).
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-APH'; npx playwright test --list     # rebuilds the report without running
+start execution-report-uat-aph	est_execution_report.html
+```
+
+---
+
+### 2026-11-20: Report links each test to its row in the Excel test case sheet (from ecom-automation)
+
+**Why:** like ecom-automation's report, each test in "All test cases" should show the test case ID(s) of
+the Excel test case sheet and open the workbook at that row.
+
+| File / folder | Change |
+|---|---|
+| `common/reporters/executionReport.ts` | Changed: `linkToSheet()` replaced by ecom's version, made generic (any test ID; column title and workbook name from the mapping) |
+| `report-notes/README.md` | Changed: `sheet_links.json` format (new optional `workbookName`, `columnLabel`) |
+
+Before: the sheet ID was a small link under the automation ID. Now (ecom style):
+
+| Automation ID | Test Case ID (SSR-xxx v1.0) | Module | ... |
+|---|---|---|---|
+| TC-CS-001 | TC-SP-CS-001 ↗ | Credit Settlement | |
+| TC-CS-005 | TC-SP-CS-010 ↗<br>TC-SP-CS-011 ↗ | Credit Settlement | |
+| TC-CS-002 | - (not in the sheet) | Credit Settlement | |
+
+```mermaid
+flowchart LR
+  M["report-notes/&lt;env&gt;/sheet_links.json<br/>workbookUrl, sheet, links"] --> R["executionReport.ts<br/>linkToSheet()"]
+  R --> T["All test cases:<br/>+ column 'Test Case ID (sheet)'<br/>+ search finds sheet IDs"]
+  T -->|click ↗| X["Excel Online<br/>opens at that row"]
+```
+
+- No mapping file -> report unchanged (no column). Nothing is mapped yet: the System Portal test case
+  workbook link, sheet name and rows are needed.
+- Checked with a temporary mapping on the Fassbayar report: column, links (`activeCell='<sheet>'!A<row>`),
+  "-" rows and search all work; the temporary mapping was removed.
+
+**Key code**
+```ts
+.replace('<th>Test Case ID</th>',
+  `<th>Automation ID</th><th title="${esc(workbook)}, sheet '${esc(mapping.sheet)}'">${esc(label)}</th>`)
+.replace(/data-search="([^\s"]+)/g, (match, id) => ...sheet IDs + id...)        // search
+.replace(/(<tr[^>]*data-search=...>\s*)<td class="mono">([^<]+)<\/td>/g, ...)   // + sheet cell
+```
+
+**How to run / check**: add `report-notes/uat-fassbayar/sheet_links.json`, then rebuild without running:
+```powershell
+$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test --list
+start execution-report-uat-fassbayar	est_execution_report.html
+```
+
+---
+
+### 2026-11-20: Open any Markdown file in the browser (npm run md)
+
+**Why:** a browser shows a `.md` file as raw text; the module map and changelog should open as a formatted page.
+
+| File / folder | Change |
+|---|---|
+| `scripts/md-to-html.js` | **New**: writes `<file>.html` next to the `.md` (tables formatted, mermaid diagrams drawn) and opens it |
+| `package.json` | Changed: `npm run md` |
+| `.gitignore` | Changed: the generated `.html` files stay local |
+
+**How to run / check**
+```powershell
+npm run md -- docs/portal-module-map.md
+npm run md -- CHANGELOG.md
+```
+The page loads its Markdown / diagram libraries from the internet (CDN).
+
+---
+
+### 2026-11-20: Site map of both portals: every module, flow and difference
+
+**Why:** understand every module and flow on APH and Fassbayar, and how they differ, before automating more.
+Crawled read-only with the dedicated automation accounts (`automationaph`, `automationfb`).
+
+| File / folder | Change |
+|---|---|
+| `explore/scan/siteMap.scan.ts` | **New**: read-only crawler (opens pages only; never submits; never opens delete / void / reset / settle / export / download links) |
+| `docs/portal-module-map.md` | **New**: module table, flows (mermaid), APH vs Fassbayar differences, automation status |
+| `.gitignore` | Changed: crawl output `explore/scan/results/site-map-*.json` stays local (real MIDs / names; repo is public) |
+
+**Result:** APH 49 pages, Fassbayar 56. Same 7 top-menu modules. Fassbayar only: Fasstap, Replace Readers +
+report, Bulk Company Upload (Edit), Upload / Remove Company Logo, Bill Payment Report, Export SSO List,
+Home dashboard. APH only: Host Settings, Fassbayar Sync History / Retrigger Sync, View Parent.
+
+```mermaid
+flowchart LR
+  LOGIN[login] --> TOP[top menu: 7 modules] --> QL[quicklinks] --> DET[detail pages]
+  DET -.->|recorded, never opened| ACT[delete / void / reset / settle / export / download]
+```
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test --config explore/scan/scan.config.ts siteMap
+start docs\portal-module-map.md
+```
 
 ---
 

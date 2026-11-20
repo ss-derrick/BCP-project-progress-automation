@@ -13,7 +13,8 @@
     "report:rebuild": "playwright test --list",
     "report:summary": "playwright test --list --reporter=./common/reporters/summaryReport.ts",
     "scan": "playwright test --config explore/scan/scan.config.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "md": "node scripts/md-to-html.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",

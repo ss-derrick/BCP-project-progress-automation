@@ -530,9 +530,16 @@ export default class ExecutionReportReporter implements Reporter {
     return linkedHtml.replace('</body>', `${viewer}\n</body>`);
   }
 
-  // Add the Excel test case ID under each report Test Case ID, linked to
-  // its row in the workbook (opens Excel Online at that row).
-  // Mapping: report-notes/sheet_links.json
+  // "Test Case ID (<sheet>)" column next to the Automation ID in "All test cases":
+  // the Excel test case ID(s) of the same scenario, each linked to its row in
+  // the workbook (opens Excel Online at that row). Search also finds them.
+  // Taken from ecom-automation (reporters/executionReport.ts), made generic:
+  // any test ID, column title / workbook name from the mapping file.
+  // Mapping: report-notes/<env>/sheet_links.json (or report-notes/sheet_links.json)
+  //   { "workbookUrl": "...", "workbookName": "SSR-xxx_Test_Cases_v1.0.xlsx",
+  //     "sheet": "Sheet name", "columnLabel": "Test Case ID (SSR-xxx v1.0)",
+  //     "links": { "TC-COMP-001": [ { "sheetId": "TC-SP-COMP-001", "row": 5 } ] } }
+  // No mapping file -> report unchanged. Test without a row in the sheet -> "-".
   private linkToSheet(html: string): string {
     const mappingPath = path.resolve(
       this.rootDir,
@@ -543,37 +550,60 @@ export default class ExecutionReportReporter implements Reporter {
 
     const mapping: {
       workbookUrl: string;
+      workbookName?: string;
       sheet: string;
+      columnLabel?: string;
       links: Record<string, { sheetId: string; row: number }[]>;
     } = JSON.parse(fs.readFileSync(mappingPath, 'utf8'));
 
+    const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+    const workbook = mapping.workbookName ?? 'the test case workbook';
+    const label = mapping.columnLabel ?? `Test Case ID (${mapping.sheet})`;
     const rowUrl = (row: number) =>
-      `${mapping.workbookUrl}&activeCell=${encodeURIComponent(`'${mapping.sheet}'!A${row}`)}`;
+      `${mapping.workbookUrl}${mapping.workbookUrl.includes('?') ? '&' : '?'}activeCell=${encodeURIComponent(`'${mapping.sheet}'!A${row}`)}`;
 
     const sheetLinks = (id: string): string =>
       (mapping.links[id] ?? [])
         .map((link) =>
-          `<a class="sheet-link" href="${rowUrl(link.row)}" target="_blank" rel="noopener" ` +
-          `title="Open ${link.sheetId} (row ${link.row}) in the test case sheet">` +
-          `${link.sheetId} &#8599;</a>`)
-        .join(' ');
+          `<a class="sheet-link" href="${esc(rowUrl(link.row))}" target="_blank" rel="noopener" ` +
+          `title="Open ${esc(link.sheetId)} (row ${link.row}) in ${esc(workbook)}">` +
+          `${esc(link.sheetId)} &#8599;</a>`)
+        .join('<br>');
+    const sheetIds = (id: string): string =>
+      (mapping.links[id] ?? []).map((link) => link.sheetId).join(' ');
 
     const style = `
 <style>
-  a.sheet-link {
-    display: inline-block; margin-top: 2px; font-size: 11px; white-space: nowrap;
-    color: #1a5fb4; text-decoration: none;
-  }
+  a.sheet-link { white-space: nowrap; color: #1a5fb4; text-decoration: none; }
   a.sheet-link:hover { text-decoration: underline; }
+  td.no-sheet-id { color: #999; }
 </style>`;
 
-    return html
-      // Results table: <td class="mono">TC-APH-001</td> (any ID with a mapping)
-      .replace(/<td class="mono">([^<]+)<\/td>/g, (match, id: string) => {
-        const links = sheetLinks(id);
-        return links ? `<td class="mono">${id}<br>${links}</td>` : match;
+    // Only the "All test cases" table (#tcTable)
+    const start = html.indexOf('<table id="tcTable">');
+    if (start === -1) return html.replace('</head>', `${style}
+</head>`);
+    const end = html.indexOf('</table>', start);
+    const table = html.slice(start, end)
+      // column 1 = Automation ID (script), column 2 = test case ID in the Excel sheet
+      .replace('<th>Test Case ID</th>',
+        `<th>Automation ID</th><th title="${esc(workbook)}, sheet '${esc(mapping.sheet)}'">${esc(label)}</th>`)
+      // search box: also match the Excel IDs
+      .replace(/data-search="([^\s"]+)/g, (match, id: string) => {
+        const ids = sheetIds(id);
+        return ids ? `data-search="${esc(ids)} ${id}` : match;
       })
-      .replace('</head>', `${style}\n</head>`);
+      // first cell of each row: <td class="mono">TC-COMP-001</td> + sheet cell
+      .replace(/(<tr[^>]*data-search="[^"]*"[^>]*>\s*)<td class="mono">([^<]+)<\/td>/g, (match, head: string, id: string) => {
+        const links = sheetLinks(id);
+        return `${head}<td class="mono">${id}</td>` + (links
+          ? `<td class="mono">${links}</td>`
+          : '<td class="mono no-sheet-id" title="Scenario not in the test case sheet">-</td>');
+      });
+
+    return (html.slice(0, start) + table + html.slice(end))
+      .replace('</head>', `${style}
+</head>`);
   }
 
   private toDataUri(filePath: string): string {

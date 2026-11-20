@@ -1,0 +1,20 @@
+{
+  "_comment": "Links each automated test (Automation ID) to the case(s) with the same scenario in FassBayar_System_Portal_Baseline_Test_Cases_v1.0.xlsx, sheet 'Test Case Library' (row = Excel row). Exact or partial matches only (mapped 20 Nov 2026); tests with no or only a weak match have no link. Used by common/reporters/executionReport.ts.",
+  "workbookUrl": "https://softspace001.sharepoint.com/:x:/r/sites/MobilePOS/_layouts/15/Doc.aspx?sourcedoc=%7BD6AE43C1-0DDA-4239-B947-D78E7E92871E%7D&file=FassBayar_System_Portal_Baseline_Test_Cases_v1.0.xlsx&action=default&mobileredirect=true",
+  "workbookName": "FassBayar_System_Portal_Baseline_Test_Cases_v1.0.xlsx",
+  "sheet": "Test Case Library",
+  "columnLabel": "Test Case ID (FassBayar Baseline v1.0)",
+  "links": {
+    "TC-APH-001":  [ { "sheetId": "TC-FB-BP-AUTH-002", "row": 103 }, { "sheetId": "TC-FB-BP-AUTH-010", "row": 111 } ],
+    "TC-COMP-001": [ { "sheetId": "TC-FB-BP-CMP-014", "row": 15 }, { "sheetId": "TC-FB-BP-CMP-008", "row": 9 } ],
+    "TC-COMP-003": [ { "sheetId": "TC-FB-BP-CMP-019", "row": 20 } ],
+    "TC-CS-001":   [ { "sheetId": "TC-FB-BP-STL-001", "row": 166 } ],
+    "TC-CS-002":   [ { "sheetId": "TC-FB-BP-STL-002", "row": 167 } ],
+    "TC-CS-003":   [ { "sheetId": "TC-FB-BP-STL-002", "row": 167 } ],
+    "TC-CS-004":   [ { "sheetId": "TC-FB-BP-STL-002", "row": 167 } ],
+    "TC-CS-005":   [ { "sheetId": "TC-FB-BP-STL-002", "row": 167 } ],
+    "TC-CS-006":   [ { "sheetId": "TC-FB-BP-XCUT-002", "row": 185 } ],
+    "TC-CS-007":   [ { "sheetId": "TC-FB-BP-STL-003", "row": 168 } ],
+    "TC-CS-009":   [ { "sheetId": "TC-FB-BP-STL-006", "row": 171 } ]
+  }
+}

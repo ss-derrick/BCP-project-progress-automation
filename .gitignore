@@ -19,3 +19,11 @@ Test_Execution_Report_*.html
 /execution-report*/
 /test_summary.html
 /explore-dumps/
+
+# Site-map crawl output: contains real MIDs / merchant names (repo is public)
+/explore/scan/results/site-map-*.json
+
+# HTML made from Markdown by npm run md (regenerate any time)
+/docs/*.html
+/CHANGELOG.html
+/README.html
