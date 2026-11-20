@@ -1,0 +1,276 @@
+{
+  "env": "UAT-Fassbayar",
+  "portal": "fassbayar",
+  "url": "https://10.0.1.30:36190/transaction/search?search=18052434181126000560",
+  "title": "Search Results | Soft Space",
+  "controls": [
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/",
+      "onclick": "",
+      "value": "",
+      "text": "",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "login_btn",
+      "name": "",
+      "type": "",
+      "cls": "button btnLogout",
+      "href": "",
+      "onclick": "document.forms['logoutForm'].submit()",
+      "value": "",
+      "text": "LOGOUT",
+      "form": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "",
+      "type": "submit",
+      "cls": "hideBtn",
+      "href": "",
+      "onclick": "",
+      "value": "",
+      "text": "",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/",
+      "onclick": "",
+      "value": "",
+      "text": "Home",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/company",
+      "onclick": "",
+      "value": "",
+      "text": "AllCompanies",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/mobileUser",
+      "onclick": "",
+      "value": "",
+      "text": "ManageMobile Users",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/reader",
+      "onclick": "",
+      "value": "",
+      "text": "ManageReaders",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/transaction",
+      "onclick": "",
+      "value": "",
+      "text": "ManageTransactions",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/creditSettlement",
+      "onclick": "",
+      "value": "",
+      "text": "ManageCredit Settlements",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/admin",
+      "onclick": "",
+      "value": "",
+      "text": "Administrator",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/transaction/",
+      "onclick": "",
+      "value": "",
+      "text": "Transaction Summary",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/transaction/getBlankTransactionsReport",
+      "onclick": "",
+      "value": "",
+      "text": "Geofencing Bypassed Transaction Report",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/transaction/billingReport",
+      "onclick": "",
+      "value": "",
+      "text": "Reporting",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "",
+      "href": "/transaction/billPaymentBatchList",
+      "onclick": "",
+      "value": "",
+      "text": "Bill Payment Report",
+      "form": ""
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "button btnL btnDarkGrey",
+      "href": "javascript:void(0)",
+      "onclick": "$(this).parents('form').trigger('submit');",
+      "value": "",
+      "text": "Search",
+      "form": "searchForm"
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "",
+      "type": "submit",
+      "cls": "hideBtn",
+      "href": "",
+      "onclick": "searchBlank()",
+      "value": "",
+      "text": "",
+      "form": "searchForm"
+    },
+    {
+      "tag": "input",
+      "id": "search",
+      "name": "search",
+      "type": "text",
+      "cls": "search txt16 white",
+      "href": "",
+      "onclick": "",
+      "value": "18052434181126000560",
+      "text": "",
+      "form": "searchForm"
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "button btnDarkGrey",
+      "href": "viewDetails?itemid=124362&withinRange=true",
+      "onclick": "",
+      "value": "",
+      "text": "View Details",
+      "form": ""
+    }
+  ],
+  "tables": [
+    {
+      "id": "dataRow",
+      "cls": "txt12",
+      "headers": [
+        "Date/Time",
+        "Transaction ID",
+        "Status",
+        "Amount",
+        "Approval Code",
+        "Verification Method",
+        "TID(MID)",
+        "Quicklink"
+      ],
+      "rows": [
+        {
+          "cls": "dataListMid",
+          "cells": [
+            "18 Nov 2026 /02:21:59 PM",
+            "18052434181126000560",
+            "Approved",
+            "38.00",
+            "VI3800",
+            "CVM_TYPE_CDCVM",
+            "18052434(201805230000001)",
+            "View Details"
+          ]
+        }
+      ]
+    }
+  ],
+  "texts": [
+    "Search",
+    "Search for a Transaction",
+    "Search Results",
+    "You are currently viewing Transaction ID",
+    "18052434181126000560",
+    "Total Records: 1",
+    "Page 1 of 1",
+    "Time",
+    "Transaction ID",
+    "Status",
+    "Amount",
+    "Approval Code",
+    "Verification Method",
+    "Quicklink",
+    "Approved",
+    "38.00",
+    "VI3800",
+    "CVM_TYPE_CDCVM",
+    "View Details"
+  ]
+}

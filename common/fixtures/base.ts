@@ -5,12 +5,15 @@ import { BLOCKED_PAGE_TEXT, ENV_NAME, PORTAL_PROFILE, type PortalProfile } from 
 import { LoginPage } from '../pages/LoginPage';
 import { ConsolePage } from '../pages/ConsolePage';
 import { HomePage } from '../pages/HomePage';
+import { CompanySummaryPage } from '../pages/CompanySummaryPage';
+import { TransactionSummaryPage } from '../pages/TransactionSummaryPage';
+import { TransactionDetailsPage } from '../pages/TransactionDetailsPage';
 import { CreditSettlementPage } from '../pages/CreditSettlementPage';
 
 // BASE TEST for every portal.
-//   common/tests/*  import { test } from '../fixtures/base'
-//   aph/tests/*     import { test } from '../fixtures/pages'  (= this + APH pages)
-//   fassbayar/...   import { test } from '../fixtures/pages'  (= this + Fassbayar pages)
+//   common/tests/<module>/*  import { test } from '../../fixtures/base'
+//   aph/tests/<module>/*     import { test } from '../../fixtures/pages'  (= this + APH pages)
+//   fassbayar/tests/<module>/* import { test } from '../../fixtures/pages'  (= this + Fassbayar pages)
 // When a screen's two versions are merged into common/pages, its fixture
 // moves here and returns the portal override when one exists, e.g.
 //   addCompanyPage: async ({ page }, use) => use(PORTAL === 'fassbayar'
@@ -20,6 +23,9 @@ type SharedPages = {
   loginPage: LoginPage;
   consolePage: ConsolePage;
   homePage: HomePage;
+  companySummaryPage: CompanySummaryPage;
+  transactionSummaryPage: TransactionSummaryPage;
+  transactionDetailsPage: TransactionDetailsPage;
   creditSettlementPage: CreditSettlementPage;
 };
 
@@ -32,6 +38,9 @@ export const test = base.extend<SharedPages & AutoFixtures>({
   loginPage: async ({ page }, use) => { await use(new LoginPage(page)); },
   consolePage: async ({ page }, use) => { await use(new ConsolePage(page)); },
   homePage: async ({ page }, use) => { await use(new HomePage(page)); },
+  companySummaryPage: async ({ page }, use) => { await use(new CompanySummaryPage(page)); },
+  transactionSummaryPage: async ({ page }, use) => { await use(new TransactionSummaryPage(page)); },
+  transactionDetailsPage: async ({ page }, use) => { await use(new TransactionDetailsPage(page)); },
   creditSettlementPage: async ({ page }, use) => { await use(new CreditSettlementPage(page)); },
 
   // If a test fails while a firewall "blocked" page is on screen, tag it

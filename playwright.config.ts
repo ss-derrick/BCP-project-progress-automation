@@ -141,7 +141,10 @@ export default defineConfig({
         : SYSTEM_LABEL,
       runContext: 'after the last Playwright run',
       timezone: REPORT_TIMEZONE,
-      timezoneShort: REPORT_TIMEZONE_SHORT
+      timezoneShort: REPORT_TIMEZONE_SHORT,
+      // Builds test_execution_report.html (needs Python 3 + jinja2: pip install jinja2).
+      // Kept in the project so it works on every PC. REPORT_GENERATOR overrides it.
+      generatorPath: process.env.REPORT_GENERATOR ?? `${__dirname}/tools/report-generator/generate_report.py`
     }],
 
     // Test Summary -> test_summary.html: one card per environment, built

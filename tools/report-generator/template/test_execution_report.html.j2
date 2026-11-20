@@ -1,0 +1,231 @@
+{# ============================================================
+   TEMPLATE SOURCE — do not open this file directly.
+   It's full of {{ }} placeholders and won't render as a report.
+   Run generate_report.py instead (see START_HERE.txt / README.md);
+   it reads this file and writes a real report under generated/.
+   ============================================================ #}
+<!doctype html>
+<html><head><meta charset="utf-8"><title>{{ project_name }} — Test Execution Report</title>
+<style>
+  :root {
+    --bg: #f7f8fa; --card-bg: #ffffff; --text: #1a1d23; --text-dim: #5b6270;
+    --border: #e2e5ea; --accent: #2f6fed;
+    --pass: #1a7f37; --pass-bg: #dcfce7;
+    --fail: #b42318; --fail-bg: #fee4e2;
+    --blocked-env: #6b7280; --blocked-env-bg: #eef0f3;
+    --notrun: #4b5563; --notrun-bg: #eef0f3;
+    --skipped: #6b21a8; --skipped-bg: #f3e8ff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161a; --card-bg: #1c1f26; --text: #e7e9ee; --text-dim: #9aa2b1;
+      --border: #2b2f38; --accent: #6d9bff;
+      --pass: #4ade80; --pass-bg: #14351f;
+      --fail: #f87171; --fail-bg: #3a1715;
+      --blocked-env: #b8bfcb; --blocked-env-bg: #262a32;
+      --notrun: #b8bfcb; --notrun-bg: #262a32;
+      --skipped: #d8b4fe; --skipped-bg: #2c1c3d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161a; --card-bg: #1c1f26; --text: #e7e9ee; --text-dim: #9aa2b1;
+    --border: #2b2f38; --accent: #6d9bff;
+    --pass: #4ade80; --pass-bg: #14351f;
+    --fail: #f87171; --fail-bg: #3a1715;
+    --blocked-env: #b8bfcb; --blocked-env-bg: #262a32;
+    --notrun: #b8bfcb; --notrun-bg: #262a32;
+    --skipped: #d8b4fe; --skipped-bg: #2c1c3d;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 24px; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .subtitle { color: var(--text-dim); font-size: 13px; margin-bottom: 20px; }
+  .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 18px; }
+  .card h2 { font-size: 15px; margin: 0 0 10px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+  .stat { border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; min-width: 0; }
+  .stat .n { font-size: 22px; font-weight: 700; }
+  .stat .l { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--text-dim); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: .02em; position: sticky; top: 0; background: var(--card-bg); }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.mono { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; white-space: nowrap; }
+  td.small { font-size: 11px; color: var(--text-dim); }
+  td.notes { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-dim); }
+  td.wraptext { color: var(--text-dim); overflow-wrap: anywhere; }
+  .pass { color: var(--pass); } .fail { color: var(--fail); } .blocked { color: var(--blocked-env); } .notrun { color: var(--notrun); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge-pass { color: var(--pass); background: var(--pass-bg); }
+  .badge-fail { color: var(--fail); background: var(--fail-bg); }
+  .badge-blocked-env { color: var(--blocked-env); background: var(--blocked-env-bg); }
+  .badge-not-run { color: var(--notrun); background: var(--notrun-bg); }
+  .badge-skipped { color: var(--skipped); background: var(--skipped-bg); }
+  .badge-good { color: var(--pass); background: var(--pass-bg); }
+  .badge-bad { color: var(--fail); background: var(--fail-bg); }
+  .badge-warn { color: var(--skipped); background: var(--skipped-bg); }
+  .badge-neutral { color: var(--notrun); background: var(--notrun-bg); }
+  .empty-state { color: var(--text-dim); font-style: italic; }
+  .card-note { color: var(--text-dim); font-size: 12px; margin: -4px 0 10px; }
+  .controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .controls input, .controls select { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: 12.5px; }
+  .controls input { flex: 1; min-width: 180px; }
+  .table-scroll { max-height: 640px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .table-scroll-x { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .count-note { color: var(--text-dim); font-size: 11.5px; margin-top: 6px; }
+  a { color: var(--accent); }
+</style>
+</head><body>
+<div class="wrap">
+  <h1>{{ project_name }} &mdash; Test Execution Report</h1>
+  <div class="subtitle">{{ system_label }} &middot; auto-generated {{ generated_at }} ({{ timezone }}) {{ run_context }} &middot; source: {{ results_path }} + {{ library_path }}</div>
+
+  <div class="card">
+    <h2>Summary &mdash; {{ total_count }} test cases{% if scope_label %} ("{{ scope_label }}"){% endif %}</h2>
+    <div class="stats">
+{%- for s in stats %}
+      <div class="stat"><div class="n{% if s.color_class %} {{ s.color_class }}{% endif %}"{% if s.color_var %} style="color:var({{ s.color_var }})"{% endif %}>{{ s.n }}</div><div class="l">{{ s.l|safe }}</div></div>
+{%- endfor %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Coverage by module</h2>
+    <table>
+      <thead><tr><th>Module</th><th class="num">Total</th><th class="num">Pass</th><th class="num">Fail</th><th class="num">Blocked</th><th class="num">Skipped</th><th class="num">Not run</th><th class="num">Executed</th></tr></thead>
+      <tbody>{% for m in coverage_rows %}<tr>
+        <td>{{ m.module }}</td>
+        <td class="num">{{ m.total }}</td>
+        <td class="num pass">{{ m.pass }}</td>
+        <td class="num fail">{{ m.fail }}</td>
+        <td class="num blocked">{{ m.blocked }}</td>
+        <td class="num" style="color:var(--skipped)">{{ m.skipped }}</td>
+        <td class="num notrun">{{ m.notrun }}</td>
+        <td class="num">{{ m.executed_pct }}%</td>
+        </tr>
+{%- endfor %}</tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>All test cases</h2>
+    <div class="controls">
+      <input id="search" type="text" placeholder="Search Test Case ID or title...">
+      <select id="moduleFilter"><option value="">All modules</option>{% for mod in module_options %}<option value="{{ mod }}">{{ mod }}</option>{% endfor %}</select>
+      <select id="statusFilter">
+        <option value="">All statuses</option>
+        <option value="pass">Pass</option>
+        <option value="fail">Fail</option>
+        <option value="blocked-env">Blocked (environment)</option>
+        <option value="skipped">Skipped</option>
+        <option value="not-run">Not run</option>
+      </select>
+    </div>
+    <div class="table-scroll">
+      <table id="tcTable">
+        <thead><tr><th>Test Case ID</th><th>Module</th><th>Title</th><th>Priority</th><th>Status</th><th>Last executed{% if timezone_short %} ({{ timezone_short }}){% endif %}</th><th>Duration</th><th>Evidence</th><th>Notes</th></tr></thead>
+        <tbody>{% for r in rows %}<tr data-module="{{ r.module }}" data-status="{{ r.status }}"
+            data-search="{{ r.id }} {{ r.title }}">
+            <td class="mono">{{ r.id }}</td>
+            <td>{{ r.module }}</td>
+            <td>{{ r.title }}</td>
+            <td>{{ r.priority }}</td>
+            <td><span class="badge badge-{{ r.status }}">{{ r.status_label }}</span></td>
+            <td class="mono small">{{ r.last_executed }}</td>
+            <td class="num">{{ r.duration }}</td>
+            <td>{% if r.evidence %}<a href="{{ r.evidence }}" target="_blank">screenshot</a>{% else %}&mdash;{% endif %}</td>
+            <td class="notes" title="{{ r.notes }}">{{ r.notes }}</td>
+        </tr>
+{%- endfor %}</tbody>
+      </table>
+    </div>
+    <div class="count-note" id="countNote"></div>
+  </div>
+
+{%- if human_action_items %}
+  <div class="card">
+    <h2>Human Action Required</h2>
+    <div class="card-note">Test cases that could not be automated and need a manual or different approach.</div>
+    <div class="table-scroll-x">
+      <table>
+        <thead><tr><th>Test Case ID</th><th>Module</th><th>Title</th><th>Reason</th><th>Recommended Handling</th></tr></thead>
+        <tbody>{% for item in human_action_items %}<tr>
+          <td class="mono">{{ item.id or "—" }}</td>
+          <td>{{ item.module or "" }}</td>
+          <td>{{ item.title }}</td>
+          <td class="wraptext">{{ item.reason }}</td>
+          <td class="wraptext">{{ item.recommended_handling or "" }}</td>
+          </tr>
+{%- endfor %}</tbody>
+      </table>
+    </div>
+  </div>
+{%- endif %}
+
+{%- if investigation_items %}
+  <div class="card">
+    <h2>Investigation / Evidence-Gathering Results</h2>
+    <div class="card-note">Evidence gathered where a complete pass/fail oracle doesn't exist yet. These never count as Pass.</div>
+    <div class="table-scroll-x">
+      <table>
+        <thead><tr><th>Investigation ID</th><th>Objective</th><th>Outcome</th><th>Observation</th><th>Evidence</th><th>Gap Ref</th><th>Notes</th></tr></thead>
+        <tbody>{% for it in investigation_items %}<tr>
+          <td class="mono">{{ it.id }}</td>
+          <td class="wraptext">{{ it.objective }}</td>
+          <td class="wraptext">{{ it.outcome }}</td>
+          <td class="wraptext">{{ it.observation }}</td>
+          <td>{% if it.evidence %}<a href="{{ it.evidence }}" target="_blank">screenshot</a>{% else %}&mdash;{% endif %}</td>
+          <td>{% if it.gap_ref and it.gap_ref in gap_ids %}<a href="#gap-{{ it.gap_ref }}">{{ it.gap_ref }}</a>{% else %}{{ it.gap_ref or "—" }}{% endif %}</td>
+          <td class="wraptext">{{ it.notes or "" }}</td>
+          </tr>
+{%- endfor %}</tbody>
+      </table>
+    </div>
+  </div>
+{%- endif %}
+
+{%- if gaps %}
+  <div class="card">
+    <h2>Open Gaps / Limitations</h2>
+    <div class="card-note">Gaps and limitations noted during testing.</div>
+    <div class="table-scroll-x">
+      <table>
+        <thead><tr><th>Gap ID</th><th>Status</th><th>Description</th><th>Impact</th></tr></thead>
+        <tbody>{% for g in gaps %}<tr id="gap-{{ g.id }}">
+          <td class="mono">{{ g.id }}</td>
+          <td>{% if g.status %}<span class="badge badge-{{ g.status_class }}">{{ g.status }}</span>{% else %}—{% endif %}</td>
+          <td class="wraptext">{{ g.description }}</td>
+          <td class="wraptext">{{ g.impact or "" }}</td>
+          </tr>
+{%- endfor %}</tbody>
+      </table>
+    </div>
+  </div>
+{%- endif %}
+</div>
+<script>
+  const search = document.getElementById('search');
+  const moduleFilter = document.getElementById('moduleFilter');
+  const statusFilter = document.getElementById('statusFilter');
+  const rows = Array.from(document.querySelectorAll('#tcTable tbody tr'));
+  const countNote = document.getElementById('countNote');
+  function applyFilters() {
+    const q = search.value.trim().toLowerCase();
+    const m = moduleFilter.value;
+    const s = statusFilter.value;
+    let visible = 0;
+    rows.forEach(r => {
+      const okQ = !q || r.dataset.search.toLowerCase().includes(q);
+      const okM = !m || r.dataset.module === m;
+      const okS = !s || r.dataset.status === s;
+      const show = okQ && okM && okS;
+      r.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    countNote.textContent = `Showing ${visible} of ${rows.length} test cases`;
+  }
+  [search, moduleFilter, statusFilter].forEach(el => el.addEventListener('input', applyFilters));
+  applyFilters();
+</script>
+</body></html>

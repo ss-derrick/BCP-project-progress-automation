@@ -1,17 +1,19 @@
 import { test as base, expect } from '../../common/fixtures/base';
 
 // Fassbayar-only page fixtures: screens that exist only on Fassbayar.
-// (Shared pages - loginPage, consolePage, homePage - come from common.)
+// (Shared pages - loginPage, consolePage, homePage, ... - come from common.)
 // Fassbayar tests: import { test, expect } from '../fixtures/pages'
-//
-// Add one like this:
-//   import { SomeFassbayarPage } from '../pages/SomeFassbayarPage';
-//   type FassbayarPages = { someFassbayarPage: SomeFassbayarPage };
-//   someFassbayarPage: async ({ page }, use) => { await use(new SomeFassbayarPage(page)); },
+import { BillPaymentReportPage } from '../pages/BillPaymentReportPage';
+import { BillPaymentDetailsPage } from '../pages/BillPaymentDetailsPage';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-type FassbayarPages = {};
+type FassbayarPages = {
+  billPaymentReportPage: BillPaymentReportPage;     // Manage Transactions > Bill Payment Report
+  billPaymentDetailsPage: BillPaymentDetailsPage;
+};
 
-export const test = base.extend<FassbayarPages>({});
+export const test = base.extend<FassbayarPages>({
+  billPaymentReportPage: async ({ page }, use) => { await use(new BillPaymentReportPage(page)); },
+  billPaymentDetailsPage: async ({ page }, use) => { await use(new BillPaymentDetailsPage(page)); }
+});
 
 export { expect };

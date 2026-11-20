@@ -1,8 +1,8 @@
-import { test } from '../fixtures/portal';
-import { testCase } from '../utils/testCase';
-import { loginAs } from '../flows/loginFlow';
-import { hostsFor, ENV_NAME, PORTAL_PROFILE } from '../../portals.config';
-import { createCompanyForHost } from '../creation/hostCompanyData';
+import { test } from '../../fixtures/portal';
+import { testCase } from '../../utils/testCase';
+import { loginAs } from '../../flows/loginFlow';
+import { hostsFor, ENV_NAME, PORTAL_PROFILE } from '../../../portals.config';
+import { createCompanyForHost } from '../../creation/hostCompanyData';
 
 // SHARED: runs on every portal (APH + Fassbayar) from this one file.
 // The portal (ENV_NAME) decides the host profile, the form rules and the

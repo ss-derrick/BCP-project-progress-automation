@@ -1,19 +1,22 @@
-import { test, expect } from '../fixtures/base';
-import { testCase } from '../utils/testCase';
-import { loginAs } from '../flows/loginFlow';
-import { ENV_NAME, PORTAL_PROFILE } from '../../portals.config';
-import {
-  CreditSettlementPage, SETTLEMENT_STATUSES, portalToday, type SettlementRow
-} from '../pages/CreditSettlementPage';
+import { test, expect } from '../../fixtures/base';
+import { testCase } from '../../utils/testCase';
+import { loginAs } from '../../flows/loginFlow';
+import { ENV_NAME, PORTAL_PROFILE } from '../../../portals.config';
+import { CreditSettlementPage, SETTLEMENT_STATUSES, type SettlementRow } from '../../pages/CreditSettlementPage';
+import { portalToday } from '../../utils/portalDate';
 
-// SHARED: Manage Credit Settlements, on every portal (APH + Fassbayar).
+// Manage Credit Settlements - SHARED: runs on APH and Fassbayar.
+// (Written by Derrick, merged into this structure 18 Nov 2026.)
 // READ-ONLY: only opens pages, filters and searches. Schedule Force Settlement
 // is opened at step 1 (Search) only - nothing is scheduled or confirmed.
+// "Settle Credit" is never clicked.
 // Test data = the settlements already on the environment: each test takes a
 // real row from today's list (the Date filter defaults to today). No rows
 // today -> the test is skipped with the reason.
+// Portal differences (batch page) come from portals.config.ts creditSettlement.
+// Run only this module:  npx playwright test --grep @credit-settlement
 
-const MODULE = 'Credit Settlement';
+const MODULE = 'Manage Credit Settlements';
 const rules = PORTAL_PROFILE.creditSettlement;   // Batch Details differences (portals.config.ts)
 const num = (batchNo: string) => Number(batchNo.replace(/\D/g, ''));
 
@@ -23,7 +26,7 @@ async function firstRowOrSkip(cs: CreditSettlementPage): Promise<SettlementRow> 
   return row!;
 }
 
-test.describe('Manage Credit Settlements (shared)', () => {
+test.describe('Manage Credit Settlements > Credit Settlement Summary', { tag: '@credit-settlement' }, () => {
 
   test.beforeEach(async ({ loginPage, consolePage, creditSettlementPage: cs }) => {
     await loginAs({ loginPage, consolePage });
@@ -144,22 +147,33 @@ test.describe('Manage Credit Settlements (shared)', () => {
   );
 
   test(
-    'Search for a Batch No. that does not exist shows "No record found"',
+    'Search for a Batch No. that does not exist shows "No record found" or the archive-hours message',
     testCase({ id: 'TC-CS-006', module: MODULE, priority: 'Medium' }),
     async ({ creditSettlementPage: cs }) => {
       await test.step('Search Batch No. 999999', async () => {
         await cs.searchBatch('999999');
-        // APH: a batch not in recent data is looked up in the ARCHIVE, which only
-        // opens 22:00-06:00; in the daytime it says so instead of "No record found"
-        await expect(cs.noRecord.or(cs.archiveClosed)).toBeVisible();
-        if (await cs.archiveClosed.isVisible()) {
-          await cs.captureScreen('Batch No. 999999 - archive closed');
-          test.skip(true, `${ENV_NAME}: "${(await cs.archiveClosed.innerText()).trim()}" - run between 22:00 and 06:00 to check "No record found"`);
-        }
-        await expect(cs.noRecord).toBeVisible();
-        await expect(cs.rows).toHaveCount(0);
-        await cs.captureScreen('Batch No. 999999 - no record');
       });
+
+      // A batch not in recent data is looked up in the ARCHIVE, which only opens
+      // 22:00-06:00. Both answers are EXPECTED (QA team, 19 Nov 2026), on both portals:
+      //   daytime -> "Archive data can only be viewed between 22:00 and 06:00 ..."
+      //   night   -> "No record found"
+      // Either one = pass (no skip). Neither = fail.
+      await expect(cs.noRecord.or(cs.archiveClosed), 'No record found or the archive-hours message').toBeVisible();
+
+      if (await cs.archiveClosed.isVisible()) {
+        const message = (await cs.archiveClosed.innerText()).trim();
+        await test.step(`Archive closed at this hour (expected): "${message}"`, async () => {
+          await expect(cs.rows).toHaveCount(0);
+          await cs.captureScreen('Batch No. 999999 - archive closed');
+        });
+      } else {
+        await test.step('"No record found" (expected)', async () => {
+          await expect(cs.noRecord).toBeVisible();
+          await expect(cs.rows).toHaveCount(0);
+          await cs.captureScreen('Batch No. 999999 - no record');
+        });
+      }
     }
   );
 
@@ -174,13 +188,11 @@ test.describe('Manage Credit Settlements (shared)', () => {
         description: '"Download Sale Report" of a successful batch and the transaction quicklinks are not tested.',
         impact: 'A defect in the sale report download would not be caught.'
       }],
-      // Both portals show "Settle Credit" on SOME pending batches (seen on APH 18 Nov,
-      // on Fassbayar batch 000022 on 19 Nov but not batch 485 on 18 Nov): never clicked
-      manual: [{
-        title: 'Settle Credit on a pending batch',
-        reason: 'Settle Credit settles a real batch and cannot be undone, so automation never clicks it. It is shown on some pending batches only (rule not visible on the page).',
-        handling: 'Test Settle Credit by hand on a test batch before each release, and confirm with the team when the button should appear.'
-      }]
+      manual: rules.settleCreditButton ? [{
+        title: `Settle Credit on a pending batch (${PORTAL_PROFILE.name})`,
+        reason: 'Settle Credit settles a real batch and cannot be undone, so automation never clicks it.',
+        handling: 'Test Settle Credit by hand on a test batch before each release.'
+      }] : []
     }),
     async ({ creditSettlementPage: cs, page }) => {
       const sample = await firstRowOrSkip(cs);
@@ -197,12 +209,8 @@ test.describe('Manage Credit Settlements (shared)', () => {
       });
 
       if (/pending/i.test(sample.status)) {
-        await test.step('Pending batch: "Settle Credit" shown or not is recorded (never clicked)', async () => {
-          const settle = page.getByRole('link', { name: 'Settle Credit' });
-          const shown = (await settle.count()) > 0;
-          console.log(`${ENV_NAME} | pending batch ${sample.batchNo}: Settle Credit ${shown ? 'shown' : 'not shown'}`);
-          test.info().annotations.push({ type: 'info', description: `Settle Credit ${shown ? 'shown' : 'not shown'} on pending batch ${sample.batchNo}` });
-          if (shown) await expect(settle).toHaveAttribute('href', /settleCredit/);   // looked at, never clicked
+        await test.step(`Pending batch: "Settle Credit" ${rules.settleCreditButton ? 'offered' : 'not offered'} on ${PORTAL_PROFILE.name} (never clicked)`, async () => {
+          await expect(page.getByRole('link', { name: 'Settle Credit' })).toHaveCount(rules.settleCreditButton ? 1 : 0);
         });
       }
 

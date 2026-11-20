@@ -1,10 +1,12 @@
-import { test, expect } from '../fixtures/portal';
-import { testCase } from '../utils/testCase';
-import { loginAs } from '../flows/loginFlow';
-import { hostsFor, portals, ENV_NAME, PORTAL_PROFILE } from '../../portals.config';
-import { createCompanyForHost } from '../creation/hostCompanyData';
+import { test, expect } from '../../fixtures/portal';
+import { testCase } from '../../utils/testCase';
+import { loginAs } from '../../flows/loginFlow';
+import { hostsFor, portals, ENV_NAME, PORTAL_PROFILE } from '../../../portals.config';
+import { createCompanyForHost } from '../../creation/hostCompanyData';
 
 // SHARED: Global Payment card schemes on Add a Company, on every portal.
+// (Written by Derrick, merged 19 Nov 2026; IDs renumbered from his TC-COMP-004 /
+//  TC-COMP-005-xx because TC-COMP-004 is Company Summary here.)
 // The schemes come from the portal's GP profile, so no portal check here:
 //   APH:       VISA, MasterCard                                   (common/hosts/globalPayment.ts)
 //   Fassbayar: VISA, MasterCard, HSBC VISA, HSBC Mastercard       (portals.config.ts)
@@ -12,7 +14,7 @@ import { createCompanyForHost } from '../creation/hostCompanyData';
 // One test per scheme, created ONLY on a portal that offers that scheme:
 // on APH the HSBC tests don't exist (not run, not counted, not in the report).
 // IDs stay the same on every portal: numbered over the schemes of ALL
-// portals, so HSBC VISA is always TC-COMP-005-03.
+// portals, so HSBC VISA is always TC-COMP-006-03.
 // Read-only: Submit opens the review, Confirm is NEVER clicked, nothing is created.
 
 const HOST_CODE = 'GP';   // Global Payment
@@ -26,7 +28,7 @@ test.describe('Add a Company - Global Payment card schemes (shared)', () => {
 
   test(
     'Global Payment offers exactly this portal\'s card schemes',
-    testCase({ id: 'TC-COMP-004', module: 'Add a Company', priority: 'High' }),
+    testCase({ id: 'TC-COMP-005', module: 'Add a Company', priority: 'High' }),
     async ({ loginPage, consolePage, homePage, addCompanyFormPage: form }) => {
 
       test.skip(!host, `${HOST_CODE} is not a host of ${ENV_NAME} (portals.config.ts)`);
@@ -54,7 +56,7 @@ test.describe('Add a Company - Global Payment card schemes (shared)', () => {
     test(
       `Global Payment with card scheme ${scheme}: accepted at Submit and shown on Review`,
       testCase({
-        id: `TC-COMP-005-${String(i + 1).padStart(2, '0')}`, module: 'Add a Company', priority: 'Medium',
+        id: `TC-COMP-006-${String(i + 1).padStart(2, '0')}`, module: 'Add a Company', priority: 'Medium',
         gaps: [{
           description: 'Card scheme tests stop at Review & Confirm (Confirm is never clicked, same on both portals), so a company is created end-to-end with the first scheme only (TC-COMP-001).',
           impact: 'A defect that only shows when saving a company with another card scheme would not be caught.'

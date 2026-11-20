@@ -1,0 +1,139 @@
+{
+  "env": "UAT-Fassbayar",
+  "portal": "fassbayar",
+  "url": "https://10.0.1.30:36190/transaction/billPaymentBatchList",
+  "title": "All Transactions | Soft Space",
+  "jquery": true,
+  "forms": [
+    {
+      "name": "filterForm",
+      "id": "",
+      "action": "",
+      "method": "get"
+    }
+  ],
+  "controls": [
+    {
+      "tag": "input",
+      "id": "",
+      "name": "businessName",
+      "type": "text",
+      "cls": "filter white",
+      "href": "",
+      "onclick": "",
+      "value": "",
+      "text": "",
+      "visible": true,
+      "readonly": false,
+      "form": "filterForm",
+      "label": "Business Name"
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "mid",
+      "type": "text",
+      "cls": "filter white",
+      "href": "",
+      "onclick": "",
+      "value": "",
+      "text": "",
+      "visible": true,
+      "readonly": false,
+      "form": "filterForm",
+      "label": "MID"
+    },
+    {
+      "tag": "select",
+      "id": "",
+      "name": "status",
+      "type": "",
+      "cls": "styled",
+      "href": "",
+      "onclick": "",
+      "value": "",
+      "text": "Select One Successful Unsuccessful Pending Processing",
+      "visible": true,
+      "readonly": false,
+      "form": "filterForm",
+      "label": "Status",
+      "options": [
+        "=Select One",
+        "Successful=Successful",
+        "Unsuccessful=Unsuccessful",
+        "Pending=Pending",
+        "Processing=Processing"
+      ]
+    },
+    {
+      "tag": "input",
+      "id": "fromdate3",
+      "name": "from",
+      "type": "text",
+      "cls": "filterDate white datepickFrom _from hasDatepicker",
+      "href": "",
+      "onclick": "",
+      "value": "18 Nov 2026",
+      "text": "",
+      "visible": true,
+      "readonly": true,
+      "form": "filterForm",
+      "label": "Date"
+    },
+    {
+      "tag": "input",
+      "id": "todate3",
+      "name": "to",
+      "type": "text",
+      "cls": "filterDate white datepickTo _to hasDatepicker",
+      "href": "",
+      "onclick": "",
+      "value": "18 Nov 2026",
+      "text": "",
+      "visible": true,
+      "readonly": true,
+      "form": "filterForm",
+      "label": "Date"
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "button btnL btnDarkGrey",
+      "href": "javascript:void(0)",
+      "onclick": "$(this).parents('form').trigger('submit');",
+      "value": "",
+      "text": "Search",
+      "visible": true,
+      "readonly": false,
+      "form": "",
+      "label": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "",
+      "type": "submit",
+      "cls": "hideBtn",
+      "href": "",
+      "onclick": "",
+      "value": "",
+      "text": "",
+      "visible": true,
+      "readonly": false,
+      "form": "filterForm",
+      "label": ""
+    }
+  ],
+  "tables": [],
+  "texts": [
+    "Bill Payment Report",
+    "Business Name",
+    "MID",
+    "Status",
+    "Select One",
+    "Date",
+    "Search"
+  ]
+}

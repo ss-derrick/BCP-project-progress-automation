@@ -1,18 +1,17 @@
-# Changelog
+# Changelog: system-portal-automation (TryOut)
 
-Every change to this project is recorded here: **what** changed, **why**, **which files / folders**,
-the **key code**, and **how to run or check it**. Newest first. Flows and diagrams are welcome
-(` ```mermaid ` blocks render on GitHub and in VS Code's Markdown preview); images go in
-`docs/images/` and are linked as `![caption](docs/images/file.png)`.
+Every change to this folder is recorded here: **what** changed, **why**, **which files**, the **key code**
+and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 
 > **Rule:** every time something is added, changed or removed, add an entry at the top of
-> [Changes](#changes) in the same commit. Use the template below.
+> [Changes](#changes). Code merged from a teammate says whose it is and what was adapted to fit
+> the agreed structure (see README "Rules").
 
 <details>
 <summary>Entry template (copy this)</summary>
 
 ~~~markdown
-### YYYY-MM-DD: <short title>
+### YYYY-MM-DD HH:MM: <short title>
 
 **Why:** <the reason / request>
 
@@ -34,26 +33,68 @@ the **key code**, and **how to run or check it**. Newest first. Flows and diagra
 
 ## Changes
 
-- [2026-11-20: Automated tests mapped to the APH and FassBayar baseline test case workbooks](#2026-11-20-automated-tests-mapped-to-the-aph-and-fassbayar-baseline-test-case-workbooks)
-- [2026-11-20: Report links each test to its row in the Excel test case sheet (from ecom-automation)](#2026-11-20-report-links-each-test-to-its-row-in-the-excel-test-case-sheet-from-ecom-automation)
-- [2026-11-20: Open any Markdown file in the browser (npm run md)](#2026-11-20-open-any-markdown-file-in-the-browser-npm-run-md)
-- [2026-11-20: Site map of both portals: every module, flow and difference](#2026-11-20-site-map-of-both-portals-every-module-flow-and-difference)
-- [2026-11-19: "Settle Credit" can appear on both portals (no longer APH-only)](#2026-11-19-settle-credit-can-appear-on-both-portals-no-longer-aph-only)
-- [2026-11-19: Card scheme tests exist only on the portal that offers the scheme](#2026-11-19-card-scheme-tests-exist-only-on-the-portal-that-offers-the-scheme)
-- [2026-11-19: Human Action and Gaps tables generated automatically on every run](#2026-11-19-human-action-and-gaps-tables-generated-automatically-on-every-run)
-- [2026-11-19: Human Action and Gaps tables always shown in the report](#2026-11-19-human-action-and-gaps-tables-always-shown-in-the-report)
-- [2026-11-19: Summary shows only the portal(s) of the run](#2026-11-19-summary-shows-only-the-portals-of-the-run)
-- [2026-11-18: Project pushed to GitHub](#2026-11-18-project-pushed-to-github)
-- [2026-11-18: New module: Manage Credit Settlements (TC-CS-001 to 009)](#2026-11-18-new-module-manage-credit-settlements-tc-cs-001-to-009)
-- [2026-11-18: Stability fixes for APH (Add a Company)](#2026-11-18-stability-fixes-for-aph-add-a-company)
-- [2026-11-18: Random company data on Add a Company (Fassbayar: all fields)](#2026-11-18-random-company-data-on-add-a-company-fassbayar-all-fields)
-- [2026-11-18: Summary counts "applicable for one portal only" skips separately](#2026-11-18-summary-counts-applicable-for-one-portal-only-skips-separately)
-- [2026-11-18: Global Payment card scheme tests (TC-COMP-004, 005-01 to 04)](#2026-11-18-global-payment-card-scheme-tests-tc-comp-004-005-01-to-04)
-- [2026-11-18: Duplicate MID test runs on Fassbayar too (TC-COMP-003)](#2026-11-18-duplicate-mid-test-runs-on-fassbayar-too-tc-comp-003)
+- [2026-11-20 11:15: Merged Kai Wen's branch (kaiwen/tryout) into Derrick's repo](#2026-11-20-1115-merged-kai-wens-branch-kaiwentryout-into-derricks-repo)
+- [2026-11-20 11:08: Automated tests mapped to the APH and FassBayar baseline test case workbooks](#2026-11-20-1108-automated-tests-mapped-to-the-aph-and-fassbayar-baseline-test-case-workbooks)
+- [2026-11-20 11:00: Report links each test to its row in the Excel test case sheet (from ecom-automation)](#2026-11-20-1100-report-links-each-test-to-its-row-in-the-excel-test-case-sheet-from-ecom-automation)
+- [2026-11-20 10:55: Open any Markdown file in the browser (npm run md)](#2026-11-20-1055-open-any-markdown-file-in-the-browser-npm-run-md)
+- [2026-11-20 10:50: Site map of both portals: every module, flow and difference](#2026-11-20-1050-site-map-of-both-portals-every-module-flow-and-difference)
+- [2026-11-20 10:41: Shared on GitHub (private repo, branch kaiwen/tryout)](#2026-11-20-1041-shared-on-github-private-repo-branch-kaiwentryout)
+- [2026-11-19 17:30: Tests grouped by menu module (tests/&lt;module&gt;/)](#2026-11-19-1730-tests-grouped-by-menu-module-testsmodule)
+- [2026-11-19 16:00: TC-CS-006 archive-hours message is an expected result, not a skip](#2026-11-19-1600-tc-cs-006-archive-hours-message-is-an-expected-result-not-a-skip)
+- [2026-11-19 15:27: Structure map updated (no code change)](#2026-11-19-1527-structure-map-updated-no-code-change)
+- [2026-11-19 14:41: Fassbayar pending batch shows "Settle Credit", same as APH (TC-CS-007)](#2026-11-19-1441-fassbayar-pending-batch-shows-settle-credit-same-as-aph-tc-cs-007)
+- [2026-11-19 14:25: Fassbayar test transaction is now Settled (TC-TRX-001)](#2026-11-19-1425-fassbayar-test-transaction-is-now-settled-tc-trx-001)
+- [2026-11-19 11:50: Full Test Execution Report is built again (tools/report-generator)](#2026-11-19-1150-full-test-execution-report-is-built-again-toolsreport-generator)
+- [2026-11-19: APH test transaction is now Settled (TC-TRX-001)](#2026-11-19-aph-test-transaction-is-now-settled-tc-trx-001)
+- [2026-11-19 10:52: Reporting and skipping from Derrick (auto Human Action / Gaps, per-portal summary, portal-only tests)](#2026-11-19-1052-reporting-and-skipping-from-derrick)
+- [2026-11-19 09:47: Add a Company validations from Derrick (card schemes, Fassbayar extras, random data)](#2026-11-19-0947-add-a-company-validations-from-derrick)
+- [2026-11-18 17:09: New module: Manage Credit Settlements (from Derrick)](#2026-11-18-1709-new-module-manage-credit-settlements-from-derrick)
+- [2026-11-18 15:19: New Fassbayar-only module: Bill Payment Report](#2026-11-18-1519-new-fassbayar-only-module-bill-payment-report)
+- [2026-11-18 15:07: Automation accounts in .env](#2026-11-18-1507-automation-accounts-in-env)
+- [2026-11-18 15:01: New module: Transaction Summary](#2026-11-18-1501-new-module-transaction-summary)
+- [2026-11-18 14:25: New module: Company Summary](#2026-11-18-1425-new-module-company-summary)
+- [2026-11-18 afternoon: Old copied pages and specs removed](#2026-11-18-afternoon-old-copied-pages-and-specs-removed)
+- [2026-11-18: Structure built: one codebase, two portals](#2026-11-18-structure-built-one-codebase-two-portals)
 
 ---
 
-### 2026-11-20: Automated tests mapped to the APH and FassBayar baseline test case workbooks
+### 2026-11-20 11:15: Merged Kai Wen's branch (kaiwen/tryout) into Derrick's repo
+
+**Why:** one codebase for the team, in the agreed structure ("TryOut Structure Map": tests grouped by menu
+module, report generator in the project, portal-only screens in the portal folder).
+
+Merged as ONE commit (not with history): Kai Wen's commit contains `.env` with passwords, and this repo is public, so its history is not copied. Derrick's state before the
+merge is tagged `before-kaiwen-merge`.
+
+| From | Taken |
+|---|---|
+| Kai Wen | Tests in `tests/<module>/`; Company Summary (TC-COMP-004), Transaction Summary (TC-TRX-001), Bill Payment Report (Fassbayar, TC-BILL-001); `tools/report-generator/`; `utils/portalDate.ts`; known* test data; card scheme IDs renumbered to TC-COMP-005 / 006-xx |
+| Kai Wen (QA-confirmed) | TC-CS-006 passes on the archive-hours message; a pending batch expects "Settle Credit" on both portals (`settleCreditButton: true`) |
+| Derrick | Excel test case column + APH / FassBayar baseline mappings, site map + `docs/`, `npm run md`, `.gitignore` additions, CHANGELOG entries |
+| Not taken | Kai Wen's committed `.env` (passwords): removed from git, each PC keeps its own |
+
+| File / folder | Resolution |
+|---|---|
+| `common/tests/*.spec.ts` (old flat location) | Removed: replaced by `common/tests/<module>/` (same content + the changes above) |
+| `portals.config.ts`, `common/pages/CreditSettlementPage.ts`, `common/fixtures/base.ts`, `fassbayar/fixtures/pages.ts`, `playwright.config.ts`, `aph|fassbayar/tests/README.md` | Kai Wen's |
+| `common/reporters/executionReport.ts`, `report-notes/README.md`, `package.json`, `.gitignore` | Derrick's (newer: Excel column, `npm run md`) |
+| `README.md` | Kai Wen's + `npm run md` and `docs/` |
+| `CHANGELOG.md` | Both: Kai Wen's history + Derrick's 20 Nov entries (times added) |
+
+Note for QA: Fassbayar pending batch 485 showed **no** Settle Credit on 18 Nov; with the confirmed rule a case
+like that now fails TC-CS-007.
+
+**How to run / check**
+```powershell
+npm run typecheck
+npm run test:all
+```
+
+---
+
+### 2026-11-20 11:08: Automated tests mapped to the APH and FassBayar baseline test case workbooks
+
+**By:** Derrick.
 
 **Why:** each automated test in the report should link to its test case(s) in the team's baseline workbooks.
 
@@ -89,7 +130,9 @@ start execution-report-uat-aph	est_execution_report.html
 
 ---
 
-### 2026-11-20: Report links each test to its row in the Excel test case sheet (from ecom-automation)
+### 2026-11-20 11:00: Report links each test to its row in the Excel test case sheet (from ecom-automation)
+
+**By:** Derrick.
 
 **Why:** like ecom-automation's report, each test in "All test cases" should show the test case ID(s) of
 the Excel test case sheet and open the workbook at that row.
@@ -135,7 +178,9 @@ start execution-report-uat-fassbayar	est_execution_report.html
 
 ---
 
-### 2026-11-20: Open any Markdown file in the browser (npm run md)
+### 2026-11-20 10:55: Open any Markdown file in the browser (npm run md)
+
+**By:** Derrick.
 
 **Why:** a browser shows a `.md` file as raw text; the module map and changelog should open as a formatted page.
 
@@ -154,7 +199,9 @@ The page loads its Markdown / diagram libraries from the internet (CDN).
 
 ---
 
-### 2026-11-20: Site map of both portals: every module, flow and difference
+### 2026-11-20 10:50: Site map of both portals: every module, flow and difference
+
+**By:** Derrick.
 
 **Why:** understand every module and flow on APH and Fassbayar, and how they differ, before automating more.
 Crawled read-only with the dedicated automation accounts (`automationaph`, `automationfb`).
@@ -183,388 +230,417 @@ start docs\portal-module-map.md
 
 ---
 
-### 2026-11-19: "Settle Credit" can appear on both portals (no longer APH-only)
+### 2026-11-20 10:41: Shared on GitHub (private repo, branch kaiwen/tryout)
 
-**Why:** the full run failed TC-CS-007 on Fassbayar: pending batch **000022** showed **Settle Credit**,
-while pending batch 485 (18 Nov) did not. The button is not APH-only; it appears on SOME pending
-batches on both portals (the rule is not visible on the page). Not a product defect: a wrong assumption in the test.
+**Why:** to share the TryOut code with the team.
 
-| File / folder | Change |
-|---|---|
-| `portals.config.ts` | Removed: `settleCreditButton` from `creditSettlement` rules (both portals) |
-| `common/tests/creditSettlement.spec.ts` | Changed: TC-CS-007 records whether Settle Credit is shown (never clicks it) instead of expecting it per portal; the "test Settle Credit by hand" Human Action now applies to both portals |
+- Repo: **`ss-kaiwen/system-portal-automation`**, **private** (only invited people can see it).
+- Branch: **`kaiwen/tryout`** (first and only branch).
+- Included on request: **`.env` with the UAT automation logins** (force-added; `.gitignore` still lists `.env`,
+  so a teammate's own `.env` edits are not committed by accident), and `explore/scan/results/`.
+- Not included (generated, rebuilt by a run): `node_modules/`, `test-results/`, `playwright-report/`,
+  `execution-report-*/`, `test_summary.html`, `Test_Execution_Report_*.html`.
+- Pre-push check (19/20 Nov): structure rules hold (known: drift #1 `common/fixtures/portal.ts`; `'999999'`
+  still in `creditSettlement.spec.ts`; Login / Add Company specs have no tag yet); `tsc --noEmit` OK.
 
-**Key code**
-```ts
-await test.step('Pending batch: "Settle Credit" shown or not is recorded (never clicked)', async () => {
-  const settle = page.getByRole('link', { name: 'Settle Credit' });
-  const shown = (await settle.count()) > 0;
-  test.info().annotations.push({ type: 'info', description: `Settle Credit ${shown ? 'shown' : 'not shown'} on pending batch ${sample.batchNo}` });
-  if (shown) await expect(settle).toHaveAttribute('href', /settleCredit/);   // looked at, never clicked
-});
-```
+**Keep the repo private**: `.env` holds the UAT passwords. If it is ever made public or shared outside
+Softspace, change the automation passwords first.
 
-**Result** (full run, 19 Nov): APH 16 test cases, 15 passed, 1 skipped (archive 22:00-06:00);
-Fassbayar 18 / 18 passed. Human action items: APH 3, Fassbayar 2. Gaps: 14 each.
-
-**Open question for the team:** when should Settle Credit appear on a pending batch?
-
-**How to run / check**
+**How a teammate gets it**
 ```powershell
-npm run test:all
-start test_summary.html
+git clone -b kaiwen/tryout https://github.com/ss-kaiwen/system-portal-automation.git
+cd system-portal-automation; npm install; npx playwright test --list
 ```
 
 ---
 
-### 2026-11-19: Card scheme tests exist only on the portal that offers the scheme
+### 2026-11-19 17:30: Tests grouped by menu module (tests/&lt;module&gt;/)
 
-**Why:** a test that is not applicable to a portal should not run there, not be counted as a test case
-there, and not appear in that portal's report (before: HSBC tests showed as "Skipped" on APH).
+**Why:** one flat `common/tests` list gets hard to read as modules are added. Agreed on the structure map
+first (versions 11–12), then applied. Only `tests/` is grouped; `pages/`, `fixtures/`, `testdata/` stay flat.
+Folder names = the portal's top menu, in camelCase, the same on every portal.
 
 | File / folder | Change |
 |---|---|
-| `common/tests/addCompanyCardScheme.spec.ts` | Changed: a TC-COMP-005 test is only **created** when this portal's Global Payment offers the scheme; the "Applicable for ... only" skip is removed |
+| `common/tests/login/` | `login.spec.ts` moved here |
+| `common/tests/allCompanies/` | `addCompany`, `addCompanyValidation`, `addCompanyCardScheme`, `companySummary` `.spec.ts` moved here |
+| `common/tests/manageTransactions/` | `transactionSummary.spec.ts` moved here |
+| `common/tests/manageCreditSettlements/` | `creditSettlement.spec.ts` moved here |
+| `common/tests/home/`, `manageMobileUsers/`, `manageReaders/`, `administrator/` | **New**, empty (a `README.md` each) |
+| `fassbayar/tests/manageTransactions/` | `billPaymentReport.spec.ts` moved here |
+| every moved spec | imports one level deeper: `'../x'` -> `'../../x'` (nothing else changed) |
+| `aph/tests/README.md`, `fassbayar/tests/README.md`, `common/fixtures/base.ts` (comment), `README.md` | Changed: say `tests/<module>/` and the new import depth; README rule 5 added |
 
-Not in `common/pages`: pages only describe a screen. Which test exists where is decided in the test
-file, from the scheme lists in `common/hosts/globalPayment.ts` (APH) and `portals.config.ts` (Fassbayar).
+Nothing else changed: same test IDs, titles, tags and `playwright.config.ts` (`testMatch` already covers
+sub-folders). Checked: `tsc --noEmit` OK; `--list` APH 18 tests in 7 files, Fassbayar 21 in 8 files (same as before).
+Not run on UAT. Backup of the old tests folders: `system-portal-automation(TryOut)-backup-before-tests-by-module`.
 
-**Flow**
-```mermaid
-flowchart LR
-  A["allSchemes<br/>VISA, MasterCard,<br/>HSBC VISA, HSBC Mastercard"] --> B{"Does THIS portal's<br/>Global Payment offer it?"}
-  C["APH list<br/>common/hosts/globalPayment.ts"] -.-> B
-  D["Fassbayar list<br/>portals.config.ts"] -.-> B
-  B -- yes --> E["test created<br/>TC-COMP-005-0n<br/>runs + in report"]
-  B -- no --> F["no test<br/>not run, not counted,<br/>not in report"]
+Older entries below keep the old paths (e.g. `common/tests/creditSettlement.spec.ts`), as they were at the time.
+
+**How to run / check**
+```powershell
+npx playwright test common/tests/manageCreditSettlements   # one module (folder)
+npx playwright test --grep "@credit-settlement"           # same, by tag
 ```
+
+---
+
+### 2026-11-19 16:00: TC-CS-006 archive-hours message is an expected result, not a skip
+
+**Why:** searching a Batch No. that does not exist (`999999`) makes the portal look in the archive. In the
+daytime it answers *"Archive data can only be viewed between 22:00 and 06:00. Please try again during that
+time."* Derrick's test **skipped** on that message (APH, 15:53 run). The QA team confirmed the message is
+correct behaviour, so it now counts as a **pass**, on both portals.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/creditSettlement.spec.ts` | Changed: TC-CS-006 passes on "No record found" **or** the archive-hours message; no `test.skip`; title now ends "... or the archive-hours message" |
+
+Same test ID. Still fails if neither message appears, or if any row is listed. Effects in the report:
+TC-CS-006 shows Passed with the step *Archive closed at this hour (expected): "..."* and its screenshot, and
+it no longer appears in the Human Action table. (`reportNotes.ts` still has its archive rule; it is simply
+not triggered any more, left unchanged.)
 
 **Key code**
 ```ts
-// One test per scheme THIS portal offers (ID numbered over all portals' schemes)
-for (const [i, scheme] of allSchemes.entries()) {
-  if (!host?.cardSchemes.includes(scheme)) continue;   // not on this portal: no test at all
-  test(`Global Payment with card scheme ${scheme}: ...`,
-    testCase({ id: `TC-COMP-005-${String(i + 1).padStart(2, '0')}`, ... }), ...);
+await expect(cs.noRecord.or(cs.archiveClosed), 'No record found or the archive-hours message').toBeVisible();
+if (await cs.archiveClosed.isVisible()) {
+  await test.step(`Archive closed at this hour (expected): "${message}"`, ...);   // pass
+} else {
+  await test.step('"No record found" (expected)', ...);                          // pass
 }
 ```
 
-| | APH | Fassbayar |
-|---|---|---|
-| TC-COMP-005-01 VISA, 005-02 MasterCard | run | run |
-| TC-COMP-005-03 HSBC VISA, 005-04 HSBC Mastercard | **not created** (not in report) | run |
-
-APH: 16 test cases in total (was 18). IDs stay the same on every portal.
-
 **How to run / check**
 ```powershell
-$env:ENV_NAME='UAT-APH'; npx playwright test --list    # no HSBC tests listed
-npm run test:aph                                        # APH report without HSBC rows
+$env:ENV_NAME='UAT-APH'; npx playwright test --grep "does not exist"
 ```
 
 ---
 
-### 2026-11-19: Human Action and Gaps tables generated automatically on every run
+### 2026-11-19 15:27: Structure map updated (no code change)
 
-**Why:** the two tables must be filled in from what happened in the run, without anyone writing them by hand.
+**Why:** the team's structure map (claude.ai artifact "TryOut Structure Map", version 8) still showed 18 Nov, 5:16 PM.
+
+Added: the 19 Nov merges from Derrick (card scheme tests TC-COMP-005 / 006-xx, random data, Fassbayar extras,
+reportNotes, run scripts), `tools/report-generator`, the project-root files, both transactions Settled, the
+Fassbayar existing MID, the Credit Settlement rules per portal, the latest results, and the open TC-CS-007
+question (when Settle Credit shows on Fassbayar). No file in this folder changed except this CHANGELOG.
+
+**Version 9 (just before 16:00):** APH full run of 15:47–15:54 added (17 pass, 1 skip, 0 fail). Fixed on the map: TC-COMP-006-xx
+is read-only (stops at Review, Confirm never clicked), not "creates a company".
+
+**17:18, version 11 (proposal only):** the folder map shows `common/tests/` and `fassbayar/tests/` grouped by module
+(`login/`, `allCompanies/`, `manageTransactions/`, `manageCreditSettlements/`) for review. The real folders were
+not moved.
+
+**17:26, version 12 (proposal only):** every portal menu module now has a `tests/` folder on the map, in menu order:
+`login/`, `home/`, `allCompanies/`, `manageMobileUsers/`, `manageReaders/`, `manageTransactions/`,
+`manageCreditSettlements/`, `administrator/` (dashed = empty). Still not created in the real folder.
+
+---
+
+### 2026-11-19 14:41: Fassbayar pending batch shows "Settle Credit", same as APH (TC-CS-007)
+
+**Why:** TC-CS-007 failed on Fassbayar in the 14:10 run: today's first batch (000009) was **pending** and
+showed a **Settle Credit** button, but the Fassbayar rule (from Derrick's code) said Fassbayar has none
+(`Expected: 0  Received: 1`). The QA team confirmed Fassbayar behaves like APH: a pending batch offers
+Settle Credit. Earlier runs passed only because the first batch was never pending, so the check was skipped.
 
 | File / folder | Change |
 |---|---|
-| `common/reporters/reportNotes.ts` | **New**: the rules that build both tables |
-| `common/reporters/executionReport.ts` | Changed: `optionalCards()` calls `buildNotes()` on every run and writes `data/human_action_items.json` + `data/gaps.json` |
-| `common/utils/testCase.ts` | Changed: `testCase()` accepts `gaps` and `manual` |
-| `common/tests/*.spec.ts` (all 5) | Changed: each test declares what it does not cover |
-| `report-notes/` | Hand-written items still work and are listed first |
+| `portals.config.ts` | Changed: `fassbayar.creditSettlement.settleCreditButton` `false` -> `true` |
 
-**Flow**
-```mermaid
-flowchart LR
-  R["This run's results<br/>skip / fail / blocked"] --> N["buildNotes()<br/>common/reporters/reportNotes.ts"]
-  T["Tests declare<br/>testCase({ gaps, manual })"] --> N
-  M["Hand-written<br/>report-notes/*.json"] --> N
-  N --> H["Human Action Required"]
-  N --> G["Open Gaps / Limitations"]
-  H --> X["test_execution_report.html"]
-  G --> X
-  X --> S["test_summary.html<br/>counts per portal"]
+No test or page code changed. Effects on Fassbayar:
+- TC-CS-007 now expects "Settle Credit" on a pending batch (only counted, **never clicked**).
+- The report's Human Action table now also lists "Settle Credit on a pending batch (Fassbayar)", as APH does.
+
+**Key code**
+```ts
+creditSettlement: {
+  showsRefundedTotal: true,
+  settleCreditButton: true,   // was false
+  ...
 ```
 
-**What goes in each table**
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-Fassbayar'; npx playwright test --grep "View Details opens the batch"
+```
+
+---
+
+### 2026-11-19 14:25: Fassbayar test transaction is now Settled (TC-TRX-001)
+
+**Why:** the Fassbayar transaction `18052434181126000560` has been credit-settled, so its status changed
+from **Approved** to **Settled** on UAT. TC-TRX-001 failed on Fassbayar in the 14:11 run
+(`Expected: "Approved"  Received: "Settled"`).
+
+| File / folder | Change |
+|---|---|
+| `common/testdata/knownTransactions.ts` | Changed: `UAT-FASSBAYAR` status `Approved` -> `Settled` (both portals now expect Settled) |
+
+No test or page code changed: TC-TRX-001 reads the expected status from this file.
+
+**Key code**
+```ts
+'UAT-FASSBAYAR': { trxId: '18052434181126000560', status: 'Settled', ... }
+```
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-Fassbayar'; npx playwright test --grep "@transaction-summary"
+```
+
+---
+
+### 2026-11-19 11:50: Full Test Execution Report is built again (tools/report-generator)
+
+**Why:** `test_summary.html` showed **"Full report not generated"** for both portals. After a run,
+`executionReport.ts` saves the data, then calls `generate_report.py` to build the HTML. The reporter looked
+for that script in a folder on one PC (`%USERPROFILE%\skills\02 automation test execution report template
+package - legacy\`) that does not exist here, so only data + screenshots were written.
+
+| File / folder | Change |
+|---|---|
+| `tools/report-generator/` | **New** (from Derrick's first repo version, 18 Nov): `generate_report.py`, `template/test_execution_report.html.j2`, `README.md` |
+| `playwright.config.ts` | Changed: `generatorPath` points to `tools/report-generator/generate_report.py` (`REPORT_GENERATOR` still overrides) |
+| `README.md` | Changed: `tools/` and `scripts/` in the structure |
+
+Nothing in `common/`, `aph/` or `fassbayar/` changed; the reporters were already Derrick's latest
+(`Downloads\reporters` = identical to `common/reporters`).
+
+**Key code** (`playwright.config.ts`)
+```ts
+generatorPath: process.env.REPORT_GENERATOR ?? `${__dirname}/tools/report-generator/generate_report.py`
+```
+
+**Needs:** Python 3 + jinja2 on the PC (`pip install jinja2`).
+
+**Result:** rebuilt from the last runs without testing again: both portals now have
+`test_execution_report.html` + a shareable `Test_Execution_Report_2026-11-19.html`, and the summary shows
+**"Open full report"** for both.
+
+**How to run / check**
+```powershell
+npx playwright test --list      # rebuild the report of ENV_NAME from its last run (nothing executed)
+start test_summary.html         # "Open full report" button
+```
+
+---
+
+### 2026-11-19: APH test transaction is now Settled (TC-TRX-001)
+
+**Why:** the APH transaction `10029595181126001164` changed from **Approved** to **Settled** on UAT
+(its batch was settled), so TC-TRX-001 would fail on APH while expecting Approved.
+
+| File / folder | Change |
+|---|---|
+| `common/testdata/knownTransactions.ts` | Changed: `UAT-APH` status `Approved` -> `Settled` (Fassbayar unchanged at the time; Settled from 14:25) |
+
+No test or page code changed: TC-TRX-001 reads the expected status from this file and checks it in the
+search result's **Status** column and as **Payment Status** on Transaction Details.
+
+**Key code**
+```ts
+'UAT-APH': { trxId: '10029595181126001164', status: 'Settled', ... }
+```
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-APH'; npx playwright test --grep "@transaction-summary"
+```
+
+---
+
+### 2026-11-19 10:52: Reporting and skipping from Derrick
+
+**Why:** merge Derrick's commit `99f06a2` (19 Nov 10:23) so the reports explain skips and limits by
+themselves, and a test that does not apply to a portal is not shown there at all.
+Backup before: `system-portal-automation(TryOut)-backup-before-derrick-reports`.
+
+| File / folder | Change |
+|---|---|
+| `common/reporters/reportNotes.ts` | **New** (Derrick): builds the **Human Action Required** and **Open Gaps / Limitations** tables on every run |
+| `common/reporters/executionReport.ts` | Changed (Derrick): calls `buildNotes()`, writes `data/human_action_items.json` + `data/gaps.json`; both cards always shown ("none" row when empty) |
+| `common/reporters/summaryReport.ts` | Changed (Derrick): new `folders` option = which portals the summary shows |
+| `common/utils/testCase.ts` | Changed (Derrick): `testCase()` accepts `gaps` and `manual` |
+| `playwright.config.ts` | Changed (Derrick): `SUMMARY_ENVS` decides the summary's portals |
+| `scripts/run-all.js` | **New** (Derrick): runs portals one after another, one summary at the end |
+| `package.json` | Changed (Derrick): `test:aph`, `test:fassbayar`, `test:all` |
+| `common/tests/login.spec.ts`, `addCompany.spec.ts`, `addCompanyValidation.spec.ts` | Changed (Derrick): each test declares its gaps |
+| `common/tests/creditSettlement.spec.ts` | Changed: Derrick's gaps / manual checks **added**; our tag `@credit-settlement`, module name and `utils/portalDate` kept |
+| `common/tests/addCompanyCardScheme.spec.ts` | Changed: Derrick's "test only created on a portal that offers the scheme"; **our IDs kept** (TC-COMP-005, TC-COMP-006-0n) |
+| `report-notes/README.md`, `README.md` | Changed: how the cards work; new run commands |
+| Not merged | Derrick's `CHANGELOG.md` (his history, his IDs) and `CLAUDE.md`; this file is TryOut's own changelog |
+
+**What goes in each table** (`reportNotes.ts`)
 
 | In the run | Table |
 |---|---|
-| Skipped for a reason a person can act on (APH archive 22:00-06:00, no settlements today, no known MID) | Human Action, with what to do |
-| Failed because of the environment (server down, session logged out by the same account elsewhere, no login in `.env`) | Human Action |
+| Skip a person can act on: APH archive only 22:00-06:00, no settlements today, no known MID | Human Action, with what to do |
+| Failed because of the environment: server down, session logged out, no login in `.env` | Human Action |
 | Any other failure | Gap, status **Open** (gone when the test passes again) |
-| `testCase({ manual: [...] })` | Human Action (e.g. Settle Credit, Schedule Force Settlement) |
+| `testCase({ manual: [...] })`, e.g. Settle Credit, Schedule Force Settlement | Human Action |
 | `testCase({ gaps: [...] })` | Gap, status **Known limitation** |
 | Skip "Applicable for <portal> only" / "is not a host of" | Left out (not this portal's scenario) |
 
-**Key code**: declaring gaps / manual checks in a test:
-```ts
-testCase({
-  id: 'TC-CS-009', module: MODULE, priority: 'Medium',
-  manual: [{
-    title: 'Schedule Force Settlement: Schedule > Review & Confirm > Complete',
-    reason: 'Finishing the wizard schedules a real force settlement, so automation stops at step 1.',
-    handling: 'Test scheduling by hand on a test company before each release.'
-  }],
-  gaps: [{ description: '...what is not covered...', impact: '...what could slip through...' }]
-})
-```
-A rule in `reportNotes.ts` (skip reason -> what to do):
-```ts
-{
-  match: /Archive data can only be viewed between (\d{1,2}:\d{2}) and (\d{1,2}:\d{2})/,
-  handling: (m) => `Re-run this test between ${m[1]} and ${m[2]} ...`
-}
-```
-
-**How to run / check**: run any portal, then open its report; the run also prints
-`[execution-report] Human action items: N, gaps / limitations: N`.
-```powershell
-npm run test:all
-start execution-report-uat-aph\test_execution_report.html
-```
-Result of the first run: APH 3 human actions / 14 gaps, Fassbayar 1 / 14.
-
----
-
-### 2026-11-19: Human Action and Gaps tables always shown in the report
-
-**Why:** the two tables must be in every report, even with nothing to report.
-
-| File / folder | Change |
-|---|---|
-| `common/reporters/executionReport.ts` | Changed: nothing to list -> one "none" row ("No human action required" / "No open gaps or limitations recorded") |
-| `report-notes/README.md` | Changed: explains the always-shown cards |
-
-The summary page (`summaryReport.ts`) already counts those "none" rows as 0.
-
----
-
-### 2026-11-19: Summary shows only the portal(s) of the run
-
-**Why:** running Fassbayar only should give a Fassbayar-only summary; APH only -> APH only; both -> both.
-
-| File / folder | Change |
-|---|---|
-| `playwright.config.ts` | Changed: works out which report folders the summary shows (`SUMMARY_ENVS`) |
-| `common/reporters/summaryReport.ts` | Changed: new `folders` option, shows only those |
-| `scripts/run-all.js` | **New**: runs portals one after another; the last run's summary includes all of them |
-| `package.json` | Changed: `test:all`, `test:aph`, `test:fassbayar` |
-| `README.md` | Changed: the new commands under *Running* |
-
-**Flow**
-```mermaid
-flowchart TD
-  A["npm run test:fassbayar"] --> A1["run UAT-FASSBAYAR"] --> A2["summary: Fassbayar"]
-  B["npm run test:aph"] --> B1["run UAT-APH"] --> B2["summary: APH"]
-  C["npm run test:all<br/>scripts/run-all.js"] --> C1["run UAT-APH"] --> C2["run UAT-FASSBAYAR<br/>SUMMARY_ENVS=UAT-APH,UAT-FASSBAYAR"] --> C3["summary: APH + Fassbayar"]
-```
-
-**Key code** (`playwright.config.ts`):
-```ts
-//   default                            -> only the environment of THIS run
-//   SUMMARY_ENVS=UAT-APH,UAT-FASSBAYAR -> those (npm run test:all sets it on its last run)
-//   SUMMARY_ENVS=all                   -> every execution-report-* folder
-const summaryFolders = summaryEnvs === 'all'
-  ? undefined
-  : summaryEnvs ? summaryEnvs.split(',').map((e) => reportFolderOf(e.trim())) : [reportDir];
-```
-
-**How to run / check**
-```powershell
-npm run test:fassbayar     # summary: Fassbayar only
-npm run test:aph           # summary: APH only
-npm run test:all           # summary: both
-start test_summary.html
-```
-
----
-
-### 2026-11-18: Project pushed to GitHub
-
-**Why:** keep the project on GitHub: https://github.com/ss-derrick/BCP-project-progress-automation
-
-| Branch | Content |
-|---|---|
-| `main` | This project |
-| `old-main` | Backup of the previous `main` (older BCP codebase, 274 files) |
-| `system-portal-automation` | Same as `main` (first push; can be deleted) |
-
-`.env` (passwords), `node_modules`, reports and test results are **not** uploaded (`.gitignore`).
-
-**How to push later changes**
-```powershell
-git add .
-git commit -m "what you changed"
-git push
-```
-
----
-
-### 2026-11-18: New module: Manage Credit Settlements (TC-CS-001 to 009)
-
-**Why:** automate Manage Credit Settlements (`/creditSettlement/list`) on both portals. All tests are **read-only**:
-nothing is settled, scheduled or created.
-
-| File / folder | Change |
-|---|---|
-| `common/pages/CreditSettlementPage.ts` | **New**: shared page (list, filters, batch search, View Details, View all, Schedule Force Settlement) |
-| `common/tests/creditSettlement.spec.ts` | **New**: TC-CS-001 to 009 |
-| `common/fixtures/base.ts` | Changed: `creditSettlementPage` fixture |
-| `portals.config.ts` | Changed: `creditSettlement` rules per portal (Batch Details differences) |
-| `explore/scan/creditSettlement.scan.ts` | **New**: read-only explorer of the module (first run hung; needs fixing before re-use) |
-
-**Module map** (what the tests open; red = never clicked)
-```mermaid
-flowchart TD
-  L["Credit Settlement list<br/>/creditSettlement/list<br/>TC-CS-001..004"] --> S["Batch No. search<br/>/creditSettlement/search<br/>TC-CS-005, 006"]
-  L --> D["View Details (batch)<br/>/creditSettlement/batch<br/>TC-CS-007"]
-  L --> V["View all credit settlements<br/>/creditSettlement/company<br/>TC-CS-008"]
-  L --> F1["Schedule Force Settlement<br/>step 1: Search company<br/>TC-CS-009"]
-  D --> SC["Settle Credit (APH, pending)"]
-  D --> DL["Download Sale Report"]
-  F1 --> F2["step 2: Schedule"] --> F3["step 3: Review & Confirm"] --> F4["step 4: Complete"]
-  classDef never fill:#fbe4e4,stroke:#c62828,color:#7a1010;
-  class SC,F2,F3,F4 never;
-```
-
-| ID | Scenario |
-|---|---|
-| TC-CS-001 | List: batch search, filters (TID, Mobile User ID, Status, Date = today), columns, quicklinks |
-| TC-CS-002 | Filter by each Status shows only that status |
-| TC-CS-003 | Filter by TID |
-| TC-CS-004 | Filter by Mobile User ID |
-| TC-CS-005 | Search an existing Batch No. |
-| TC-CS-006 | Search a Batch No. that does not exist -> "No record found" (APH: skipped in the day, archive 22:00-06:00) |
-| TC-CS-007 | View Details: batch no., status message, totals, filters, transactions, Back |
-| TC-CS-008 | View all credit settlements (company) |
-| TC-CS-009 | Schedule Force Settlement opens at step 1 of 4 |
-
-**Portal differences** (`portals.config.ts`):
-```ts
-creditSettlement: {               // APH
-  showsRefundedTotal: false,
-  batchFilters: ['Terminal ID (TID)', 'Approval Code', 'Status', 'Amount', 'Date'],
-  transactionStatuses: ['Approved', 'Reversed', 'Voided', 'Pending Signature', 'Settled', 'Refunded', 'Expired']
-},
-creditSettlement: {               // Fassbayar
-  showsRefundedTotal: true,
-  batchFilters: ['Terminal ID (TID)', 'Status', 'Date'],
-  transactionStatuses: ['Approved', 'Reversed', 'Voided', 'Pending Signature', 'Settled', 'Expired']
-}
-```
-Handled inside the shared page: date field `to` (APH) / `from` (Fassbayar) -> located by `.filterDate`;
-APH zero-padded batch numbers -> compared as numbers.
-
-**How to run / check**
-```powershell
-$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test common/tests/creditSettlement.spec.ts
-```
-
----
-
-### 2026-11-18: Stability fixes for APH (Add a Company)
-
-**Why:** two APH failures that were timing, not product defects.
-
-| File / folder | Change |
-|---|---|
-| `common/pages/AddCompanyFormPage.ts` | `open()`: waits for the page and clicks "Add a Company" again if the first click was lost |
-| `common/pages/AddCompanyFormPage.ts` | `submitExpectingRejection()`: waits for the server's `/company/checkItemsAvailability` answer; clicks Submit again if it never arrives |
-
 **Key code**
 ```ts
-await expect(async () => {
-  const answer = this.page.waitForResponse((r) => r.url().includes('/company/checkItemsAvailability'), { timeout: 20_000 });
-  await this.submitButton.click();
-  await answer;
-}, 'Submit sends the availability check to the server').toPass({ timeout: 60_000 });
-```
-
-Note: the APH account is shared (a colleague logged in as the same user caused `error=concurrent` logouts).
-Don't use the account elsewhere during a run.
-
----
-
-### 2026-11-18: Random company data on Add a Company (Fassbayar: all fields)
-
-**Why:** every Add a Company run should use different, realistic data, valid for the form's own rules.
-Transaction limits stay at the form's default.
-
-| File / folder | Change |
-|---|---|
-| `common/creation/randomCompanyData.ts` | **New**: pools of valid values (matching postcode / city / state, names, addresses, 31 banks, MCC codes, SST / TIN formats, references) |
-| `common/creation/hostCompanyData.ts` | Changed: `createCompanyForHost()` builds random data; name, short name, user ID prefix, DBA and MID keep a timestamp (unique, traceable) |
-| `common/creation/types.ts` | Changed: `CompanyExtras` (SST, TIN, bank, MCC, references) |
-| `common/pages/AddCompanyFormPage.ts` | Changed: hooks `fillPortalCompanyFields()` and `verifyPortalReview()` |
-| `fassbayar/pages/FassbayarAddCompanyFormPage.ts` | Changed: fills and checks SST, TIN, bank, MCC, Reference 1-5 |
-
-**Key code** (`hostCompanyData.ts`):
-```ts
-const { name, trade } = R.businessName(s, form.businessNameMax);   // "Sinar Jaya Trading 261118103045"
-const loc = pick(R.LOCATIONS);                                      // postcode + city + state match
-const person = R.authoriserPerson();                                // salutation + name
-...
-email: AUTHORISER_EMAIL || R.emailFor(person.fullName),             // random @example.com
-```
-
-- Authoriser e-mail: random `@example.com` per company. Set `AUTHORISER_EMAIL` in `.env` to use one real mailbox.
-- Checked: 500 generated companies per portal pass the form rules; the real Fassbayar form accepts them.
-
----
-
-### 2026-11-18: Summary counts "applicable for one portal only" skips separately
-
-**Why:** HSBC card schemes exist on Fassbayar only; on APH those tests must show as skipped, not as failures.
-
-| File / folder | Change |
-|---|---|
-| `common/tests/addCompanyCardScheme.spec.ts` | Skip reason starts with `Applicable for Fassbayar only: ...` |
-| `common/reporters/summaryReport.ts` | Such skips are listed as "Not applicable to this portal (skipped, not counted)" |
-
-**Key code** (`summaryReport.ts`):
-```ts
-const OTHER_PORTAL = /^(Not verified on |Applicable for .+ only)/;
-```
-
----
-
-### 2026-11-18: Global Payment card scheme tests (TC-COMP-004, 005-01 to 04)
-
-**Why:** Global Payment offers VISA, MasterCard on APH and VISA, MasterCard, HSBC VISA, HSBC Mastercard on
-Fassbayar. Both portals list the same test cases; Review & Confirm only, nothing is created.
-
-| File / folder | Change |
-|---|---|
-| `common/tests/addCompanyCardScheme.spec.ts` | **New**: TC-COMP-004 (exact scheme list) + one test per scheme of any portal |
-| `common/pages/AddCompanyFormPage.ts` | Changed: `cardSchemeOptions()`, `captureCardSchemeList()`, `verifyReviewCardSchemes()` |
-
-The scheme lists come from config, nothing hard-coded in the test:
-`common/hosts/globalPayment.ts` (APH) and `portals.config.ts` (Fassbayar: `onPortal(GlobalPayment, { cardSchemes: [...] })`).
-
-| ID | APH | Fassbayar |
-|---|---|---|
-| TC-COMP-004 GP offers exactly this portal's schemes | runs | runs |
-| TC-COMP-005-01 VISA / 02 MasterCard | runs | runs |
-| TC-COMP-005-03 HSBC VISA / 04 HSBC Mastercard | skipped (Fassbayar only) | runs |
-
----
-
-### 2026-11-18: Duplicate MID test runs on Fassbayar too (TC-COMP-003)
-
-**Why:** TC-COMP-003 was skipped on Fassbayar: no existing MID recorded.
-
-| File / folder | Change |
-|---|---|
-| `common/testdata/existingMids.ts` | Added the Fassbayar MID created by TC-COMP-001 |
-
-```ts
-'UAT-FASSBAYAR': {
-  mid: '261118140251604',
-  hostCode: 'GP',
-  note: 'Global Payment company created by TC-COMP-001 on 18 Nov 2026, 14:02'
+// addCompanyCardScheme.spec.ts: a scheme this portal doesn't offer gets NO test
+for (const [i, scheme] of allSchemes.entries()) {
+  if (!host?.cardSchemes.includes(scheme)) continue;   // not on this portal: no test at all
+  test(`Global Payment with card scheme ${scheme}: ...`,
+    testCase({ id: `TC-COMP-006-${String(i + 1).padStart(2, '0')}`, ... }), ...);
 }
+
+// a test declares what it does not cover / what needs a person
+testCase({ id: 'TC-CS-009', module: MODULE, priority: 'Medium',
+  manual: [{ title: '...', reason: '...', handling: '...' }],
+  gaps:   [{ description: '...', impact: '...' }] })
 ```
+
+| Tests listed | APH | Fassbayar |
+|---|---|---|
+| Before | 20 (HSBC tests skipped) | 21 |
+| After | **18** (HSBC tests not created) | **21** |
+
+**How to run / check**
+```powershell
+npm run test:aph          # summary: APH only
+npm run test:fassbayar    # summary: Fassbayar only
+npm run test:all          # APH then Fassbayar, summary: both
+$env:SUMMARY_ENVS='all'   # summary: every execution-report-* folder
+```
+
+---
+
+### 2026-11-19 09:47: Add a Company validations from Derrick
+
+**Why:** take Derrick's Add a Company improvements that fit the structure: more validation, more stable
+clicks, realistic data. Backup before: `system-portal-automation(TryOut)-backup-before-derrick-add-company`.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/addCompanyCardScheme.spec.ts` | **New** (Derrick): TC-COMP-005 GP offers exactly the portal's card schemes; TC-COMP-006-01…04 each scheme accepted at Submit and shown exactly on Review (renumbered from his TC-COMP-004 / 005-xx) |
+| `common/pages/AddCompanyFormPage.ts` | Changed (Derrick): retry when Open / Submit clicks are lost; card scheme helpers; hooks `fillPortalCompanyFields` / `verifyPortalReview` |
+| `fassbayar/pages/FassbayarAddCompanyFormPage.ts` | Changed (Derrick): fills SST, TIN, bank, MCC, Reference 1-5 and checks them on Review |
+| `common/creation/hostCompanyData.ts`, `types.ts` | Changed (Derrick): realistic random data per run; timestamped name / User ID / MID kept |
+| `common/creation/randomCompanyData.ts` | **New** (Derrick): pools of form-valid values (all 31 banks and 10 MCC codes exist on Fassbayar) |
+| `common/testdata/existingMids.ts` | Changed (Derrick): Fassbayar MID `261118140251604` so TC-COMP-003 runs there |
+| `common/reporters/summaryReport.ts` | Changed (Derrick): "applicable for one portal only" listed apart |
+
+**Checked:** TC-COMP-001 passed on both portals after the merge (19 Nov 09:55 APH, 09:56 Fassbayar).
+
+**How to run / check**
+```powershell
+npx playwright test common/tests/addCompanyCardScheme.spec.ts common/tests/addCompanyValidation.spec.ts   # creates nothing
+```
+
+---
+
+### 2026-11-18 17:09: New module: Manage Credit Settlements (from Derrick)
+
+**Why:** add the Manage Credit Settlements module Derrick wrote, adapted to the agreed structure.
+Backup before: `system-portal-automation(TryOut)-backup-before-credit-settlement`.
+
+| File / folder | Change |
+|---|---|
+| `common/pages/CreditSettlementPage.ts` | **New** (Derrick); changed to open from the top menu |
+| `common/tests/creditSettlement.spec.ts` | **New** (Derrick): TC-CS-001 … 009, read-only; tag `@credit-settlement` added |
+| `common/utils/portalDate.ts` | **New**: `portalToday()` moved here from the page |
+| `common/fixtures/base.ts` | Changed: `creditSettlementPage` fixture |
+| `portals.config.ts` | Changed: `creditSettlement` rules per portal (batch page differences) |
+| `explore/scan/creditSettlement.scan.ts` | **New** (Derrick): read-only scan |
+
+**Checked:** full run 18 Nov 17:32 (Fassbayar) / 17:41 (APH): Credit Settlement passed on both
+(TC-CS-006 skipped on APH by design: archive opens 22:00-06:00).
+
+**How to run / check**
+```powershell
+npx playwright test --grep "@credit-settlement"
+```
+
+---
+
+### 2026-11-18 15:19: New Fassbayar-only module: Bill Payment Report
+
+**Why:** Manage Transactions > Bill Payment Report exists only on Fassbayar.
+
+| File / folder | Change |
+|---|---|
+| `fassbayar/pages/BillPaymentReportPage.ts`, `BillPaymentDetailsPage.ts` | **New** |
+| `fassbayar/fixtures/pages.ts` | Changed: the two pages |
+| `fassbayar/tests/billPaymentReport.spec.ts` | **New**: TC-BILL-001 search Harris_LH 01 Oct – 01 Nov 2026, view Batch 000060 |
+| `common/testdata/knownBillPayments.ts` | **New** |
+| `explore/scan/billPaymentReport.scan.ts` | **New**: read-only scan |
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-Fassbayar'; npx playwright test --grep "@bill-payment-report"
+```
+
+---
+
+### 2026-11-18 15:07: Automation accounts in .env
+
+**Why:** runs use dedicated automation accounts instead of personal logins.
+
+| File / folder | Change |
+|---|---|
+| `.env` | Changed: `automationaph` (APH), `automationfb` (Fassbayar); `.env` is never shared in the repo |
+
+---
+
+### 2026-11-18 15:01: New module: Transaction Summary
+
+| File / folder | Change |
+|---|---|
+| `common/pages/TransactionSummaryPage.ts`, `TransactionDetailsPage.ts` | **New** (no locator for Void Payment Now) |
+| `common/tests/transactionSummary.spec.ts` | **New**: TC-TRX-001 search trxID, view details, status Approved |
+| `common/testdata/knownTransactions.ts` | **New**: one trxID per environment |
+| `explore/scan/transactionSummary.scan.ts` | **New** |
+
+```powershell
+npx playwright test --grep "@transaction-summary"
+```
+
+---
+
+### 2026-11-18 14:25: New module: Company Summary
+
+| File / folder | Change |
+|---|---|
+| `common/pages/CompanySummaryPage.ts` | **New** |
+| `common/tests/companySummary.spec.ts` | **New**: TC-COMP-004 search sync company MID 000452839489382 |
+| `common/testdata/knownCompanies.ts` | **New** |
+
+```powershell
+npx playwright test --grep "@company-summary"
+```
+
+---
+
+### 2026-11-18 afternoon: Old copied pages and specs removed
+
+**Why:** only code written for the agreed structure stays. Backup: `system-portal-automation(TryOut)-before-cleanup.zip`.
+
+| File / folder | Change |
+|---|---|
+| `aph/pages` (6 old pages), `aph/tests/allCompanies.spec.ts` | Removed |
+| `fassbayar/pages` (10 old pages), `fassbayar/tests` (8 specs) | Removed |
+| old helpers in `common/creation`, `common/testdata`, `explore/aph`, `explore/fassbayar` | Removed |
+
+---
+
+### 2026-11-18: Structure built: one codebase, two portals
+
+**Why:** the team's decision: one codebase that runs on APH and Fassbayar; `ENV_NAME` picks the portal.
+
+| File / folder | Change |
+|---|---|
+| `portals.config.ts` | **New**: environments -> portal, hosts and form rules per portal |
+| `common/hosts/` | **New**: 12 host profiles |
+| `common/pages/AddCompanyFormPage.ts` + `aph/` / `fassbayar/` overrides | **New**: shared Add a Company |
+| `common/tests/addCompany.spec.ts`, `addCompanyValidation.spec.ts` | **New**: TC-COMP-001 (creates), 002 GP Retail/IPP, 003 duplicate MID |
+| `explore/scan/` | **New**: read-only scans of both portals |

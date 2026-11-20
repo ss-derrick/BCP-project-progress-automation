@@ -1,0 +1,113 @@
+{
+  "env": "UAT-Fassbayar",
+  "portal": "fassbayar",
+  "url": "https://10.0.1.30:36190/transaction/billPaymentBatch?batchId=60",
+  "title": "Bill Payment Details | Soft Space",
+  "jquery": true,
+  "forms": [
+    {
+      "name": "filterForm",
+      "id": "",
+      "action": "",
+      "method": "get"
+    }
+  ],
+  "controls": [
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "button btnDarkGrey",
+      "href": "javascript: history.go(-1)",
+      "onclick": "",
+      "value": "",
+      "text": "Back to Previous Page",
+      "visible": true,
+      "readonly": false,
+      "form": "",
+      "label": "You are currently viewing Batch No. : 00"
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "button",
+      "href": "doPrintBillPaymentReport?itemid=60",
+      "onclick": "",
+      "value": "",
+      "text": "Summary (PDF)",
+      "visible": true,
+      "readonly": false,
+      "form": "",
+      "label": "The credit settlement for this batch was"
+    },
+    {
+      "tag": "select",
+      "id": "",
+      "name": "verificationMethod",
+      "type": "",
+      "cls": "styled",
+      "href": "",
+      "onclick": "",
+      "value": "",
+      "text": "Select One Cash Card QR",
+      "visible": true,
+      "readonly": false,
+      "form": "filterForm",
+      "label": "Verification Method",
+      "options": [
+        "=Select One",
+        "Cash=Cash",
+        "Card=Card",
+        "QR=QR"
+      ]
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "name": "",
+      "type": "",
+      "cls": "button btnL btnDarkGrey",
+      "href": "javascript:void(0)",
+      "onclick": "$(this).parents('form').trigger('submit');",
+      "value": "",
+      "text": "Search",
+      "visible": true,
+      "readonly": false,
+      "form": "",
+      "label": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "",
+      "type": "submit",
+      "cls": "hideBtn",
+      "href": "",
+      "onclick": "",
+      "value": "",
+      "text": "",
+      "visible": true,
+      "readonly": false,
+      "form": "filterForm",
+      "label": ""
+    }
+  ],
+  "tables": [],
+  "texts": [
+    "You are currently viewing",
+    "Batch No. : 000060",
+    "Back to Previous Page",
+    "The credit settlement for this batch was successful",
+    "Summary (PDF)",
+    "Total Amount",
+    "MYR0.00",
+    "Bill Payment Details",
+    "Verification Method",
+    "Select One",
+    "Search",
+    "No record found. Please try again"
+  ]
+}

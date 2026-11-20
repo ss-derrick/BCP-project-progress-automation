@@ -1,10 +1,10 @@
-import { test, expect } from '../fixtures/portal';
-import { testCase } from '../utils/testCase';
-import { loginAs } from '../flows/loginFlow';
-import { hostsFor, ENV_NAME } from '../../portals.config';
-import { expectedPaymentTypeState } from '../utils/hostValidation';
-import { createCompanyForHost } from '../creation/hostCompanyData';
-import { existingMidFor } from '../testdata/existingMids';
+import { test, expect } from '../../fixtures/portal';
+import { testCase } from '../../utils/testCase';
+import { loginAs } from '../../flows/loginFlow';
+import { hostsFor, ENV_NAME } from '../../../portals.config';
+import { expectedPaymentTypeState } from '../../utils/hostValidation';
+import { createCompanyForHost } from '../../creation/hostCompanyData';
+import { existingMidFor } from '../../testdata/existingMids';
 
 // SHARED validation of "Add a Company" > MID Settings, on every portal.
 // Read-only: the form is never submitted, nothing is created.

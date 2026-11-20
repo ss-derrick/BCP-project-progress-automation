@@ -21,21 +21,34 @@ system-portal-automation/
 │   ├── creation/             # hostCompanyData: a new company for one host (NewHostCompany) + data shapes
 │   ├── flows/                # login (loginAs, loginAsAdmin)
 │   ├── testdata/             # reusable fixed data (existingMids: a MID already taken per environment)
-│   ├── utils/                # hostValidation, random, testCase()
+│   ├── utils/                # hostValidation, portalDate, random, testCase()
 │   ├── pages/                # BasePage, LoginPage, ConsolePage, HomePage, AddCompanyFormPage
 │   ├── fixtures/base.ts      # base test: shared pages, blocked-page check, requireFeature()
 │   ├── fixtures/portal.ts    # gives shared tests the portal's version of a page (AddCompanyFormPage)
-│   ├── tests/                # scenarios that run on BOTH portals
+│   ├── tests/                # scenarios that run on BOTH portals, one folder per menu module:
+│   │   ├── login/                    login.spec.ts
+│   │   ├── home/                     (empty)
+│   │   ├── allCompanies/             addCompany, addCompanyValidation, addCompanyCardScheme, companySummary
+│   │   ├── manageMobileUsers/        (empty)
+│   │   ├── manageReaders/            (empty)
+│   │   ├── manageTransactions/       transactionSummary.spec.ts
+│   │   ├── manageCreditSettlements/  creditSettlement.spec.ts
+│   │   └── administrator/            (empty)
 │   └── reporters/            # execution report + summary page
 │
 ├── aph/                      # only what differs on Aeon Payment Hub
 │   ├── pages/                # AphAddCompanyFormPage (+ Host Swing Priority)
-│   ├── fixtures/  tests/     # empty until an APH-only screen / scenario is added
+│   ├── fixtures/  tests/     # tests/<module>/ once an APH-only scenario is added
 ├── fassbayar/                # only what differs on Fassbayar
-│   ├── pages/                # FassbayarAddCompanyFormPage (+ DBA)
-│   ├── fixtures/  tests/     # empty until a Fassbayar-only screen / scenario is added
+│   ├── pages/                # FassbayarAddCompanyFormPage (+ DBA, SST, TIN...), Bill Payment pages
+│   ├── fixtures/             # pages.ts: Bill Payment Report + Details
+│   ├── tests/manageTransactions/  # billPaymentReport.spec.ts
 │
 ├── report-notes/<env>/       # optional gaps + human-action cards per environment
+├── scripts/run-all.js        # npm run test:all / test:aph / test:fassbayar
+├── scripts/md-to-html.js     # npm run md -- <file.md>: open a Markdown file in the browser
+├── docs/                     # portal-module-map.md: every module, flow, APH vs Fassbayar difference
+├── tools/report-generator/   # builds test_execution_report.html (Python 3 + jinja2: pip install jinja2)
 └── explore/scan/             # read-only scans comparing a screen on both portals (npm run scan), not part of the suite
 ```
 
@@ -44,6 +57,7 @@ system-portal-automation/
 2. A portal page never copies a common page; it `extends` it and overrides only what differs.
 3. Tests never say `if (portal === ...)`: differences live in portal pages, host profiles or `portals.config.ts`.
 4. `common/` never imports from `aph/` or `fassbayar/`; the two portal folders never import each other.
+5. Tests are grouped by portal menu module (`tests/<module>/`), same folder names on every portal (since 19 Nov 2026).
 
 ## Running
 
@@ -56,6 +70,7 @@ npm run test:all                                      # APH, then Fassbayar -> s
 npm run test:aph                                      # APH only            -> summary shows APH only
 npm run test:fassbayar                                # Fassbayar only      -> summary shows Fassbayar only
 npm run report:summary                                # rebuild test_summary.html (every portal) without running
+npm run md -- docs/portal-module-map.md               # open a Markdown file in the browser (tables + diagrams)
 npm run typecheck
 ```
 
@@ -79,8 +94,14 @@ suite were removed the same day; only code written for this structure is left. T
 | Module | Status |
 |---|---|
 | Login | shared (TC-APH-001) |
-| Add a Company | shared page + APH / Fassbayar overrides (TC-COMP-001, 002, 003) |
+| Add a Company | shared page + APH / Fassbayar overrides (TC-COMP-001, 002, 003); random realistic data, Fassbayar SST/TIN/bank/MCC/references filled and checked on Review (Derrick, merged 19 Nov 2026) |
+| Add a Company: GP card schemes | shared, Derrick's (TC-COMP-005, TC-COMP-006-01…04; HSBC schemes Fassbayar only) |
+| Company Summary | shared (TC-COMP-004) |
+| Transaction Summary | shared (TC-TRX-001) |
+| Bill Payment Report | Fassbayar only (TC-BILL-001) |
+| Manage Credit Settlements | shared, written by Derrick, merged 18 Nov 2026 (TC-CS-001 … 009, `@credit-settlement`) |
 | Company list, company details, Parent Company, bulk upload, logo | not rebuilt yet |
 
 Next module: write it once in `common/pages` (+ a small portal override where the screen differs),
-put its scenario in `common/tests`, and run it on both portals.
+put its scenario in `common/tests/<module>/`, and run it on both portals.
+One module only: `npx playwright test common/tests/manageCreditSettlements`.

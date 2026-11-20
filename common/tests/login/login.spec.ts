@@ -1,7 +1,7 @@
-import { test } from '../fixtures/base';
-import { testCase } from '../utils/testCase';
-import { loginAs } from '../flows/loginFlow';
-import { TEST_ID_PREFIX } from '../../portals.config';
+import { test } from '../../fixtures/base';
+import { testCase } from '../../utils/testCase';
+import { loginAs } from '../../flows/loginFlow';
+import { TEST_ID_PREFIX } from '../../../portals.config';
 
 // APH System Portal - Login
 // Uses the account in .env. Positive path only: no wrong-password tests

@@ -1,5 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from './BasePage';
+import { Timeouts } from '../../portals.config';
 
 // System Portal - Manage Credit Settlements (/creditSettlement/list).
 // SHARED by both portals (read-only scan of 18 Nov 2026). Differences handled here:
@@ -20,13 +21,9 @@ export interface SettlementRow {
 
 export const SETTLEMENT_STATUSES = ['Successful', 'Unsuccessful', 'Pending', 'Processing'];
 
-// "18 Nov 2026" in the portal's time zone (the Date filter's default = today)
-export const portalToday = (): string =>
-  new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kuala_Lumpur' })
-    .format(new Date());
-
 export class CreditSettlementPage extends BasePage {
 
+  readonly menuTab = this.page.locator('#topNavi a[href="/creditSettlement"]');
   readonly title = this.page.locator('.barPaddTitle');
   readonly quicklinks = this.page.locator('#leftPanel a');
   readonly batchSearchBox = this.page.locator('#search');
@@ -51,8 +48,10 @@ export class CreditSettlementPage extends BasePage {
 
   // ---------- open ----------
 
+  // Top menu "Manage Credit Settlements" -> Credit Settlement Summary (/creditSettlement/list)
   async open(): Promise<void> {
-    await this.page.goto('/creditSettlement/list');
+    await this.menuTab.click();
+    await this.page.waitForURL(/\/creditSettlement(\/list)?(\?.*)?$/, { timeout: Timeouts.pageLoad });
     await this.page.waitForLoadState('load');
     await expect(this.title.first()).toHaveText('All Credit Settlements');
   }

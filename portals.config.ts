@@ -58,9 +58,10 @@ export interface FormRules {
 }
 
 // Manage Credit Settlements > View Details (batch page) - differs per portal
-// (read-only scan of 18 Nov 2026)
+// (read-only scan of 18 Nov 2026, by Derrick)
 export interface CreditSettlementRules {
   showsRefundedTotal: boolean;        // "Total Refunded Amount" in the batch summary
+  settleCreditButton: boolean;        // "Settle Credit" on a PENDING batch (never clicked by tests)
   batchFilters: string[];             // filter labels on Batch Details, in page order
   transactionStatuses: string[];      // Status filter options on Batch Details
 }
@@ -91,6 +92,7 @@ export const portals: Record<Portal, PortalProfile> = {
     },
     creditSettlement: {
       showsRefundedTotal: false,
+      settleCreditButton: true,
       batchFilters: ['Terminal ID (TID)', 'Approval Code', 'Status', 'Amount', 'Date'],
       transactionStatuses: ['Approved', 'Reversed', 'Voided', 'Pending Signature', 'Settled', 'Refunded', 'Expired']
     },
@@ -124,6 +126,9 @@ export const portals: Record<Portal, PortalProfile> = {
     },
     creditSettlement: {
       showsRefundedTotal: true,
+      // Same as APH: a pending batch offers "Settle Credit" (confirmed by QA team, 19 Nov 2026;
+      // seen on batch 000009). Was false in Derrick's version.
+      settleCreditButton: true,
       batchFilters: ['Terminal ID (TID)', 'Status', 'Date'],
       transactionStatuses: ['Approved', 'Reversed', 'Voided', 'Pending Signature', 'Settled', 'Expired']
     },
