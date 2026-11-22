@@ -144,7 +144,12 @@ export default defineConfig({
       timezoneShort: REPORT_TIMEZONE_SHORT,
       // Builds test_execution_report.html (needs Python 3 + jinja2: pip install jinja2).
       // Kept in the project so it works on every PC. REPORT_GENERATOR overrides it.
-      generatorPath: process.env.REPORT_GENERATOR ?? `${__dirname}/tools/report-generator/generate_report.py`
+      generatorPath: process.env.REPORT_GENERATOR ?? `${__dirname}/tools/report-generator/generate_report.py`,
+      // Results also written into the test case workbook when <ENV>_WORKBOOK is set in .env
+      // (path of the OneDrive-synced .xlsx), e.g. UAT_APH_WORKBOOK=C:\...\APH_..._v1.0.xlsx
+      workbookPath: process.env[`${ENV_NAME.toUpperCase().replace(/[^A-Z0-9]/g, '_')}_WORKBOOK`],
+      envName: ENV_NAME,
+      buildLabel: process.env.BUILD_LABEL
     }],
 
     // Test Summary -> test_summary.html: one card per environment, built

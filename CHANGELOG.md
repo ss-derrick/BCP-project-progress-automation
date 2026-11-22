@@ -33,6 +33,10 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 
 ## Changes
 
+- [2026-11-20 17:05: Workbook update no longer leaves a temp file in the synced folder; FassBayar written](#2026-11-20-1705-workbook-update-no-longer-leaves-a-temp-file-in-the-synced-folder-fassbayar-written)
+- [2026-11-20 16:50: First real write into the APH baseline workbook](#2026-11-20-1650-first-real-write-into-the-aph-baseline-workbook)
+- [2026-11-20 14:45: Run results written into the APH / FassBayar test case workbooks](#2026-11-20-1445-run-results-written-into-the-aph--fassbayar-test-case-workbooks)
+- [2026-11-20 11:45: Local .env uses the dedicated automation accounts](#2026-11-20-1145-local-env-uses-the-dedicated-automation-accounts)
 - [2026-11-20 11:15: Merged Kai Wen's branch (kaiwen/tryout) into Derrick's repo](#2026-11-20-1115-merged-kai-wens-branch-kaiwentryout-into-derricks-repo)
 - [2026-11-20 11:08: Automated tests mapped to the APH and FassBayar baseline test case workbooks](#2026-11-20-1108-automated-tests-mapped-to-the-aph-and-fassbayar-baseline-test-case-workbooks)
 - [2026-11-20 11:00: Report links each test to its row in the Excel test case sheet (from ecom-automation)](#2026-11-20-1100-report-links-each-test-to-its-row-in-the-excel-test-case-sheet-from-ecom-automation)
@@ -55,6 +59,111 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 - [2026-11-18 14:25: New module: Company Summary](#2026-11-18-1425-new-module-company-summary)
 - [2026-11-18 afternoon: Old copied pages and specs removed](#2026-11-18-afternoon-old-copied-pages-and-specs-removed)
 - [2026-11-18: Structure built: one codebase, two portals](#2026-11-18-structure-built-one-codebase-two-portals)
+
+---
+
+### 2026-11-20 17:05: Workbook update no longer leaves a temp file in the synced folder; FassBayar written
+
+**By:** Derrick. **Why:** the first FassBayar write saved through a temp file next to the workbook; OneDrive
+uploaded that temp file (`tmp….xlsx` appeared on SharePoint) and did not upload the workbook itself.
+
+| File / folder | Change |
+|---|---|
+| `tools/workbook-results/update_workbook.py` | Fixed: saves to the Windows temp folder, then copies over the workbook in one write (no temp file in the synced folder) |
+
+Result: FassBayar workbook re-written at 17:01 from the 16:56 run (21 / 21 passed): 10 cases Pass (rows 9, 15,
+20, 103, 111, 166-168, 171, 185); OneDrive uploaded it, SharePoint shows the new version. The leftover temp file
+and the APH conflict copy were deleted by hand.
+
+**Key code**
+```python
+fd, tmp = tempfile.mkstemp(suffix=".xlsx")      # system temp folder, not the synced folder
+wb.save(tmp)
+shutil.copyfile(tmp, a.workbook)                 # one write -> OneDrive uploads it normally
+```
+
+**How to run / check**
+```powershell
+npm run test:fassbayar     # run output ends with "[workbook] ... Pass" lines
+```
+
+---
+
+### 2026-11-20 16:50: First real write into the APH baseline workbook
+
+**By:** Derrick. **Why:** check that the run really updates the shared workbook.
+
+| File / folder | Change |
+|---|---|
+| `.env` (local only) | `UAT_APH_WORKBOOK`, `UAT_FASSBAYAR_WORKBOOK` = the OneDrive-synced files in `C:\Users\<you>\Soft Space Sdn Bhd\Mobile POS - Baseline\` (SharePoint folder synced; both files set to "Always keep on this device") |
+| `tools/workbook-results/update_workbook.py` | Fixed: header names with a line break ("Execution" / "Date") are matched |
+
+Result of `npm run test:aph` (16:46): 18 / 18 passed; 11 APH cases written (Status Pass, Actual Result,
+Tester, Execution Date, Build) at exactly the rows of `sheet_links.json`; OneDrive uploaded it to SharePoint.
+Kept: all 11 sheets, 222 rows, filters, data validation; dropped only Excel's calculation cache / revision
+metadata (rebuilt by Excel). Backup: `execution-report-uat-aph/workbook-backups/`.
+
+**Watch out:** the workbook was open for editing in Excel Online during the write, so OneDrive also kept an
+identical conflict copy `APH_System_Portal_Baseline_Test_Cases_v1.0-DESKTOP-6GPV6UV.xlsx` in the folder (to be
+deleted by hand). Close the workbook in Excel Online / Excel before a run.
+
+---
+
+### 2026-11-20 14:45: Run results written into the APH / FassBayar test case workbooks
+
+**By:** Derrick. **Why:** results should be updated not only in the HTML report but also in the Status
+column of each portal's baseline workbook.
+
+| File / folder | Change |
+|---|---|
+| `tools/workbook-results/update_workbook.py` | **New**: fills Status, Actual Result, Tester, Execution Date, Build of every linked sheet case (Defect ID untouched) |
+| `common/reporters/executionReport.ts` | Changed: after a real run (not a rebuild) calls it when the portal's workbook path is set |
+| `playwright.config.ts` | Changed: `workbookPath` from `<ENV>_WORKBOOK` in `.env`, `envName`, `BUILD_LABEL` |
+| `.env.example`, `README.md` | Changed: how to set it up |
+
+```mermaid
+flowchart LR
+  RUN[test run] --> RES["execution-report-&lt;env&gt;/data<br/>last_execution_results.json"]
+  MAP["report-notes/&lt;env&gt;/sheet_links.json<br/>test -> sheet case"] --> UPD
+  RES --> UPD["update_workbook.py"]
+  UPD -->|"Status, Actual Result, Tester,<br/>Execution Date, Build"| WB["synced .xlsx<br/>(OneDrive)"] -->|sync| SP[(SharePoint workbook)]
+  UPD -.-> BK["execution-report-&lt;env&gt;/workbook-backups/"]
+```
+
+Rules: a case linked to several tests is **Fail** if any failed, **Blocked** if any was blocked by the
+environment, else **Pass**. Cases whose tests did not run are left as they are. Rows are found by TC ID
+(column "TC ID"), so moved rows do not matter. A backup copy is saved before each write; a workbook that is
+open in Excel desktop is not changed (message in the run output).
+
+Checked on a sample workbook shaped like the baseline one: 11 APH cases -> Pass from the 20 Nov run; a
+failed test -> its case Fail, a blocked one -> Blocked; Defect ID, the Status drop-down, colour rules,
+filter, frozen panes and README formulas kept.
+
+Needs: the SharePoint "Baseline" folder synced to the PC (OneDrive "Sync"), `pip install openpyxl`, and in `.env`:
+```
+UAT_APH_WORKBOOK=C:\...\APH_System_Portal_Baseline_Test_Cases_v1.0.xlsx
+UAT_FASSBAYAR_WORKBOOK=C:\...\FassBayar_System_Portal_Baseline_Test_Cases_v1.0.xlsx
+```
+
+**How to run / check**
+```powershell
+npm run test:aph      # run output ends with "[workbook] ... Pass" lines
+```
+
+---
+
+### 2026-11-20 11:45: Local .env uses the dedicated automation accounts
+
+**By:** Derrick. **Why:** the old accounts are shared with colleagues; a second login with the same account
+logs the run out (one session per user). The automation accounts are used only by test runs.
+
+| File / folder | Change |
+|---|---|
+| `.env` (local only, never committed) | `UAT_APH_USERNAME=automationaph`, `UAT_FASSBAYAR_USERNAME=automationfb` (+ their passwords) |
+
+Checked: Login test passes on both portals with the new accounts (APH needed a second try: the first click
+timed out once, then passed in 6.8 s). Every teammate puts the same accounts in their own `.env`
+(passwords are shared privately, not in the repo).
 
 ---
 

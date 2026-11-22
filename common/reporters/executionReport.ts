@@ -31,6 +31,11 @@ export interface ExecutionReportOptions {
   timezoneShort?: string;
   notesDir?: string;        // hand-written optional cards (see report-notes/)
   generatorPath?: string;   // path to generate_report.py
+  // Test case workbook (.xlsx) to write this run's results into (Status, Actual Result, ...),
+  // via tools/workbook-results/update_workbook.py. Not set = no workbook update.
+  workbookPath?: string;
+  envName?: string;          // e.g. UAT-APH, written in Actual Result
+  buildLabel?: string;       // Build column, default "UAT <date>"
   python?: string;          // python executable
 }
 
@@ -144,6 +149,9 @@ export default class ExecutionReportReporter implements Reporter {
     });
 
     this.renderHtml(configPath, path.join(outputDir, 'test_execution_report.html'));
+
+    // Real run only (not a report rebuild): results into the test case workbook
+    if (this.results.size > 0) this.updateWorkbook(outputDir);
   }
 
   // Rebuild only: take title / module / priority from the current code
@@ -604,6 +612,31 @@ export default class ExecutionReportReporter implements Reporter {
     return (html.slice(0, start) + table + html.slice(end))
       .replace('</head>', `${style}
 </head>`);
+  }
+
+  // Status / Actual Result / Tester / Execution Date / Build of every sheet case linked in
+  // sheet_links.json, written into the workbook (OneDrive-synced copy of the SharePoint file).
+  private updateWorkbook(outputDir: string): void {
+    const workbook = this.options.workbookPath;
+    if (!workbook) return;
+    const mapping = path.resolve(this.rootDir, this.options.notesDir ?? 'report-notes', 'sheet_links.json');
+    if (!fs.existsSync(workbook) || !fs.existsSync(mapping)) {
+      console.warn(`[workbook] not updated: ${!fs.existsSync(workbook) ? `workbook not found (${workbook})` : 'no sheet_links.json'}`);
+      return;
+    }
+    const args = [
+      path.resolve(this.rootDir, 'tools', 'workbook-results', 'update_workbook.py'),
+      '--workbook', workbook,
+      '--mapping', mapping,
+      '--results', path.join(outputDir, 'data', 'last_execution_results.json'),
+      '--env', this.options.envName ?? '',
+      '--backup-dir', path.join(outputDir, 'workbook-backups'),
+      ...(this.options.buildLabel ? ['--build', this.options.buildLabel] : [])
+    ];
+    const run = spawnSync(this.options.python ?? process.env.PYTHON ?? 'python', args, { encoding: 'utf8' });
+    process.stdout.write(run.stdout ?? '');
+    if (run.status !== 0) console.warn(`[workbook] not updated:
+${run.stderr || run.error?.message || ''}`);
   }
 
   private toDataUri(filePath: string): string {

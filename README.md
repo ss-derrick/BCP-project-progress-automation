@@ -49,6 +49,7 @@ system-portal-automation/
 ├── scripts/md-to-html.js     # npm run md -- <file.md>: open a Markdown file in the browser
 ├── docs/                     # portal-module-map.md: every module, flow, APH vs Fassbayar difference
 ├── tools/report-generator/   # builds test_execution_report.html (Python 3 + jinja2: pip install jinja2)
+├── tools/workbook-results/   # writes run results into the test case workbook (pip install openpyxl; <ENV>_WORKBOOK in .env)
 └── explore/scan/             # read-only scans comparing a screen on both portals (npm run scan), not part of the suite
 ```
 
