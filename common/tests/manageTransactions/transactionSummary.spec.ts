@@ -22,7 +22,7 @@ test.describe('Manage Transactions > Transaction Summary', { tag: '@transaction-
 
   test(
     'Search a transaction by Transaction ID and view its details',
-    testCase({ id: 'TC-TRX-001', module: MODULE, priority: 'High' }),
+    testCase({ id: 'TC-TRX-001', module: MODULE, priority: 'High', suite: ['smoke'] }),
     async ({ transactionSummaryPage, transactionDetailsPage }) => {
 
       const trx = knownTransactionFor(ENV_NAME);

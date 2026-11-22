@@ -23,7 +23,7 @@ test.describe('Manage Transactions > Bill Payment Report', { tag: ['@fassbayar',
 
   test(
     'Search a bill payment by Business Name and date range, and view its details',
-    testCase({ id: 'TC-BILL-001', module: MODULE, priority: 'High' }),
+    testCase({ id: 'TC-BILL-001', module: MODULE, priority: 'High', suite: ['smoke'] }),
     async ({ billPaymentReportPage, billPaymentDetailsPage }) => {
 
       const bill = knownBillPaymentFor(ENV_NAME);

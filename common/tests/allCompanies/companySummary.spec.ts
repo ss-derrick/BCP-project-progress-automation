@@ -21,7 +21,7 @@ test.describe('All Companies > Company Summary', { tag: '@company-summary' }, ()
 
   test(
     'Search the sync company by MID',
-    testCase({ id: 'TC-COMP-004', module: MODULE, priority: 'High' }),
+    testCase({ id: 'TC-COMP-004', module: MODULE, priority: 'High', suite: ['smoke'] }),
     async ({ companySummaryPage }) => {
 
       // Content: search with the plain MID (no -ACS suffix)

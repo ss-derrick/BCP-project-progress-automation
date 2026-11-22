@@ -61,6 +61,39 @@ const DEFAULT_GENERATOR = path.join(
 const stripAnsi = (text: string): string =>
   text.replace(/\u001b\[[0-9;]*m/g, '');
 
+// Test categories (testCase({ suite }) -> tags @smoke ...), see common/utils/testCase.ts.
+// Category of one test, for the report's "Category" column, e.g. "Smoke".
+// No category tag = the test only runs in a Full run.
+const CATEGORY_TAGS: Record<string, string> = { '@smoke': 'Smoke', '@regression': 'Regression' };
+function testCategory(test: TestCase): string {
+  const names = test.tags.map((t) => CATEGORY_TAGS[t]).filter(Boolean);
+  return names.length ? names.join(', ') : 'Full only';
+}
+
+// Which category this run was, from the command line:
+//   --grep "@smoke" -> "Smoke run"   (no filter at all -> "Full run")
+//   any other --grep or a folder / file -> "Filtered run (...)"
+const VALUE_FLAGS = new Set(['--grep', '-g', '--grep-invert', '--project', '--reporter', '--workers', '-j',
+  '--config', '-c', '--retries', '--timeout', '--repeat-each', '--max-failures', '-x', '--output',
+  '--shard', '--global-timeout', '--trace', '--tsconfig']);
+function runCategory(argv: string[] = process.argv): string {
+  const args = argv.slice(argv.indexOf('test') + 1);
+  let grep = '';
+  const paths: string[] = [];
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    if (a === '--grep' || a === '-g') grep = args[++i] ?? '';
+    else if (a.startsWith('--grep=')) grep = a.slice('--grep='.length);
+    else if (VALUE_FLAGS.has(a)) i++;
+    else if (!a.startsWith('-')) paths.push(a);
+  }
+  const category = Object.entries(CATEGORY_TAGS).find(([tag]) => grep.includes(tag))?.[1];
+  const where = paths.length ? ` · ${paths.join(', ')}` : '';
+  if (category) return `${category} run${where}`;
+  if (!grep && !paths.length) return 'Full run';
+  return `Filtered run (${[grep && `--grep ${grep}`, paths.join(', ')].filter(Boolean).join(' · ')})`;
+}
+
 // Order rows by Test Case ID (TC-APH-002 before TC-APH-010),
 // regardless of which file each test lives in
 function sortById<T>(rows: T[]): T[] {
@@ -135,12 +168,24 @@ export default class ExecutionReportReporter implements Reporter {
     }
 
     const configPath = path.join(outputDir, 'report_config.json');
+
+    // Run category (Smoke / Full / Filtered). A rebuild (--list) runs nothing, so it
+    // keeps the last run's category (none saved -> no label).
+    let category = this.results.size > 0 ? runCategory() : '';
+    if (this.results.size === 0) {
+      try {
+        category = JSON.parse(fs.readFileSync(configPath, 'utf8')).run_category ?? '';
+      } catch { /* no earlier config: no label */ }
+    }
+
     this.writeJson(configPath, {
       report_type: 'lite',
       project_name: this.options.projectName ?? 'Playwright Automation',
       system_label: this.options.systemLabel ?? 'System under test',
       run_context: this.options.runContext ?? 'after the last Playwright run',
-      ...(this.options.scopeLabel && { scope_label: this.options.scopeLabel }),
+      // Shown in the report's Summary title, e.g. Summary - 4 test cases ("Smoke run")
+      ...((this.options.scopeLabel ?? category) && { scope_label: this.options.scopeLabel ?? category }),
+      ...(category && { run_category: category }),
       timezone: this.options.timezone ?? 'UTC',
       timezone_short: this.options.timezoneShort ?? '',
       library_path: 'data/test_case_library.json',
@@ -171,7 +216,8 @@ export default class ExecutionReportReporter implements Reporter {
         id,
         module: annotation('module') ?? (test.parent.title || 'General'),
         title: test.title,
-        priority: annotation('priority') ?? ''
+        priority: annotation('priority') ?? '',
+        category: testCategory(test)
       });
     }
 
@@ -208,7 +254,8 @@ export default class ExecutionReportReporter implements Reporter {
         id,
         module: annotation('module') ?? (test.parent.title || 'General'),
         title: test.title,
-        priority: annotation('priority') ?? ''
+        priority: annotation('priority') ?? '',
+        category: testCategory(test)
       });
 
       if (!result) continue;   // not executed -> report shows "Not run"

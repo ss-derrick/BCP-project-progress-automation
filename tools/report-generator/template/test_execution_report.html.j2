@@ -113,6 +113,9 @@
     <div class="controls">
       <input id="search" type="text" placeholder="Search Test Case ID or title...">
       <select id="moduleFilter"><option value="">All modules</option>{% for mod in module_options %}<option value="{{ mod }}">{{ mod }}</option>{% endfor %}</select>
+      {%- if category_options %}
+      <select id="categoryFilter"><option value="">All categories</option>{% for c in category_options %}<option value="{{ c }}">{{ c }}</option>{% endfor %}</select>
+      {%- endif %}
       <select id="statusFilter">
         <option value="">All statuses</option>
         <option value="pass">Pass</option>
@@ -124,13 +127,16 @@
     </div>
     <div class="table-scroll">
       <table id="tcTable">
-        <thead><tr><th>Test Case ID</th><th>Module</th><th>Title</th><th>Priority</th><th>Status</th><th>Last executed{% if timezone_short %} ({{ timezone_short }}){% endif %}</th><th>Duration</th><th>Evidence</th><th>Notes</th></tr></thead>
-        <tbody>{% for r in rows %}<tr data-module="{{ r.module }}" data-status="{{ r.status }}"
+        <thead><tr><th>Test Case ID</th><th>Module</th><th>Title</th><th>Priority</th>{% if category_options %}<th>Category</th>{% endif %}<th>Status</th><th>Last executed{% if timezone_short %} ({{ timezone_short }}){% endif %}</th><th>Duration</th><th>Evidence</th><th>Notes</th></tr></thead>
+        <tbody>{% for r in rows %}<tr data-module="{{ r.module }}" data-status="{{ r.status }}" data-category="{{ r.category }}"
             data-search="{{ r.id }} {{ r.title }}">
             <td class="mono">{{ r.id }}</td>
             <td>{{ r.module }}</td>
             <td>{{ r.title }}</td>
             <td>{{ r.priority }}</td>
+            {%- if category_options %}
+            <td>{{ r.category or "&mdash;"|safe }}</td>
+            {%- endif %}
             <td><span class="badge badge-{{ r.status }}">{{ r.status_label }}</span></td>
             <td class="mono small">{{ r.last_executed }}</td>
             <td class="num">{{ r.duration }}</td>
@@ -208,24 +214,27 @@
   const search = document.getElementById('search');
   const moduleFilter = document.getElementById('moduleFilter');
   const statusFilter = document.getElementById('statusFilter');
+  const categoryFilter = document.getElementById('categoryFilter');
   const rows = Array.from(document.querySelectorAll('#tcTable tbody tr'));
   const countNote = document.getElementById('countNote');
   function applyFilters() {
     const q = search.value.trim().toLowerCase();
     const m = moduleFilter.value;
     const s = statusFilter.value;
+    const c = categoryFilter ? categoryFilter.value : '';
     let visible = 0;
     rows.forEach(r => {
       const okQ = !q || r.dataset.search.toLowerCase().includes(q);
       const okM = !m || r.dataset.module === m;
       const okS = !s || r.dataset.status === s;
-      const show = okQ && okM && okS;
+      const okC = !c || (r.dataset.category || '').split(', ').includes(c);
+      const show = okQ && okM && okS && okC;
       r.style.display = show ? '' : 'none';
       if (show) visible++;
     });
     countNote.textContent = `Showing ${visible} of ${rows.length} test cases`;
   }
-  [search, moduleFilter, statusFilter].forEach(el => el.addEventListener('input', applyFilters));
+  [search, moduleFilter, statusFilter, categoryFilter].filter(Boolean).forEach(el => el.addEventListener('input', applyFilters));
   applyFilters();
 </script>
 </body></html>

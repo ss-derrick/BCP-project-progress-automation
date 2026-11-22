@@ -143,6 +143,7 @@ def lite_build_rows(library: list, results: list) -> list:
         rows.append({
             "id": tc_id, "module": case["module"], "title": case["title"],
             "priority": case.get("priority", ""), "status": status,
+            "category": case.get("category", ""),
             "status_label": LITE_BADGE_LABEL[status],
             "last_executed": res.get("last_executed", ""),
             "duration": lite_fmt_duration(res.get("duration_seconds")),
@@ -193,6 +194,10 @@ def generate_lite(config: dict, resolve, output_path: Path):
     stats = lite_build_stats(rows)
     coverage_rows = lite_build_coverage(rows)
     module_options = sorted({r["module"] for r in rows})
+    # Test categories (Smoke, Regression, "Full only"); no column when no test has one
+    category_order = ["Smoke", "Regression", "Full only"]
+    found = {c for r in rows for c in (r["category"] or "").split(", ") if c}
+    category_options = [c for c in category_order if c in found] + sorted(found - set(category_order))
 
     # Optional extras — each renders only when its data file is provided.
     human_action_items = load_optional(config, "human_action_path", resolve)
@@ -216,6 +221,7 @@ def generate_lite(config: dict, resolve, output_path: Path):
         stats=stats,
         coverage_rows=coverage_rows,
         module_options=module_options,
+        category_options=category_options,
         rows=rows,
         human_action_items=human_action_items,
         investigation_items=investigation_items,

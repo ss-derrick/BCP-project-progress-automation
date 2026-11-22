@@ -36,6 +36,7 @@ interface SystemSummary {
   projectName?: string;
   name: string;
   label: string;
+  runCategory?: string;     // "Smoke run", "Full run"... (executionReport.ts)
   fullReport?: string;
   total: number;
   passed: number;
@@ -127,6 +128,7 @@ export default class SummaryReporter implements Reporter {
       projectName: config.project_name,
       name: label.split(' (')[0],
       label,
+      runCategory: config.run_category,
       fullReport: fullReport ? `${folder}/${path.basename(fullReport)}` : undefined,
       total: own.length,
       passed: counts.pass ?? 0,
@@ -197,6 +199,7 @@ export default class SummaryReporter implements Reporter {
       </div>
       <div class="bar"><div style="width:${rate}%"></div></div>
       <div class="meta">
+        ${s.runCategory ? `<span>Run: <b>${esc(s.runCategory)}</b></span>` : ''}
         <span>Last run: <b>${esc(this.when(s.lastRun))}</b> ${esc(tzShort)}</span>
         <span>Human action items: <b>${s.humanActions}</b></span>
         <span>Open gaps: <b>${s.openGaps}</b></span>

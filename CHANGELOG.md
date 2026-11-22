@@ -33,8 +33,10 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 
 ## Changes
 
+- [2026-11-22 22:15: Merged Kai Wen's main (Smoke categories); TC-CS-001 on a day with no settlement](#2026-11-22-2215-merged-kai-wens-main-smoke-categories-tc-cs-001-on-a-day-with-no-settlement)
 - [2026-11-20 17:05: Workbook update no longer leaves a temp file in the synced folder; FassBayar written](#2026-11-20-1705-workbook-update-no-longer-leaves-a-temp-file-in-the-synced-folder-fassbayar-written)
 - [2026-11-20 16:50: First real write into the APH baseline workbook](#2026-11-20-1650-first-real-write-into-the-aph-baseline-workbook)
+- [2026-11-20 15:55: Test categories: Smoke (tags + report Category column)](#2026-11-20-1555-test-categories-smoke-tags--report-category-column)
 - [2026-11-20 14:45: Run results written into the APH / FassBayar test case workbooks](#2026-11-20-1445-run-results-written-into-the-aph--fassbayar-test-case-workbooks)
 - [2026-11-20 11:45: Local .env uses the dedicated automation accounts](#2026-11-20-1145-local-env-uses-the-dedicated-automation-accounts)
 - [2026-11-20 11:15: Merged Kai Wen's branch (kaiwen/tryout) into Derrick's repo](#2026-11-20-1115-merged-kai-wens-branch-kaiwentryout-into-derricks-repo)
@@ -59,6 +61,39 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 - [2026-11-18 14:25: New module: Company Summary](#2026-11-18-1425-new-module-company-summary)
 - [2026-11-18 afternoon: Old copied pages and specs removed](#2026-11-18-afternoon-old-copied-pages-and-specs-removed)
 - [2026-11-18: Structure built: one codebase, two portals](#2026-11-18-structure-built-one-codebase-two-portals)
+
+---
+
+### 2026-11-22 22:15: Merged Kai Wen's main (Smoke categories); TC-CS-001 on a day with no settlement
+
+**By:** Derrick. **Why:** take Kai Wen's latest `main` (commit 4975bb7, Smoke test category) into Derrick's
+repo, following the "TryOut Structure Map" (20 Nov, 5:01 PM: categories are tags in the test, not folders).
+
+| From | Taken |
+|---|---|
+| Kai Wen (4975bb7) | `testCase({ suite: ['smoke'] })` -> `@smoke`; Smoke = TC-APH-001, TC-COMP-004, TC-TRX-001, TC-CS-001 (+ TC-BILL-001 on Fassbayar); report **Category** column + "Smoke run" label; `npm run test:smoke`, `test:aph:smoke`, `test:fassbayar:smoke` (see his 15:55 entry below) |
+| Not taken | His force-added `.env` (logins): his repo is private, this one is public. Applied as one commit without `.env`, not with his history |
+| Derrick | Workbook update, Excel links (`executionReport.ts` combined: both kept) |
+
+| File / folder | Change |
+|---|---|
+| `common/tests/manageCreditSettlements/creditSettlement.spec.ts` | Fixed: TC-CS-001 on a day with **no settlement** (22 Nov, Sunday): the portal shows "No record found. Please try again" instead of the table, so the test checks that instead of the columns |
+
+Checked: `tsc` OK; APH 18 tests (4 Smoke), Fassbayar 21 (5 Smoke). Smoke run: Fassbayar 5 / 5 passed;
+APH 3 / 4: **TC-TRX-001 fails: the APH portal shows "An error has occurred" when opening View Details of the
+known transaction 10029595181126001164** (twice, 22 Nov ~22:00); Fassbayar passes. Possible APH defect / archive
+(after 22:00); to check with QA.
+
+Note: during the first check run the workbook writing was not switched off (in PowerShell `$env:X=''` deletes
+the variable, so `.env` was used): APH / FassBayar AUTH-002, AUTH-013 got today's Pass (correct) and STL-001 got
+"Fail" from the test problem above; STL-001 was put back to its 20 Nov Pass from the pre-write backup. To switch
+workbook writing off for one run, point it at a missing file: `$env:UAT_APH_WORKBOOK='C:\nowhere\off.xlsx'`.
+
+**How to run / check**
+```powershell
+npm run test:aph:smoke
+npm run test:fassbayar:smoke
+```
 
 ---
 
@@ -106,6 +141,58 @@ metadata (rebuilt by Excel). Backup: `execution-report-uat-aph/workbook-backups/
 **Watch out:** the workbook was open for editing in Excel Online during the write, so OneDrive also kept an
 identical conflict copy `APH_System_Portal_Baseline_Test_Cases_v1.0-DESKTOP-6GPV6UV.xlsx` in the folder (to be
 deleted by hand). Close the workbook in Excel Online / Excel before a run.
+
+---
+
+### 2026-11-20 15:55: Test categories: Smoke (tags + report Category column)
+
+**Applied here 20 Nov 2026 from Kai Wen's TryOut** (same change, same entry; Derrick's newer `executionReport.ts` Excel-link code kept, only the category lines added).
+
+**Why:** the team wants to run a chosen category of tests (Smoke, Regression, Full) and see in the
+report which category a run and each test belong to. Agreed on the structure map (section 4b, 20 Nov
+3:03 PM): **tags inside the test, not new folders**, so `tests/<module>/` stays as it is and one test can
+be in several categories. **Smoke first**; Regression comes later (one more name in `SUITES`).
+
+| File | | What |
+|---|---|---|
+| `common/utils/testCase.ts` | Changed | New `suite` field (`['smoke']`) -> Playwright tag `@smoke`; `SUITES` lists the categories |
+| `common/tests/login/login.spec.ts` | Changed | TC-APH-001 (Login) -> `suite: ['smoke']` |
+| `common/tests/allCompanies/companySummary.spec.ts` | Changed | TC-COMP-004 -> Smoke |
+| `common/tests/manageTransactions/transactionSummary.spec.ts` | Changed | TC-TRX-001 -> Smoke |
+| `common/tests/manageCreditSettlements/creditSettlement.spec.ts` | Changed | TC-CS-001 (list screen) -> Smoke |
+| `fassbayar/tests/manageTransactions/billPaymentReport.spec.ts` | Changed | TC-BILL-001 -> Smoke (Fassbayar only) |
+| `common/reporters/executionReport.ts` | Changed | Each test's category in the library (`category`); the run's category from the command line (`Smoke run` / `Full run` / `Filtered run (...)`) -> `report_config.json` `run_category` + `scope_label` |
+| `tools/report-generator/generate_report.py` + `template/test_execution_report.html.j2` | Changed | "All test cases": new **Category** column + "All categories" filter; Summary title shows the run, e.g. `Summary - 4 test cases ("Smoke run")` |
+| `common/reporters/summaryReport.ts` | Changed | Each portal card on `test_summary.html` shows `Run: Smoke run` |
+| `scripts/run-all.js`, `package.json` | Changed | `--smoke` option; `npm run test:smoke`, `test:aph:smoke`, `test:fassbayar:smoke` |
+
+Smoke = fast, read-only checks that each main screen works: **APH 4 tests, Fassbayar 5**.
+Tests without a category show **"Full only"** (they run only in a Full run). Folders did not change.
+The Excel "Test Case ID" link is unchanged (it matches by test ID).
+
+**Key code**
+```ts
+// common/utils/testCase.ts
+export const SUITES = ['smoke'] as const;  // next: 'regression'
+...
+  return { tag: (meta.suite ?? []).map((s) => `@${s}`), annotation: [ ... ] };
+
+// a test
+testCase({ id: 'TC-TRX-001', module: MODULE, priority: 'High', suite: ['smoke'] })
+```
+
+**How to run / check**
+```powershell
+npm run test:aph:smoke          # APH Smoke (4)  -> report says "Smoke run"
+npm run test:fassbayar:smoke    # Fassbayar Smoke (5)
+npm run test:smoke              # both portals, Smoke
+$env:ENV_NAME='UAT-APH'; npx playwright test --grep "@smoke"
+npm run test:aph                # Full, as before -> "Full run"
+$env:ENV_NAME='UAT-APH'; npx playwright test --list --grep "@smoke"   # see which tests, no run
+```
+Checked without running on UAT: `tsc --noEmit` OK; `--list --grep "@smoke"` = 4 (APH) / 5 (Fassbayar);
+reports rebuilt from the last run show the Category column. A rebuild (`--list`) keeps the last run's
+label. Not run on UAT yet.
 
 ---
 

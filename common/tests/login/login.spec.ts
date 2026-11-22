@@ -11,7 +11,7 @@ test.describe('Login', () => {
   test(
     'Login with valid User ID and Password',
     testCase({
-      id: `${TEST_ID_PREFIX}-001`, module: 'Login', priority: 'High',
+      id: `${TEST_ID_PREFIX}-001`, module: 'Login', priority: 'High', suite: ['smoke'],
       gaps: [{
         description: 'Only a valid login is tested. Wrong password, locked account, password expiry and the one-session-per-user logout are not automated.',
         impact: 'A login-error or lock-out defect would not be caught. Not automated on purpose: failed logins could lock the shared test account.'

@@ -59,6 +59,7 @@ system-portal-automation/
 3. Tests never say `if (portal === ...)`: differences live in portal pages, host profiles or `portals.config.ts`.
 4. `common/` never imports from `aph/` or `fassbayar/`; the two portal folders never import each other.
 5. Tests are grouped by portal menu module (`tests/<module>/`), same folder names on every portal (since 19 Nov 2026).
+6. Test categories are tags, not folders: `testCase({ ..., suite: ['smoke'] })` -> `@smoke` (since 20 Nov 2026). No `suite` = Full only.
 
 ## Running
 
@@ -70,6 +71,8 @@ $env:DEMO='false'; ...                                # fast, headless (needed f
 npm run test:all                                      # APH, then Fassbayar -> summary shows BOTH
 npm run test:aph                                      # APH only            -> summary shows APH only
 npm run test:fassbayar                                # Fassbayar only      -> summary shows Fassbayar only
+npm run test:aph:smoke                                # one category: Smoke (test:fassbayar:smoke, test:smoke = both)
+$env:ENV_NAME='UAT-APH'; npx playwright test --grep "@smoke"   # same, without the summary script
 npm run report:summary                                # rebuild test_summary.html (every portal) without running
 npm run md -- docs/portal-module-map.md               # open a Markdown file in the browser (tables + diagrams)
 npm run typecheck

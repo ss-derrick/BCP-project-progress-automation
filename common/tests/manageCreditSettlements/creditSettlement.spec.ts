@@ -38,7 +38,7 @@ test.describe('Manage Credit Settlements > Credit Settlement Summary', { tag: '@
   test(
     'Credit Settlement list shows its search, filters, columns and quicklinks',
     testCase({
-      id: 'TC-CS-001', module: MODULE, priority: 'High',
+      id: 'TC-CS-001', module: MODULE, priority: 'High', suite: ['smoke'],
       gaps: [{
         description: "Only today's settlements are used (the Date filter default); searching other dates with the date picker is not tested.",
         impact: 'A defect when filtering past dates would not be caught.'
@@ -62,6 +62,17 @@ test.describe('Manage Credit Settlements > Credit Settlement Summary', { tag: '@
         expect(options).toEqual(['Select One', ...SETTLEMENT_STATUSES]);
         await expect(cs.dateFilter).toHaveValue(portalToday());
       });
+      // No settlement today (e.g. a Sunday): the portal shows "No record found. Please try again"
+      // instead of the table and "Total Records" (seen 22 Nov 2026) -> check that, not the columns
+      if (await cs.headers.count() === 0) {
+        await test.step('No settlement today: "No record found" instead of the list', async () => {
+          await expect(cs.noRecord).toBeVisible();
+          await expect(cs.rows).toHaveCount(0);
+          console.log(`${ENV_NAME} | no credit settlement on ${portalToday()}: empty list shown`);
+          await cs.captureScreen('Credit Settlement list - no record today');
+        });
+        return;
+      }
       await test.step('Columns: Date/Time, Status, Batch No., Mobile User ID, TID (MID), Quicklink', async () => {
         const headers = (await cs.headers.allInnerTexts()).map((h) => h.replace(/\s+/g, ' ').trim());
         expect(headers.slice(0, 3)).toEqual(['Date/ Time', 'Status', 'Batch No.']);
