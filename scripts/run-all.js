@@ -27,4 +27,7 @@ envs.forEach((env, i) => {
   if (run.status !== 0) exitCode = run.status ?? 1;
 });
 
+// one shareable zip: the summary only opens the full reports when their folders travel with it
+spawnSync('node', [require('node:path').join(__dirname, 'package-reports.js')], { stdio: 'inherit' });
+
 process.exit(exitCode);

@@ -9,6 +9,10 @@ import { CompanySummaryPage } from '../pages/CompanySummaryPage';
 import { TransactionSummaryPage } from '../pages/TransactionSummaryPage';
 import { TransactionDetailsPage } from '../pages/TransactionDetailsPage';
 import { CreditSettlementPage } from '../pages/CreditSettlementPage';
+import { AdministratorPage } from '../pages/AdministratorPage';
+import { ReadersPage } from '../pages/ReadersPage';
+import { cssFailMarks, cssMarks, markedScreenshot } from '../utils/screenMarks';
+import { explainMessages } from '../utils/explainFailure';
 
 // BASE TEST for every portal.
 //   common/tests/<module>/*  import { test } from '../../fixtures/base'
@@ -27,10 +31,14 @@ type SharedPages = {
   transactionSummaryPage: TransactionSummaryPage;
   transactionDetailsPage: TransactionDetailsPage;
   creditSettlementPage: CreditSettlementPage;
+  administratorPage: AdministratorPage;
+  readersPage: ReadersPage;
 };
 
 type AutoFixtures = {
   detectBlockedEnvironment: void;
+  screenEveryPage: void;
+  failureScreen: void;
 };
 
 export const test = base.extend<SharedPages & AutoFixtures>({
@@ -42,6 +50,75 @@ export const test = base.extend<SharedPages & AutoFixtures>({
   transactionSummaryPage: async ({ page }, use) => { await use(new TransactionSummaryPage(page)); },
   transactionDetailsPage: async ({ page }, use) => { await use(new TransactionDetailsPage(page)); },
   creditSettlementPage: async ({ page }, use) => { await use(new CreditSettlementPage(page)); },
+  administratorPage: async ({ page }, use) => { await use(new AdministratorPage(page)); },
+  readersPage: async ({ page }, use) => { await use(new ReadersPage(page)); },
+
+  // A step screenshot of EVERY page the test lands on (report: one per screen, in order), so a failure
+  // can be traced screen by screen. Pages whose page objects already shoot every screen are left out:
+  // Administrator (/admin), Manage Readers (/reader, /company views opened from there are shot too) and login.
+  // Off for one run: $env:STEP_SCREENSHOTS='false'
+  screenEveryPage: [
+    async ({ page }, use, testInfo) => {
+      if (process.env.STEP_SCREENSHOTS === 'false') return use();
+      let busy = Promise.resolve();
+      const onNavigate = (frame: import('@playwright/test').Frame) => {
+        if (frame !== page.mainFrame()) return;
+        busy = busy.then(async () => {
+          try {
+            await page.waitForLoadState('load', { timeout: 15_000 });
+            const path = new URL(page.url()).pathname;
+            if (/^\/(admin|reader|auth|login|console)(\/|$)/.test(path) || path === '/') return;   // shot by their page objects / login flow
+            const title = (await page.locator('.barPaddTitle, .title24Black').first().innerText({ timeout: 1_000 }).catch(() => '')).trim();
+            // caption + red boxes via screenshot-only CSS (the test may be clicking meanwhile)
+            const body = await page.screenshot({ fullPage: true, type: 'jpeg', quality: 70, style: cssMarks(`Screen: ${title || path}`) });
+            await testInfo.attach(`screen: ${title || path}`, { body, contentType: 'image/jpeg' });
+          } catch { /* page closed or test finished */ }
+        });
+      };
+      page.on('framenavigated', onNavigate);
+      await use();
+      page.off('framenavigated', onNavigate);
+      await busy;
+    },
+    { auto: true }
+  ],
+
+  // Failed checks marked ON the screen where they happened:
+  //  - while the test runs: as soon as a check fails (soft checks too), a screenshot of that very screen
+  //    with a red "FAILED HERE" banner naming the check (screenshot-only CSS: the test is not disturbed);
+  //  - when the test stops on a failure: a screenshot of where it stopped with the remaining failures and
+  //    the error messages boxed in red. The report shows these instead of Playwright's plain final screenshot.
+  failureScreen: [
+    async ({ page }, use, testInfo) => {
+      let seen = 0;
+      let busy: Promise<void> = Promise.resolve();
+      const shootNew = () => {
+        if (testInfo.errors.length <= seen || page.isClosed()) return;
+        const fresh = testInfo.errors.slice(seen);
+        seen = testInfo.errors.length;
+        busy = busy.then(async () => {
+          const lines = explainMessages(fresh.map((e) => e.message ?? String(e.value ?? '')));
+          const where = (() => { try { return new URL(page.url()).pathname; } catch { return ''; } })();
+          const body = await page.screenshot({ fullPage: true, type: 'jpeg', quality: 70, style: cssFailMarks(`check failed on ${where}`, lines) }).catch(() => null);
+          if (body) await testInfo.attach(`screen: FAILED - ${(lines[0] ?? '').slice(0, 80)}`, { body, contentType: 'image/jpeg' }).catch(() => {});
+        });
+      };
+      const timer = setInterval(shootNew, 200);
+      await use();
+      clearInterval(timer);
+      await busy;
+      if (testInfo.status === testInfo.expectedStatus || testInfo.status === 'skipped' || page.isClosed()) return;
+      if (testInfo.errors.length <= seen) return;                  // every failure already shot where it happened
+      const failures = explainMessages(testInfo.errors.slice(seen).map((e) => e.message ?? String(e.value ?? '')));
+      const where = (() => { try { return new URL(page.url()).pathname; } catch { return ''; } })();
+      const body = await markedScreenshot(page, {
+        caption: `${testInfo.status === 'timedOut' ? 'Timed out' : 'Test failed'} on ${where || 'this screen'}`,
+        failures: failures.length ? failures : ['see the report Notes']
+      });
+      if (body) await testInfo.attach(`screen: FAILED - ${(failures[0] ?? '').slice(0, 80)}`, { body, contentType: 'image/jpeg' });
+    },
+    { auto: true }
+  ],
 
   // If a test fails while a firewall "blocked" page is on screen, tag it
   // blocked-env so the report doesn't count it as a product defect.

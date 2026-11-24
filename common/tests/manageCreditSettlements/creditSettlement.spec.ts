@@ -3,7 +3,7 @@ import { testCase } from '../../utils/testCase';
 import { loginAs } from '../../flows/loginFlow';
 import { ENV_NAME, PORTAL_PROFILE } from '../../../portals.config';
 import { CreditSettlementPage, SETTLEMENT_STATUSES, type SettlementRow } from '../../pages/CreditSettlementPage';
-import { portalToday } from '../../utils/portalDate';
+import { portalToday, portalDaysAgo } from '../../utils/portalDate';
 
 // Manage Credit Settlements - SHARED: runs on APH and Fassbayar.
 // (Written by Derrick, merged into this structure 18 Nov 2026.)
@@ -12,7 +12,11 @@ import { portalToday } from '../../utils/portalDate';
 // "Settle Credit" is never clicked.
 // Test data = the settlements already on the environment: each test takes a
 // real row from today's list (the Date filter defaults to today). No rows
-// today -> the test is skipped with the reason.
+// today -> it goes back a day at a time (up to LOOKBACK_DAYS) and uses the
+// newest day that has settlements. Still none -> the list with the Date filter
+// cleared (every settlement). APH 23 Nov 2026: a day search returned 0 even for
+// days that have settlements (20 Nov: 4 in the full list) - reported as a finding.
+// None at all -> skipped with the reason.
 // Portal differences (batch page) come from portals.config.ts creditSettlement.
 // Run only this module:  npx playwright test --grep @credit-settlement
 
@@ -20,10 +24,32 @@ const MODULE = 'Manage Credit Settlements';
 const rules = PORTAL_PROFILE.creditSettlement;   // Batch Details differences (portals.config.ts)
 const num = (batchNo: string) => Number(batchNo.replace(/\D/g, ''));
 
-async function firstRowOrSkip(cs: CreditSettlementPage): Promise<SettlementRow> {
-  const [row] = await cs.readRows();
-  test.skip(!row, `No credit settlement on ${ENV_NAME} for ${portalToday()}: nothing to use as test data`);
-  return row!;
+const LOOKBACK_DAYS = 7;
+
+// First settlement of the newest day that has any (today first). The list stays filtered on that day.
+async function firstRowOrSkip(cs: CreditSettlementPage): Promise<SettlementRow & { day: string }> {
+  for (let n = 0; n <= LOOKBACK_DAYS; n++) {
+    const day = portalDaysAgo(n);
+    if (n > 0) await cs.searchDate(day);
+    const [row] = await cs.readRows();
+    if (row) {
+      if (n > 0) test.info().annotations.push({ type: 'test data', description: `No settlement today; used ${day} (${n} day(s) back)` });
+      return { ...row, day };
+    }
+  }
+  // every settlement (no date filter); the list stays like that for the test (day = '')
+  await cs.searchAllDates();
+  const [any] = await cs.readRows();
+  if (any) {
+    const [d, m, y] = any.dateTime.split(' / ')[0].split(' ');                                  // "20 11 2026"
+    const day = `${d} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][Number(m) - 1]} ${y}`;
+    test.info().annotations.push({ type: 'finding',
+      description: `Date filter found no settlement in the last ${LOOKBACK_DAYS} days, but the full list's newest settlement is on ${day}: the Date filter misses it (test used the full list)` });
+    return { ...any, day: '' };
+  }
+  test.skip(true, `No credit settlement on ${ENV_NAME} at all: nothing to use as test data. ` +
+    'Human action: make a card sale and settle it on a test terminal, then re-run');
+  throw new Error('unreachable');
 }
 
 test.describe('Manage Credit Settlements > Credit Settlement Summary', { tag: '@credit-settlement' }, () => {
@@ -144,8 +170,12 @@ test.describe('Manage Credit Settlements > Credit Settlement Summary', { tag: '@
     testCase({ id: 'TC-CS-005', module: MODULE, priority: 'High' }),
     async ({ creditSettlementPage: cs, page }) => {
       const sample = await firstRowOrSkip(cs);
-      await test.step(`Search Batch No. ${sample.batchNo}`, async () => {
+      await test.step(`Search Batch No. ${sample.batchNo} (${sample.day || 'from the full list'})`, async () => {
         await cs.searchBatch(sample.batchNo);
+        // older batches can be in the archive, which APH only opens 22:00-06:00
+        if (await cs.archiveClosed.isVisible().catch(() => false)) {
+          test.skip(true, `Human action required: batch ${sample.batchNo} (${sample.day || sample.dateTime}) is in the archive, viewable only 22:00-06:00; search it in that window`);
+        }
         await expect(page.getByText(/You are currently viewing\s*Batch No\./)).toBeVisible();
         const rows = await cs.readRows();
         expect(rows.length).toBeGreaterThan(0);
@@ -260,6 +290,9 @@ test.describe('Manage Credit Settlements > Credit Settlement Summary', { tag: '@
       await test.step(`View all credit settlements of TID ${sample.tid}'s company`, async () => {
         await cs.openViewAll(0);
         await expect(page.getByText(/MID:\s*\d+/).first()).toBeVisible();
+        // company list also defaults to today: same day as the sample, or every date
+        if (!sample.day) await cs.searchAllDates();
+        else if (sample.day !== portalToday()) await cs.searchDate(sample.day);
         await expect(page.getByRole('link', { name: 'View Company Details' })).toBeVisible();
         await expect(cs.title.first()).toHaveText('All Credit Settlements');
         await expect(cs.tidFilter).toBeVisible();

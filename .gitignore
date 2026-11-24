@@ -27,3 +27,10 @@ Test_Execution_Report_*.html
 /docs/*.html
 /CHANGELOG.html
 /README.html
+/explore/scan/results/administrator-*.json
+/explore/scan/results/administrator-details-*.json
+/explore/scan/results/administrator-popups-*.json
+/explore/scan/results/administrator-validation-*.json
+/explore/scan/results/readers-*.json
+/explore/scan/results/readerUpload-*.json
+__pycache__/

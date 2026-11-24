@@ -3,16 +3,19 @@
 After a run, every sheet case linked to automated tests (report-notes/<env>/sheet_links.json)
 gets its yellow execution columns filled in the workbook's "Test Case Library" sheet:
 
-    Status          Pass / Fail / Blocked (several tests on one case: Fail if any failed,
-                    Blocked if any was blocked by the environment, Pass if all passed)
+    Status          Pass / Fail / Blocked. Several tests on one case: Fail if any failed, Blocked if any
+                    was blocked by the environment OR skipped (could not be executed, e.g. no test
+                    data today), Pass if all passed
     Actual Result   "Automation 2026-11-20 11:50 MYT (UAT-APH): TC-CS-002 pass, TC-CS-003 pass"
     Tester          "Automation (Playwright)"
     Execution Date  2026-11-20
     Build           --build (default "UAT <date>")
+    Automation ID   (if the sheet has this column) every automated test linked to the case,
+                    e.g. "TC-CS-002, TC-CS-003", written for every linked case, even if not run
 
 Defect ID is never touched. Rows are found by the TC ID in the "TC ID" column (not by the row
 numbers in sheet_links.json), so inserted / moved rows do not matter. Cases whose tests did not
-run (skipped / not run) are left as they are. A backup copy is saved before the file is changed.
+run at all are left as they are; skips that only mean "not this portal" are ignored. A backup copy is saved before the file is changed.
 
     python update_workbook.py --workbook <file.xlsx> --mapping <sheet_links.json>
         --results <last_execution_results.json> --env UAT-APH [--build "UAT 20 Nov 2026"]
@@ -20,6 +23,7 @@ run (skipped / not run) are left as they are. A backup copy is saved before the 
 """
 import argparse
 import json
+import re
 import os
 import shutil
 import sys
@@ -30,13 +34,17 @@ from openpyxl import load_workbook
 
 MYT = timezone(timedelta(hours=8))
 COLUMNS = ["TC ID", "Status", "Actual Result", "Tester", "Execution Date", "Build"]
-RESULT_TEXT = {"pass": "pass", "fail": "FAIL", "blocked-env": "blocked (environment)"}
+RESULT_TEXT = {"pass": "pass", "fail": "FAIL", "blocked-env": "blocked (environment)",
+               "skipped": "blocked (not executed)"}
+# Skips that only mean "not this portal's scenario" are not results: left out
+# ... and HAR cases ("Human action required: ..."): the sheet keeps them Not Run for a tester
+NOT_APPLICABLE = re.compile(r"^(Not verified on |Applicable for .+ only|Human action required)|is not a host of")
 
 
 def case_status(statuses):
     if "fail" in statuses:
         return "Fail"
-    if "blocked-env" in statuses:
+    if "blocked-env" in statuses or "skipped" in statuses:
         return "Blocked"
     return "Pass"
 
@@ -61,15 +69,19 @@ def main():
 
     # sheet case -> [(automation id, status, notes)] for tests that ran
     by_case = {}
-    ran = {r["id"]: r for r in results if r.get("status") in RESULT_TEXT}
+    ran = {r["id"]: r for r in results if r.get("status") in RESULT_TEXT
+           and not (r["status"] == "skipped" and NOT_APPLICABLE.search(r.get("notes") or ""))}
     for test_id, links in mapping.get("links", {}).items():
         if test_id not in ran:
             continue
         for link in links:
             by_case.setdefault(link["sheetId"], []).append(ran[test_id])
-    if not by_case:
-        print("[workbook] nothing to write: no mapped test ran")
-        return 0
+    # "Automation ID" column: every linked case lists ALL its automated tests (from the mapping,
+    # whether or not they ran this time), e.g. "TC-CS-002, TC-CS-003, TC-CS-004, TC-CS-005"
+    ids_by_case = {}
+    for test_id, links in mapping.get("links", {}).items():
+        for link in links:
+            ids_by_case.setdefault(link["sheetId"], set()).add(test_id)
 
     wb = load_workbook(a.workbook)
     if sheet_name not in wb.sheetnames:
@@ -97,6 +109,17 @@ def main():
             rows[str(v).strip()] = r
 
     written, not_found = [], []
+    ids_changed = 0
+    if "Automation ID" in cols:
+        for case_id, ids in ids_by_case.items():
+            r = rows.get(case_id)
+            if r is None:
+                continue
+            val = ", ".join(sorted(ids))
+            if ws.cell(r, cols["Automation ID"]).value != val:
+                ws.cell(r, cols["Automation ID"]).value = val
+                ids_changed += 1
+                print(f"[workbook] {case_id} (row {r}): Automation ID = {val}")
     for case_id, tests in sorted(by_case.items()):
         r = rows.get(case_id)
         if r is None:
@@ -106,7 +129,8 @@ def main():
         parts = []
         for t in tests:
             part = f"{t['id']} {RESULT_TEXT[t['status']]}"
-            if t["status"] != "pass" and t.get("notes"):
+            # failures / skips give their reason; a pass only its "Finding: ..." note (if any)
+            if t.get("notes") and (t["status"] != "pass" or t["notes"].startswith("Finding:")):
                 part += f" ({t['notes'][:150]})"
             parts.append(part)
         actual = f"Automation {now:%Y-%m-%d %H:%M} MYT ({a.env}): " + ", ".join(parts)
@@ -120,6 +144,12 @@ def main():
         print(f"[workbook] {case_id} (row {r}): {status}")
     for case_id in not_found:
         print(f"[workbook] {case_id}: not in the workbook (check sheet_links.json)")
+    for case_id in sorted(set(ids_by_case) - set(rows)):
+        if case_id not in not_found:
+            print(f"[workbook] {case_id}: not in the workbook (check sheet_links.json)")
+    if not written and not ids_changed:
+        print("[workbook] nothing to write")
+        return 0
     if a.dry_run:
         print("[workbook] dry run: file not changed")
         return 0
@@ -141,7 +171,7 @@ def main():
     finally:
         if os.path.exists(tmp):
             os.remove(tmp)
-    print(f"[workbook] updated {len(written)} case(s) in {a.workbook}")
+    print(f"[workbook] updated {len(written)} result(s), {ids_changed} Automation ID(s) in {a.workbook}")
     return 0
 
 

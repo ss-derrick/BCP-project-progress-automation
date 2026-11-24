@@ -172,7 +172,7 @@ export default class SummaryReporter implements Reporter {
       .join(' ');
 
     const button = s.fullReport
-      ? `<a class="button" href="${esc(s.fullReport)}">Open full report &#8599;</a>`
+      ? `<a class="button" href="${esc(s.fullReport)}" title="Opens ${esc(s.fullReport)}: works only when this summary is opened from the unzipped report package">Open full report &#8599;</a>`
       : `<span class="button off" title="generate_report.py was not found when this report was made, so only its data and screenshots exist">Full report not generated</span>`;
 
     const failedTable = ok
@@ -247,6 +247,7 @@ export default class SummaryReporter implements Reporter {
   .mono { font-family:Consolas, monospace; font-size:13px; }
   .button { background:var(--brand); color:#fff; text-decoration:none; padding:8px 14px; border-radius:6px; white-space:nowrap; }
   .button.off { background:#c9cfc0; color:#4d5547; cursor:help; }
+  .share-note { background:#fff8e1; border:1px solid #f0d58a; border-radius:8px; padding:10px 14px; margin:0 0 16px; font-size:14px; line-height:1.5; }
   .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0 8px; }
   .stat { background:var(--bg); border-radius:6px; padding:10px; text-align:center; font-size:13px; color:var(--muted); }
   .stat .num { display:block; font-size:24px; font-weight:600; color:var(--ink); }
@@ -278,6 +279,11 @@ export default class SummaryReporter implements Reporter {
     <div style="color:var(--pass)">Passed<b>${passed}</b></div>
     <div style="color:var(--fail)">Not passed<b>${total - passed}</b></div>
   </div>
+  <div class="share-note"><b>Opening the full reports:</b> the "Open full report" buttons work only when this page is
+  opened from the unzipped report package, next to its <code>execution-report-&lt;system&gt;</code> folders
+  (they hold each full report and its screenshots). If you received only this one file, the buttons show
+  "404 / not found": ask for the zip <i>Test_Reports_&lt;date&gt;.zip</i>, right-click it, <b>Extract All</b>,
+  then open <code>test_summary.html</code> from the extracted folder.</div>
   ${systems.map((s) => this.card(s)).join('\n')}
   <footer>Each system's numbers come from its own last run, so they may be from different times (see "Last run").
   Full details, screenshots, gaps and human action items are in each system's report.</footer>

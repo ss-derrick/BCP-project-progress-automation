@@ -60,11 +60,34 @@ export class TransactionSummaryPage extends BasePage {
     return out;
   }
 
-  // Row's "View Details" button (a plain link - no Quicklink dropdown here)
-  async openDetails(row: Locator): Promise<void> {
+  // Newest transaction on the list (it opens on today's date: not archived yet). '' if none today.
+  // Column "Transaction ID" (APH) / "Transaction ID (Business Name)" (Fassbayar): the ID is the first word.
+  async newestTransactionId(): Promise<string> {
+    if (!(await this.rows.count())) return '';
+    const row = await this.readRow(this.rows.first());
+    const column = Object.keys(row).find((h) => h.startsWith('Transaction ID')) ?? '';
+    return (row[column] ?? '').split(/\s+/)[0];
+  }
+
+  // Older transactions are in the archive: APH shows their details only 22:00 - 06:00
+  readonly archiveClosed = this.page.getByText(/Archive data can only be viewed between/);
+
+  // Row's "View Details" button (a plain link - no Quicklink dropdown here).
+  // Returns 'archive' when the portal shows the archive-hours message instead of the details.
+  async openDetails(row: Locator): Promise<'details' | 'archive'> {
     const viewDetails = row.getByRole('link', { name: 'View Details', exact: true });
     await this.scrollToElement(viewDetails);
     await viewDetails.click();
-    await this.page.waitForURL(/\/transaction\/viewDetails\?/, { timeout: Timeouts.pageLoad });
+    // The portal can answer with its error page instead of the details (APH, 22 Nov 2026):
+    // report that page's message, not a bare timeout
+    const errorPage = this.page.getByText('An error has occurred.', { exact: true });
+    await Promise.race([
+      this.page.waitForURL(/\/transaction\/viewDetails\?/, { timeout: Timeouts.pageLoad }),
+      errorPage.waitFor({ timeout: Timeouts.pageLoad }).then(() => {
+        throw new Error('Portal error page "An error has occurred. Please try again..." instead of the transaction details (View Details)');
+      })
+    ]);
+    await this.page.waitForLoadState('load');
+    return (await this.archiveClosed.isVisible().catch(() => false)) ? 'archive' : 'details';
   }
 }

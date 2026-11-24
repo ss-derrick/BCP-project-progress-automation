@@ -90,6 +90,21 @@ export class CreditSettlementPage extends BasePage {
     await this.page.waitForLoadState('load');
   }
 
+  // The Date filter is read-only (picker only): set it like the picker does, then Search.
+  // Later filter() searches keep this date.
+  async searchDate(date: string): Promise<void> {
+    await this.dateFilter.evaluate((e, v) => { (e as HTMLInputElement).value = v; }, date);
+    await this.filterSearchButton.click();
+    await this.page.waitForLoadState('load');
+  }
+
+  // Every settlement, newest first. The list has no "all dates" option, but it IGNORES a date it cannot
+  // read and then lists everything (found 23 Nov 2026: APH's day search returned 0 even for days with
+  // settlements, so this was the only way to get test data). Used only as test-data fallback.
+  async searchAllDates(): Promise<void> {
+    await this.searchDate('any date');
+  }
+
   // ---------- batch no. search ----------
 
   async searchBatch(batchNo: string): Promise<void> {

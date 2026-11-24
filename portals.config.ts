@@ -66,15 +66,48 @@ export interface CreditSettlementRules {
   transactionStatuses: string[];      // Status filter options on Batch Details
 }
 
+// Administrator differences per portal (sheet + exploration 23 Nov 2026)
+export interface AdministratorRules {
+  cardBrandLimitColumn: string;      // Card Brand list column: APH "(MYR)", Fassbayar "(RM)"
+  auditActionCount?: number;         // Audit Trail Action options incl. Select One (APH sheet: 117; FB sheet: "60+")
+  // Audit Trail date range (ADM-019): true = a range beyond the limit must be refused with a message;
+  // false = no limit by design (a long range simply lists the records). APH and Fassbayar: false (QA Lead, 24 Nov 2026).
+  auditRangeLimited: boolean;
+  // From each baseline workbook's Test Data sheet (QA Lead, 23 Nov 2026). '' = not given yet: the tests
+  // then use the automation's own dummy users (qaautotest01 / 02). ADM_TEST_BANK_USER (.env) overrides.
+  testBankUser: string;              // disposable user: edit / suspend / reinstate (ADM-004, 006)
+  resetUser: string;                 // Reset Password target (ADM-009)
+  loginTestUser: string;             // logged in as while suspended / reinstated (ADM-018); password: <ENV>_TEST_BANK_USER_PASSWORD
+  testPlanCode: string;              // unused 3-digit IPP plan code, created / edited / deleted only by ADM-013
+  testPlanProvider: string;          // its Service Provider host code where the form has one, as on the list ('' = first option)
+}
+
+// Manage Readers (explore/scan/readers.scan.ts 23 Nov 2026 + each workbook's Test Data sheet)
+export interface ReaderRules {
+  quicklinks: string[];              // left panel on Reader Summary
+  detailsButtons: string[];          // Reader Details buttons of an Active reader (besides Suspend Reader)
+  // TD-07 working company (Test Data sheet): test readers are registered on it (RDR-003 .. 016)
+  workingCompany: string;            // business name
+  workingMid: string;                // its MID ('' = looked up from All Companies by the name)
+  // RDR-005 "company B": the test reader is moved to it. '' = not named yet -> the case asks for it
+  secondMid: string;
+}
+
 export interface PortalProfile {
   name: string;
   hosts: HostProfile[];
   form: FormRules;
   creditSettlement: CreditSettlementRules;
+  administrator: AdministratorRules;
+  readers: ReaderRules;
   features: {
     sstTin: boolean;          // SST / TIN / bank / MCC / references / DBA fields on Add a Company
     logoUpload: boolean;      // Upload / Remove Company Logo
     bulkUpload: boolean;      // Bulk Company Upload (create / edit)
+    // Administrator screens shown to the automation account (explore/scan/administrator.scan.ts, 23 Nov 2026)
+    bankUsers: boolean;       // Manage Bank Users, Add a Bank User, suspend / reinstate, Reset Password
+    cardBrandSettings: boolean;  // Card Brand Settings (contactless CVM limit)
+    hostSettings: boolean;    // Host Settings (Host Downtime Check Period)
   };
 }
 
@@ -97,7 +130,20 @@ export const portals: Record<Portal, PortalProfile> = {
       transactionStatuses: ['Approved', 'Reversed', 'Voided', 'Pending Signature', 'Settled', 'Refunded', 'Expired']
     },
     // TODO(confirm): logo / bulk upload not checked on APH yet
-    features: { sstTin: false, logoUpload: false, bulkUpload: false }
+    features: { sstTin: false, logoUpload: false, bulkUpload: false, bankUsers: true, cardBrandSettings: true, hostSettings: true },
+    // APH Test Data: TD-04 disposable user test_email (ADM-004, 006, 009); TD-02 for ADM-018 = qaautotest01
+    // (QA Lead 23 Nov: "can use qaautotest01"; the automation's own user); TD-11 test plan code 789
+    administrator: {
+      cardBrandLimitColumn: 'Contactless CVM Limit (MYR)', auditActionCount: 117, auditRangeLimited: false,   // no limit: QA Lead 24 Nov
+      testBankUser: 'test_email', resetUser: 'test_email', loginTestUser: 'qaautotest01',
+      testPlanCode: '789', testPlanProvider: ''
+    },
+    readers: {
+      quicklinks: ['Reader Summary', 'Register New Readers'],
+      detailsButtons: ['View Company Details', 'Status History >>', 'View Sync History >>', 'Retrigger Fassbayar Sync'],
+      workingCompany: 'testcreate888', workingMid: '202610011060002',   // Test Data TD-07 (ACS)
+      secondMid: ''                                                      // not named in Test Data yet (RDR-005 asks)
+    }
   },
   fassbayar: {
     name: 'Fassbayar',
@@ -132,7 +178,21 @@ export const portals: Record<Portal, PortalProfile> = {
       batchFilters: ['Terminal ID (TID)', 'Status', 'Date'],
       transactionStatuses: ['Approved', 'Reversed', 'Voided', 'Pending Signature', 'Settled', 'Expired']
     },
-    features: { sstTin: true, logoUpload: true, bulkUpload: true }
+    // Administrator for automationfb (exploration 23 Nov 2026): bank users + card brands yes, no Host Settings (404)
+    features: { sstTin: true, logoUpload: true, bulkUpload: true, bankUsers: true, cardBrandSettings: true, hostSettings: false },
+    // Fassbayar Test Data: TD-01 disposable user hGtkMDzs (suspend / reinstate, ADM-018); no reset user
+    // given; TD-05 test plan code 789 (Maybank)
+    administrator: {
+      cardBrandLimitColumn: 'Contactless CVM Limit (RM)', auditActionCount: undefined, auditRangeLimited: false,  // no limit: QA Lead 24 Nov
+      testBankUser: 'hGtkMDzs', resetUser: '', loginTestUser: 'hGtkMDzs',
+      testPlanCode: '789', testPlanProvider: 'MBB'   // MBB = Maybank (list shows the host code)
+    },
+    readers: {
+      quicklinks: ['Reader Summary', 'Register New Readers', 'Readers Replacement Report', 'Replace Readers', 'Fasstap Summary'],
+      detailsButtons: ['View Company Details', 'Status History >>'],
+      workingCompany: 'TEST COMPANY AUTOMATION 1', workingMid: '',       // Test Data TD-07
+      secondMid: ''                                                      // not named in Test Data yet (RDR-005 asks)
+    }
   }
 };
 
@@ -181,6 +241,10 @@ export const Credentials = {
 process.env.BASE_URL ??= BASE_URL;
 process.env.APP_USER ??= Credentials.username;
 process.env.APP_PASSWORD ??= Credentials.password;
+
+// Password of the disposable test bank user (Administrator TC-ADM-018 logs in as it), per environment:
+// <ENV>_TEST_BANK_USER_PASSWORD in .env. Set once by hand from the user's activation email.
+export const TEST_BANK_USER_PASSWORD = envValue('TEST_BANK_USER_PASSWORD') ?? '';
 
 // Optional: real mailbox for authoriser emails (Fassbayar builders use a
 // unique "+alias" of it). Not set = random @example.com address.

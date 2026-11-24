@@ -1,5 +1,6 @@
 import { test, Page, Locator } from '@playwright/test';
 import { DEMO_MODE, Demo } from '../../portals.config';
+import { markedScreenshot } from '../utils/screenMarks';
 
 // Shared helpers for all page objects. Every page class extends this.
 export abstract class BasePage {
@@ -68,12 +69,23 @@ export abstract class BasePage {
   // the test. Shown in the Test Execution Report as one of the test's
   // screenshots, in the order they were taken.
   async captureScreen(label: string): Promise<void> {
-    const body = await this.page.screenshot({ fullPage: true });
+    // caption bar + error messages boxed in red (common/utils/screenMarks.ts)
+    const body = await markedScreenshot(this.page, { caption: label }, true);
+    if (!body) return;
 
     await test.info().attach(`screen: ${label}`, {
       body,
       contentType: 'image/png'
     });
+  }
+
+  // Automatic screenshot of a step (every new screen, every Submit result). JPEG so a full run's
+  // report stays small enough to open and share; captureScreen() above stays PNG.
+  // Off for one run: $env:STEP_SCREENSHOTS='false'
+  async captureStep(label: string): Promise<void> {
+    if (process.env.STEP_SCREENSHOTS === 'false') return;
+    const body = await markedScreenshot(this.page, { caption: label });
+    if (body) await test.info().attach(`screen: ${label}`, { body, contentType: 'image/jpeg' });
   }
 
   // Screenshot a scrolling box IN FULL (e.g. a JSON / log panel with a

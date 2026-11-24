@@ -1,20 +1,371 @@
 {
-  "_comment": "Links each automated test (Automation ID) to the case(s) with the same scenario in FassBayar_System_Portal_Baseline_Test_Cases_v1.0.xlsx, sheet 'Test Case Library' (row = Excel row). Exact or partial matches only (mapped 20 Nov 2026); tests with no or only a weak match have no link. Used by common/reporters/executionReport.ts.",
-  "workbookUrl": "https://softspace001.sharepoint.com/:x:/r/sites/MobilePOS/_layouts/15/Doc.aspx?sourcedoc=%7BD6AE43C1-0DDA-4239-B947-D78E7E92871E%7D&file=FassBayar_System_Portal_Baseline_Test_Cases_v1.0.xlsx&action=default&mobileredirect=true",
-  "workbookName": "FassBayar_System_Portal_Baseline_Test_Cases_v1.0.xlsx",
+  "_comment": "Links each automated test (Automation ID) to the case(s) with the same scenario in FassBayar_System_Portal_Baseline_Test_Cases_v1.1.xlsx, sheet 'Test Case Library' (row = Excel row). Mapped 22 Nov 2026 (Administrator rows 250-277 added 23 Nov 2026) against v1.1 (v1.0 is in Baseline/Archive, not used); every row checked on the synced copy. Tests with no matching case have no link. Used by common/reporters/executionReport.ts and tools/workbook-results/update_workbook.py.",
+  "workbookUrl": "https://softspace001.sharepoint.com/:x:/r/sites/MobilePOS/_layouts/15/Doc.aspx?sourcedoc=%7B3088B7ED-2146-4B06-ABE0-797AF07B5BCE%7D&file=FassBayar_System_Portal_Baseline_Test_Cases_v1.1.xlsx&action=default&mobileredirect=true",
+  "workbookName": "FassBayar_System_Portal_Baseline_Test_Cases_v1.1.xlsx",
   "sheet": "Test Case Library",
-  "columnLabel": "Test Case ID (FassBayar Baseline v1.0)",
+  "columnLabel": "Test Case ID (FassBayar Baseline v1.1)",
   "links": {
-    "TC-APH-001":  [ { "sheetId": "TC-FB-BP-AUTH-002", "row": 103 }, { "sheetId": "TC-FB-BP-AUTH-010", "row": 111 } ],
-    "TC-COMP-001": [ { "sheetId": "TC-FB-BP-CMP-014", "row": 15 }, { "sheetId": "TC-FB-BP-CMP-008", "row": 9 } ],
-    "TC-COMP-003": [ { "sheetId": "TC-FB-BP-CMP-019", "row": 20 } ],
-    "TC-CS-001":   [ { "sheetId": "TC-FB-BP-STL-001", "row": 166 } ],
-    "TC-CS-002":   [ { "sheetId": "TC-FB-BP-STL-002", "row": 167 } ],
-    "TC-CS-003":   [ { "sheetId": "TC-FB-BP-STL-002", "row": 167 } ],
-    "TC-CS-004":   [ { "sheetId": "TC-FB-BP-STL-002", "row": 167 } ],
-    "TC-CS-005":   [ { "sheetId": "TC-FB-BP-STL-002", "row": 167 } ],
-    "TC-CS-006":   [ { "sheetId": "TC-FB-BP-XCUT-002", "row": 185 } ],
-    "TC-CS-007":   [ { "sheetId": "TC-FB-BP-STL-003", "row": 168 } ],
-    "TC-CS-009":   [ { "sheetId": "TC-FB-BP-STL-006", "row": 171 } ]
+    "TC-APH-001": [
+      {
+        "sheetId": "TC-FB-BP-AUTH-002",
+        "row": 3
+      },
+      {
+        "sheetId": "TC-FB-BP-AUTH-012",
+        "row": 13
+      }
+    ],
+    "TC-COMP-001": [
+      {
+        "sheetId": "TC-FB-BP-CMP-014",
+        "row": 34
+      },
+      {
+        "sheetId": "TC-FB-BP-CMP-008",
+        "row": 28
+      }
+    ],
+    "TC-COMP-002": [
+      {
+        "sheetId": "TC-FB-BP-CMP-014",
+        "row": 34
+      }
+    ],
+    "TC-COMP-003": [
+      {
+        "sheetId": "TC-FB-BP-CMP-091",
+        "row": 106
+      }
+    ],
+    "TC-COMP-004": [
+      {
+        "sheetId": "TC-FB-BP-CMP-002",
+        "row": 22
+      }
+    ],
+    "TC-TRX-001": [
+      {
+        "sheetId": "TC-FB-BP-TXN-006",
+        "row": 220
+      }
+    ],
+    "TC-BILL-001": [
+      {
+        "sheetId": "TC-FB-BP-TXN-019",
+        "row": 233
+      }
+    ],
+    "TC-CS-001": [
+      {
+        "sheetId": "TC-FB-BP-STL-001",
+        "row": 237
+      }
+    ],
+    "TC-CS-002": [
+      {
+        "sheetId": "TC-FB-BP-STL-002",
+        "row": 238
+      }
+    ],
+    "TC-CS-003": [
+      {
+        "sheetId": "TC-FB-BP-STL-002",
+        "row": 238
+      }
+    ],
+    "TC-CS-004": [
+      {
+        "sheetId": "TC-FB-BP-STL-002",
+        "row": 238
+      }
+    ],
+    "TC-CS-005": [
+      {
+        "sheetId": "TC-FB-BP-STL-002",
+        "row": 238
+      }
+    ],
+    "TC-CS-006": [
+      {
+        "sheetId": "TC-FB-BP-XCUT-002",
+        "row": 279
+      }
+    ],
+    "TC-CS-008": [
+      {
+        "sheetId": "TC-FB-BP-STL-002",
+        "row": 238
+      }
+    ],
+    "TC-CS-007": [
+      {
+        "sheetId": "TC-FB-BP-STL-003",
+        "row": 239
+      }
+    ],
+    "TC-ADM-001": [
+      {
+        "sheetId": "TC-FB-BP-ADM-001",
+        "row": 250
+      }
+    ],
+    "TC-ADM-002": [
+      {
+        "sheetId": "TC-FB-BP-ADM-002",
+        "row": 251
+      }
+    ],
+    "TC-ADM-003": [
+      {
+        "sheetId": "TC-FB-BP-ADM-003",
+        "row": 252
+      }
+    ],
+    "TC-ADM-004": [
+      {
+        "sheetId": "TC-FB-BP-ADM-004",
+        "row": 253
+      }
+    ],
+    "TC-ADM-005": [
+      {
+        "sheetId": "TC-FB-BP-ADM-005",
+        "row": 254
+      }
+    ],
+    "TC-ADM-006": [
+      {
+        "sheetId": "TC-FB-BP-ADM-006",
+        "row": 255
+      }
+    ],
+    "TC-ADM-007": [
+      {
+        "sheetId": "TC-FB-BP-ADM-007",
+        "row": 256
+      }
+    ],
+    "TC-ADM-008": [
+      {
+        "sheetId": "TC-FB-BP-ADM-008",
+        "row": 257
+      }
+    ],
+    "TC-ADM-009": [
+      {
+        "sheetId": "TC-FB-BP-ADM-009",
+        "row": 258
+      }
+    ],
+    "TC-ADM-010": [
+      {
+        "sheetId": "TC-FB-BP-ADM-010",
+        "row": 259
+      }
+    ],
+    "TC-ADM-011": [
+      {
+        "sheetId": "TC-FB-BP-ADM-011",
+        "row": 260
+      }
+    ],
+    "TC-ADM-012": [
+      {
+        "sheetId": "TC-FB-BP-ADM-012",
+        "row": 261
+      }
+    ],
+    "TC-ADM-013": [
+      {
+        "sheetId": "TC-FB-BP-ADM-013",
+        "row": 262
+      }
+    ],
+    "TC-ADM-014": [
+      {
+        "sheetId": "TC-FB-BP-ADM-014",
+        "row": 263
+      }
+    ],
+    "TC-ADM-015": [
+      {
+        "sheetId": "TC-FB-BP-ADM-015",
+        "row": 264
+      }
+    ],
+    "TC-ADM-017": [
+      {
+        "sheetId": "TC-FB-BP-ADM-017",
+        "row": 265
+      }
+    ],
+    "TC-ADM-018": [
+      {
+        "sheetId": "TC-FB-BP-ADM-018",
+        "row": 266
+      }
+    ],
+    "TC-ADM-019": [
+      {
+        "sheetId": "TC-FB-BP-ADM-019",
+        "row": 267
+      }
+    ],
+    "TC-ADM-020": [
+      {
+        "sheetId": "TC-FB-BP-ADM-020",
+        "row": 268
+      }
+    ],
+    "TC-ADM-021": [
+      {
+        "sheetId": "TC-FB-BP-ADM-021",
+        "row": 269
+      }
+    ],
+    "TC-ADM-022": [
+      {
+        "sheetId": "TC-FB-BP-ADM-022",
+        "row": 270
+      }
+    ],
+    "TC-ADM-023": [
+      {
+        "sheetId": "TC-FB-BP-ADM-023",
+        "row": 271
+      }
+    ],
+    "TC-ADM-024": [
+      {
+        "sheetId": "TC-FB-BP-ADM-024",
+        "row": 272
+      }
+    ],
+    "TC-ADM-025": [
+      {
+        "sheetId": "TC-FB-BP-ADM-025",
+        "row": 273
+      }
+    ],
+    "TC-ADM-026": [
+      {
+        "sheetId": "TC-FB-BP-ADM-026",
+        "row": 274
+      }
+    ],
+    "TC-ADM-027": [
+      {
+        "sheetId": "TC-FB-BP-ADM-027",
+        "row": 275
+      }
+    ],
+    "TC-ADM-028": [
+      {
+        "sheetId": "TC-FB-BP-ADM-028",
+        "row": 276
+      }
+    ],
+    "TC-ADM-030": [
+      {
+        "sheetId": "TC-FB-BP-ADM-030",
+        "row": 277
+      }
+    ],
+    "TC-RDR-001": [
+      {
+        "sheetId": "TC-FB-BP-RDR-001",
+        "row": 193
+      }
+    ],
+    "TC-RDR-002": [
+      {
+        "sheetId": "TC-FB-BP-RDR-002",
+        "row": 194
+      }
+    ],
+    "TC-RDR-003": [
+      {
+        "sheetId": "TC-FB-BP-RDR-003",
+        "row": 195
+      }
+    ],
+    "TC-RDR-004": [
+      {
+        "sheetId": "TC-FB-BP-RDR-004",
+        "row": 196
+      }
+    ],
+    "TC-RDR-005": [
+      {
+        "sheetId": "TC-FB-BP-RDR-005",
+        "row": 197
+      }
+    ],
+    "TC-RDR-006": [
+      {
+        "sheetId": "TC-FB-BP-RDR-006",
+        "row": 198
+      }
+    ],
+    "TC-RDR-007": [
+      {
+        "sheetId": "TC-FB-BP-RDR-007",
+        "row": 199
+      }
+    ],
+    "TC-RDR-008": [
+      {
+        "sheetId": "TC-FB-BP-RDR-008",
+        "row": 200
+      }
+    ],
+    "TC-RDR-009": [
+      {
+        "sheetId": "TC-FB-BP-RDR-009",
+        "row": 201
+      }
+    ],
+    "TC-RDR-010": [
+      {
+        "sheetId": "TC-FB-BP-RDR-010",
+        "row": 202
+      }
+    ],
+    "TC-RDR-011": [
+      {
+        "sheetId": "TC-FB-BP-RDR-011",
+        "row": 203
+      }
+    ],
+    "TC-RDR-012": [
+      {
+        "sheetId": "TC-FB-BP-RDR-012",
+        "row": 204
+      }
+    ],
+    "TC-RDR-013": [
+      {
+        "sheetId": "TC-FB-BP-RDR-013",
+        "row": 205
+      }
+    ],
+    "TC-RDR-014": [
+      {
+        "sheetId": "TC-FB-BP-RDR-014",
+        "row": 206
+      }
+    ],
+    "TC-RDR-015": [
+      {
+        "sheetId": "TC-FB-BP-RDR-015",
+        "row": 207
+      }
+    ],
+    "TC-RDR-016": [
+      {
+        "sheetId": "TC-FB-BP-RDR-016",
+        "row": 208
+      }
+    ]
   }
 }

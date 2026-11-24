@@ -29,10 +29,25 @@ export interface Declared {
 }
 
 // Skips that only mean "not this portal's scenario": nothing to do
+// ... and HAR cases: listed once, from the test's own testCase({ manual }) entry
+// Skips that are not work for anyone (the case does not apply to this portal). "Human action required" skips
+// are NOT here: they always go to the Human Action table.
 const NOT_APPLICABLE = /^(Not verified on |Applicable for .+ only)|is not a host of/;
 
 // Skip reason -> what a person should do
 const SKIP_RULES: { match: RegExp; handling: (m: RegExpMatchArray) => string }[] = [
+  {
+    match: /Human action required:?\s*(.*)$/i,
+    handling: (m) => `A person must do this: ${m[1] || 'see the reason'}. Record the result in the workbook (Actual Result).`
+  },
+  {
+    match: /Changes UAT data/,
+    handling: () => 'Run again with ADM_ALLOW_UAT_CHANGES=true in .env (only on UAT, with the QA Lead OK), or test it by hand.'
+  },
+  {
+    match: /^Preview:/,
+    handling: () => 'Preview run stopped before saving: run with ADM_ALLOW_UAT_CHANGES=true to really test it.'
+  },
   {
     match: /Archive data can only be viewed between (\d{1,2}:\d{2}) and (\d{1,2}:\d{2})/,
     handling: (m) => `Re-run this test between ${m[1]} and ${m[2]} (the archive is closed outside that window), or check it by hand then.`

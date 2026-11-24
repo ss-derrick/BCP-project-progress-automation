@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { buildNotes, type Declared, type Gap, type HumanAction, type LibraryEntry, type RunResult } from './reportNotes';
+import { explainError } from '../utils/explainFailure';
 import { spawnSync } from 'node:child_process';
 import type {
   FullConfig,
@@ -60,6 +61,41 @@ const DEFAULT_GENERATOR = path.join(
 // Remove terminal colour codes from error messages
 const stripAnsi = (text: string): string =>
   text.replace(/\u001b\[[0-9;]*m/g, '');
+
+// ---- Notes column: WHY a test failed / skipped, in plain words ----
+// Every failed check of the test (soft ones too), each as
+//   "<step>: <check> - expected <x>, portal showed <y>"
+// e.g. 'User ID 3 chars accepted - expected no error message, portal showed "Please enter valid User ID"'.
+function failedSteps(steps: TestResult['steps'], out: { title: string; message: string }[] = []) {
+  for (const s of steps) {
+    if (s.category === 'test.step' && s.error) out.push({ title: s.title, message: stripAnsi(s.error.message ?? '') });
+    failedSteps(s.steps, out);
+  }
+  return out;
+}
+
+function explainErrors(result: TestResult): string {
+  const errors = result.errors.length ? result.errors : result.error ? [result.error] : [];
+  const steps = failedSteps(result.steps);
+  const notes = errors.map((e) => {
+    const msg = stripAnsi(e.message ?? '');
+    // deepest step whose error is this one
+    const step = [...steps].reverse().find((s) => s.message && msg.startsWith(s.message.split('\n')[0]))?.title ?? '';
+    return explainError(msg, step);
+  });
+  const unique = [...new Set(notes.filter(Boolean))];
+  const shownNotes = unique.slice(0, 4).map((n, i) => (unique.length > 1 ? `${i + 1}) ${n}` : n));
+  if (unique.length > 4) shownNotes.push(`(+${unique.length - 4} more, see Steps)`);
+  return shownNotes.length ? `Failed: ${shownNotes.join(' ')}` : '';
+}
+
+// Skips: say who/what is needed
+const skipNote = (reason?: string): string => {
+  if (!reason) return 'Skipped (no reason given)';
+  if (/^Human action required/i.test(reason)) return reason;
+  if (/^Preview:/i.test(reason)) return `${reason} (preview run: stopped before saving)`;
+  return `Skipped: ${reason}`;
+};
 
 // Test categories (testCase({ suite }) -> tags @smoke ...), see common/utils/testCase.ts.
 // Category of one test, for the report's "Category" column, e.g. "Smoke".
@@ -261,14 +297,20 @@ export default class ExecutionReportReporter implements Reporter {
       if (!result) continue;   // not executed -> report shows "Not run"
 
       const { status, notes } = this.toStatus(test, result, annotation);
+      const evidence = this.copyEvidence(result, id, evidenceDir, status === 'pass');
+      // where it starts failing: the first red "FAILED HERE" screenshot of the flow
+      const shots = this.gallery[id.replace(/[^\w.-]/g, '_')] ?? [];
+      const firstFail = shots.findIndex((s) => s.caption.startsWith('FAILED'));
 
       executions.push({
         id,
         status,
         last_executed: toLocalIso(result.startTime),
         duration_seconds: Math.round(result.duration / 10) / 100,
-        evidence: this.copyEvidence(result, id, evidenceDir, status === 'pass'),
-        notes
+        evidence,
+        notes: status === 'fail' && firstFail >= 0
+          ? `${notes} [Starts failing at screenshot ${firstFail + 1} of ${shots.length}]`
+          : notes
       });
     }
 
@@ -290,18 +332,16 @@ export default class ExecutionReportReporter implements Reporter {
       return { status: 'blocked-env', notes: blockedReason };
     }
 
-    const errorLine = stripAnsi(result.error?.message ?? '')
-      .split('\n')
-      .find((line) => line.trim() !== '')
-      ?.trim() ?? '';
+    const errorLine = explainErrors(result);
 
     switch (test.outcome()) {
       case 'expected':
-        return { status: 'pass', notes: '' };
+        // a passed test can still note something seen on the portal (annotation type 'finding')
+        return { status: 'pass', notes: annotation('finding') ? `Finding: ${annotation('finding')}` : '' };
       case 'flaky':
         return { status: 'pass', notes: `Passed on retry ${result.retry}` };
       case 'skipped':
-        return { status: 'skipped', notes: annotation('skip') ?? '' };
+        return { status: 'skipped', notes: skipNote(annotation('skip')) };
       default:
         if (result.status === 'interrupted') {
           return { status: 'not-run', notes: 'Run was interrupted' };
@@ -326,11 +366,13 @@ export default class ExecutionReportReporter implements Reporter {
   ): string | null {
     const images = result.attachments.filter(
       (a) =>
-        a.contentType === 'image/png' &&
+        (a.contentType === 'image/png' || a.contentType === 'image/jpeg') &&
         (a.body || (a.path && fs.existsSync(a.path)))
     );
     const screens = images.filter((a) => a.name.startsWith(SCREEN_PREFIX));
-    const final = images.filter((a) => !a.name.startsWith(SCREEN_PREFIX)).slice(-1);
+    // our red "FAILED HERE" screenshot (common/fixtures/base.ts failureScreen) replaces Playwright's plain one
+    const hasFailedShot = screens.some((a) => a.name.startsWith(`${SCREEN_PREFIX}FAILED`));
+    const final = hasFailedShot ? [] : images.filter((a) => !a.name.startsWith(SCREEN_PREFIX)).slice(-1);
     const chosen = [...screens, ...(!passed || screens.length === 0 ? final : [])];
 
     if (chosen.length === 0) return null;
@@ -342,8 +384,9 @@ export default class ExecutionReportReporter implements Reporter {
       const caption = attachment.name.startsWith(SCREEN_PREFIX)
         ? attachment.name.slice(SCREEN_PREFIX.length)
         : 'Final screen';
-      const slug = caption.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      const fileName = `${String(index + 1).padStart(2, '0')}-${slug}.png`;
+      const slug = caption.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
+      const ext = attachment.contentType === 'image/jpeg' ? 'jpg' : 'png';
+      const fileName = `${String(index + 1).padStart(2, '0')}-${slug}.${ext}`;
       const target = path.join(evidenceDir, folder, fileName);
 
       if (attachment.body) {
@@ -441,7 +484,7 @@ export default class ExecutionReportReporter implements Reporter {
       ? JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
       : {};
 
-    const galleries: Record<string, { src: string; caption: string }[]> = {};
+    const galleries: Record<string, { src: string; caption: string; failed: boolean; first: boolean }[]> = {};
 
     const html = rawHtml.replace(
       /<a href="(evidence\/[^"]+)" target="_blank">screenshot<\/a>/g,
@@ -452,18 +495,24 @@ export default class ExecutionReportReporter implements Reporter {
         const images = entries
           .map((entry) => ({
             src: embed ? this.toDataUri(path.join(outputDir, entry.file)) : entry.file,
-            caption: entry.caption
+            caption: entry.caption,
+            failed: entry.caption.startsWith('FAILED'),      // red "FAILED HERE" screenshot (fixtures/base.ts)
+            first: false
           }))
           .filter((image) => image.src);
 
         if (images.length === 0) return match;
 
+        const firstFail = images.findIndex((image) => image.failed);
+        if (firstFail >= 0) images[firstFail].first = true;
         galleries[key] = images;
         const label = images.length === 1
           ? 'screenshot'
           : `screenshots (${images.length})`;
+        // failed tests: say on the link which screen it starts failing on
+        const failLabel = firstFail >= 0 ? ` <span class="sv-fails">&#10060; fails at #${firstFail + 1}</span>` : '';
 
-        return `<a href="${embed ? '#' : href}" data-gallery="${key}">${label}</a>`;
+        return `<a href="${embed ? '#' : href}" data-gallery="${key}">${label}${failLabel}</a>`;
       }
     );
 
@@ -506,12 +555,20 @@ export default class ExecutionReportReporter implements Reporter {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   }
   #screenshot-viewer .sv-hint { margin: 0; color: #ddd; font-size: 13px; text-align: center; }
+  /* failed screens: red frame + red caption bar; the first one says where it starts failing */
+  .sv-fails { color: #c62828; font-weight: 700; }
+  #screenshot-viewer.sv-failed .sv-bar { background: #b71c1c; margin: -16px -24px 0; padding: 10px 24px; }
+  #screenshot-viewer.sv-failed .sv-body img { outline: 8px solid #d32f2f; outline-offset: -8px; }
+  #screenshot-viewer .sv-badge { display: inline-block; background: #fff; color: #b71c1c; font-weight: 800;
+    border-radius: 4px; padding: 1px 8px; margin-right: 8px; }
+  #screenshot-viewer [data-sv="fail"] { border-color: #ff8a80; background: #b71c1c; }
 </style>
 <div id="screenshot-viewer" hidden>
   <div class="sv-bar">
     <button type="button" data-sv="prev">&#8249; Previous</button>
     <span class="sv-caption"></span>
     <button type="button" data-sv="next">Next &#8250;</button>
+    <button type="button" data-sv="fail">&#9888; Go to first failure</button>
     <button type="button" data-sv="close">&#10005; Close</button>
   </div>
   <div class="sv-body"><img alt="Test screenshot"></div>
@@ -529,10 +586,28 @@ export default class ExecutionReportReporter implements Reporter {
   var current = null;
   var index = 0;
 
+  var failBtn = viewer.querySelector('[data-sv="fail"]');
+
+  function firstFailure() {
+    var images = galleries[current];
+    for (var i = 0; i < images.length; i++) if (images[i].first) return i;
+    return -1;
+  }
+
   function show() {
     var images = galleries[current];
-    image.src = images[index].src;
-    caption.textContent = (index + 1) + ' of ' + images.length + ' \u00b7 ' + images[index].caption;
+    var shot = images[index];
+    image.src = shot.src;
+    caption.textContent = '';
+    if (shot.failed) {
+      var badge = document.createElement('span');
+      badge.className = 'sv-badge';
+      badge.textContent = shot.first ? '\u26a0 STARTS FAILING HERE' : '\u274c FAILED';
+      caption.appendChild(badge);
+    }
+    caption.appendChild(document.createTextNode((index + 1) + ' of ' + images.length + ' \u00b7 ' + shot.caption));
+    viewer.classList.toggle('sv-failed', !!shot.failed);
+    failBtn.hidden = firstFailure() < 0;
     prev.hidden = next.hidden = images.length < 2;
     prev.disabled = index === 0;
     next.disabled = index === images.length - 1;
@@ -567,6 +642,7 @@ export default class ExecutionReportReporter implements Reporter {
       var name = action.getAttribute('data-sv');
       if (name === 'prev') move(-1);
       if (name === 'next') move(1);
+      if (name === 'fail' && firstFailure() >= 0) { index = firstFailure(); show(); }
       if (name === 'close') close();
     } else if (event.target === viewer || event.target === body) {
       close();
@@ -688,7 +764,8 @@ ${run.stderr || run.error?.message || ''}`);
 
   private toDataUri(filePath: string): string {
     if (!fs.existsSync(filePath)) return '';
-    return `data:image/png;base64,${fs.readFileSync(filePath).toString('base64')}`;
+    const mime = filePath.endsWith('.jpg') ? 'image/jpeg' : 'image/png';
+    return `data:${mime};base64,${fs.readFileSync(filePath).toString('base64')}`;
   }
 
   // Run the template package's generate_report.py

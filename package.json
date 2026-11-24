@@ -15,6 +15,7 @@
     "report": "playwright show-report",
     "report:rebuild": "playwright test --list",
     "report:summary": "playwright test --list --reporter=./common/reporters/summaryReport.ts",
+    "report:package": "node scripts/package-reports.js",
     "scan": "playwright test --config explore/scan/scan.config.ts",
     "typecheck": "tsc --noEmit",
     "md": "node scripts/md-to-html.js"

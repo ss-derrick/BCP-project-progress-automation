@@ -33,6 +33,38 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 
 ## Changes
 
+- [2026-11-24 11:25: Report: failed screens highlighted red in the screenshot flow; "starts failing here"](#2026-11-24-1125-report-failed-screens-highlighted-red-in-the-screenshot-flow-starts-failing-here)
+- [2026-11-24 11:10: TC-RDR-016: each kind of blank remarks tried separately](#2026-11-24-1110-tc-rdr-016-each-kind-of-blank-remarks-tried-separately)
+- [2026-11-24 10:55: TC-ADM-019: Fassbayar also has no Audit Trail date limit by design](#2026-11-24-1055-tc-adm-019-fassbayar-also-has-no-audit-trail-date-limit-by-design)
+- [2026-11-24 10:45: TC-ADM-019: APH has no Audit Trail date limit by design (QA Lead)](#2026-11-24-1045-tc-adm-019-aph-has-no-audit-trail-date-limit-by-design-qa-lead)
+- [2026-11-24 10:30: Reader upload CSVs as files in common/testdata (RDR_01..08 with placeholders)](#2026-11-24-1030-reader-upload-csvs-as-files-in-commontestdata-rdr_0108-with-placeholders)
+- [2026-11-24 10:00: Report screenshots mark the problem: captions, red boxes on error messages, "FAILED HERE" where a check fails](#2026-11-24-1000-report-screenshots-mark-the-problem-captions-red-boxes-on-error-messages-failed-here-where-a-check-fails)
+- [2026-11-24 09:30: TC-ADM-014: Service Provider check only where the field exists (no test-wide skip)](#2026-11-24-0930-tc-adm-014-service-provider-check-only-where-the-field-exists-no-test-wide-skip)
+- [2026-11-23 16:40: Shareable report zip; summary explains why "Open full report" can show 404](#2026-11-23-1640-shareable-report-zip-summary-explains-why-open-full-report-can-show-404)
+- [2026-11-23 16:00: Sheet links checked: TC-CS-008 linked; every link matches its sheet row](#2026-11-23-1600-sheet-links-checked-tc-cs-008-linked-every-link-matches-its-sheet-row)
+- [2026-11-23 15:55: Report: a screenshot of every page in every module](#2026-11-23-1555-report-a-screenshot-of-every-page-in-every-module)
+- [2026-11-23 15:50: TC-RDR-010: valid remarks "sss" check (proves the remarks rule typo)](#2026-11-23-1550-tc-rdr-010-valid-remarks-sss-check-proves-the-remarks-rule-typo)
+- [2026-11-23 15:45: Report: every "Human action required" case is listed in the Human Action table](#2026-11-23-1545-report-every-human-action-required-case-is-listed-in-the-human-action-table)
+- [2026-11-23 15:15: Manage Readers: 16 test cases (TC-RDR-001..016) on both portals](#2026-11-23-1515-manage-readers-16-test-cases-tc-rdr-001016-on-both-portals)
+- [2026-11-23 14:15: TC-ADM-018: screenshots of every suspend / reinstate / login step](#2026-11-23-1415-tc-adm-018-screenshots-of-every-suspend--reinstate--login-step)
+- [2026-11-23 14:10: TC-ADM-022: screenshots of the form before each Submit](#2026-11-23-1410-tc-adm-022-screenshots-of-the-form-before-each-submit)
+- [2026-11-23 13:55: Report Notes explain why a test failed or was skipped](#2026-11-23-1355-report-notes-explain-why-a-test-failed-or-was-skipped)
+- [2026-11-23 13:25: TC-ADM-014: Service Provider "required" check only where a blank choice exists](#2026-11-23-1325-tc-adm-014-service-provider-required-check-only-where-a-blank-choice-exists)
+- [2026-11-23 13:10: Report: dropdown choices shown in screenshots (Failover Operator)](#2026-11-23-1310-report-dropdown-choices-shown-in-screenshots-failover-operator)
+- [2026-11-23 11:52: TC-TRX-001 uses today's newest transaction (APH archive hours)](#2026-11-23-1152-tc-trx-001-uses-todays-newest-transaction-aph-archive-hours)
+- [2026-11-23 11:40: Report: a screenshot of every Administrator screen and every Submit result](#2026-11-23-1140-report-a-screenshot-of-every-administrator-screen-and-every-submit-result)
+- [2026-11-23 10:38: Administrator test data from the workbooks' Test Data sheets (QA Lead update)](#2026-11-23-1038-administrator-test-data-from-the-workbooks-test-data-sheets-qa-lead-update)
+- [2026-11-23 10:04: Team test mailbox: ADM-009 automated, ADM-018 ready (two dummy bank users)](#2026-11-23-1004-team-test-mailbox-adm-009-automated-adm-018-ready-two-dummy-bank-users)
+- [2026-11-23 09:57: Resigned no longer tested (OQ-APH-23); findings shown on passed tests](#2026-11-23-0957-resigned-no-longer-tested-oq-aph-23-findings-shown-on-passed-tests)
+- [2026-11-23 09:38: Fixes after the first full run with changes on; APH credit settlement Date filter finding](#2026-11-23-0938-fixes-after-the-first-full-run-with-changes-on-aph-credit-settlement-date-filter-finding)
+- [2026-11-23 09:17: Skipped tests made runnable: dummy bank user, reusable plan codes, credit settlement look-back](#2026-11-23-0917-skipped-tests-made-runnable-dummy-bank-user-reusable-plan-codes-credit-settlement-look-back)
+- [2026-11-23 09:10: First real run of the self-undoing Administrator changes; plan code delete is a form](#2026-11-23-0910-first-real-run-of-the-self-undoing-administrator-changes-plan-code-delete-is-a-form)
+- [2026-11-23 08:42: Preview mode for the data-changing Administrator tests (ADM_PREVIEW_CHANGES)](#2026-11-23-0842-preview-mode-for-the-data-changing-administrator-tests-adm_preview_changes)
+- [2026-11-23 01:20: Administrator on Fassbayar (FassBayar baseline rows 250-277) + TC-ADM-030](#2026-11-23-0120-administrator-on-fassbayar-fassbayar-baseline-rows-250-277--tc-adm-030)
+- [2026-11-23 01:15: New module: Administrator (TC-ADM-001 to 029, APH baseline rows 220-248)](#2026-11-23-0115-new-module-administrator-tc-adm-001-to-029-aph-baseline-rows-220-248)
+- [2026-11-22 23:20: Workbook "Automation ID" column filled from the mapping](#2026-11-22-2320-workbook-automation-id-column-filled-from-the-mapping)
+- [2026-11-22 23:00: Relinked to the v1.1 baseline workbooks (v1.0 archived)](#2026-11-22-2300-relinked-to-the-v11-baseline-workbooks-v10-archived)
+- [2026-11-22 22:30: Workbook: skipped tests -> Blocked with the reason; mapping re-checked](#2026-11-22-2230-workbook-skipped-tests---blocked-with-the-reason-mapping-re-checked)
 - [2026-11-22 22:15: Merged Kai Wen's main (Smoke categories); TC-CS-001 on a day with no settlement](#2026-11-22-2215-merged-kai-wens-main-smoke-categories-tc-cs-001-on-a-day-with-no-settlement)
 - [2026-11-20 17:05: Workbook update no longer leaves a temp file in the synced folder; FassBayar written](#2026-11-20-1705-workbook-update-no-longer-leaves-a-temp-file-in-the-synced-folder-fassbayar-written)
 - [2026-11-20 16:50: First real write into the APH baseline workbook](#2026-11-20-1650-first-real-write-into-the-aph-baseline-workbook)
@@ -61,6 +93,880 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 - [2026-11-18 14:25: New module: Company Summary](#2026-11-18-1425-new-module-company-summary)
 - [2026-11-18 afternoon: Old copied pages and specs removed](#2026-11-18-afternoon-old-copied-pages-and-specs-removed)
 - [2026-11-18: Structure built: one codebase, two portals](#2026-11-18-structure-built-one-codebase-two-portals)
+
+---
+
+### 2026-11-24 11:25: Report: failed screens highlighted red in the screenshot flow; "starts failing here"
+**Why:** Request: keep the screen-by-screen flow, but make it obvious in the report on which screen a test
+starts failing, highlighted in red. The red "FAILED HERE" screenshots (taken where each check fails) are now
+also marked by the report itself:
+- test list: the screenshots link says "❌ fails at #N";
+- viewer: a failed screen gets a red bar and a red frame; the first one is badged "⚠ STARTS FAILING HERE",
+  the others "❌ FAILED"; a "Go to first failure" button jumps there (the flow still opens at screen 1);
+- Notes (and the workbook's Actual Result): "[Starts failing at screenshot N of M]".
+
+| File / folder | Change |
+|---|---|
+| `common/reporters/executionReport.ts` | Changed: first failed screenshot per test (notes + gallery flags), viewer styles, badge, "Go to first failure" |
+
+**Key code**
+```ts
+const firstFail = shots.findIndex((s) => s.caption.startsWith('FAILED'));
+notes: `${notes} [Starts failing at screenshot ${firstFail + 1} of ${shots.length}]`
+```
+
+**How to run / check**: run any failing test, open the report, click "screenshots (N) ❌ fails at #k", then "Go to first failure".
+
+### 2026-11-24 11:10: TC-RDR-016: each kind of blank remarks tried separately
+**Why:** Request: not only spaces; check blank remarks properly so it is clear why the case fails. The
+Reinstate form is now submitted with (1) completely empty, (2) only spaces, (3) only a tab + new line; each must
+show the remarks error and leave the reader Suspended. Screenshot before / after each Submit; when the portal
+wrongly reinstates, it is recorded and the reader is suspended again for the next try.
+Result 24 Nov, both portals the same: empty -> "Please enter a short description" (correct); only spaces and
+only tab / new line -> no error, "Your request is successful", reader Active (bug).
+
+| File / folder | Change |
+|---|---|
+| `common/tests/manageReaders/readers.spec.ts` | Changed: RDR-016 loops over 3 kinds of blank remarks |
+
+**Key code**
+```ts
+for (const b of [{ label: 'completely empty', text: '' }, { label: 'only spaces "   "', text: '   ' }, { label: 'only a tab and a new line', text: '\t\n' }])
+```
+
+**How to run / check**: `$env:ADM_ALLOW_UAT_CHANGES='true'; npx playwright test common/tests/manageReaders -g "Reinstate Reader form: field validation"`
+
+### 2026-11-24 10:55: TC-ADM-019: Fassbayar also has no Audit Trail date limit by design
+**Why:** Confirmed for Fassbayar too (24 Nov 2026): no Audit Trail date limit is expected, same as APH.
+
+| File / folder | Change |
+|---|---|
+| `portals.config.ts` | Changed: Fassbayar `administrator.auditRangeLimited: false` |
+| `common/tests/administrator/logs.spec.ts` | Changed: comment only (both portals: no limit) |
+
+**Key code**: `auditRangeLimited: false,  // no limit: QA Lead 24 Nov`
+
+**How to run / check**: `$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test common/tests/administrator/logs.spec.ts -g "date range"`
+Result 24 Nov: Fassbayar Pass (1 year = 72,720 records).
+
+### 2026-11-24 10:45: TC-ADM-019: APH has no Audit Trail date limit by design (QA Lead)
+**Why:** QA Lead decision (24 Nov 2026): on APH a long Audit Trail date range (1 year, no message) is the
+expected behaviour, so TC-ADM-019 must pass there. Now a per-portal setting: APH expects no limit (a 1-year
+search lists the records, no error page, no range message, the start date kept); Fassbayar unchanged (a range
+beyond the limit must be refused) until the QA Lead decides for it too.
+
+| File / folder | Change |
+|---|---|
+| `portals.config.ts` | Changed: `administrator.auditRangeLimited` (APH false, Fassbayar true) |
+| `common/tests/administrator/logs.spec.ts` | Changed: ADM-019 checks per that setting; APH records a finding "no limit, as expected" |
+
+**Key code**
+```ts
+if (limited) expect(message).not.toBe('');
+else { await expect(admin.errorPage).toHaveCount(0); expect(message).toBe(''); expect(records).toBeGreaterThan(0); }
+```
+
+**How to run / check** (read-only): `$env:ENV_NAME='UAT-APH'; npx playwright test common/tests/administrator/logs.spec.ts -g "date range"`
+Result 24 Nov: APH Pass (1 year = 20,758 records); Fassbayar still Fail (72,717 records, no message).
+
+### 2026-11-24 10:30: Reader upload CSVs as files in common/testdata (RDR_01..08 with placeholders)
+**Why:** Request: keep the RDR-004 upload files under test data instead of building them in code. Fixed values
+would be used up (a registered serial becomes "existing" next run; a "unknown" MID can start to exist, e.g.
+999999999999999 = "Ma Inc" on APH), so the files hold placeholders filled per run, as the sheet's TD-06 / TD-13
+"RDR_* with placeholders". Same rows and checks as before: results unchanged (24 Nov, both portals: RDR-003 Pass,
+RDR-004 Fail for the same reasons, RDR-005 Human action). RDR_90/91/92 (sheet) not added: their content is not
+known (asset zip not available).
+
+| File / folder | Change |
+|---|---|
+| `common/testdata/RDR_01-valid.csv` .. `RDR_06-duplicate-in-csv.csv`, `RDR_08-reassign.csv` | New: upload files with `{NEW_SERIAL}`, `{WORKING_MID}`, `{PROVIDER}`, ... |
+| `common/testdata/RDR_07-not-a-csv.xlsx` | New: fixed non-CSV file |
+| `common/testdata/readerCsvFiles.ts` | New: `readerCsv(file, values)` fills the placeholders (error on a missing one), CRLF |
+| `common/tests/manageReaders/readers.spec.ts` | Changed: RDR-003 / 004 / 005 upload these files |
+| `README.md`, `common/tests/manageReaders/README.md` | Changed: structure / files |
+
+**Key code**
+```ts
+const sum = await rdr.upload('RDR_03-unknown-mid.csv', readerCsv('RDR_03-unknown-mid.csv', { NEW_SERIAL, UNKNOWN_MID, PROVIDER }));
+```
+
+**How to run / check**
+```powershell
+$env:ADM_ALLOW_UAT_CHANGES='true'; $env:ENV_NAME='UAT-APH'; npx playwright test common/tests/manageReaders -g "Register readers by CSV|row errors|reassigned"
+```
+
+### 2026-11-24 10:00: Report screenshots mark the problem: captions, red boxes on error messages, "FAILED HERE" where a check fails
+**Why:** Request: in the report it was not always clear from a screenshot where the error / bug is. Now:
+1. every step screenshot has a caption bar (which step, e.g. "After Submit (...): went to Review & Confirm");
+2. every error / validation message on screen is boxed in red with an "ERROR SHOWN" tag, listed in the caption;
+3. the moment a check fails (soft checks too), a screenshot of THAT screen gets a red "FAILED HERE" banner with
+   the failed check in plain words (same text as the Notes); a test that stops on a failure gets one more where it
+   stopped. These replace Playwright's plain final screenshot in the report.
+
+```mermaid
+flowchart LR
+  A[step screenshot] -->|caption bar + red boxes| R[report]
+  C[check fails] -->|within 0.2 s: screenshot of the same screen + red FAILED HERE banner| R
+  E[test stops] -->|remaining failures, error messages boxed| R
+```
+
+| File / folder | Change |
+|---|---|
+| `common/utils/screenMarks.ts` | New: `markedScreenshot()` (DOM marks, used at fixed points), `cssMarks()` / `cssFailMarks()` (screenshot-only CSS, safe while the test acts) |
+| `common/utils/explainFailure.ts` | New: plain-words failure text (moved from the reporter), shared by Notes and the FAILED banner |
+| `common/pages/BasePage.ts` | Changed: `captureScreen` / `captureStep` take marked screenshots |
+| `common/fixtures/base.ts` | Changed: `screenEveryPage` uses CSS marks (skips /console too); new auto fixture `failureScreen` |
+| `common/reporters/executionReport.ts` | Changed: uses explainFailure; no plain final screenshot when a FAILED one exists |
+
+**Key code**
+```ts
+// failureScreen: watch for new failed checks while the test runs
+setInterval(() => { if (testInfo.errors.length > seen) /* screenshot with style: cssFailMarks(where, lines) */ }, 200);
+```
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test common/tests/administrator/bankUsers.spec.ts -g "TC-ADM-022"
+# report > TC-ADM-022 screenshots: 08-10 "FAILED - ..." on the Review page with Name / Email empty
+```
+
+### 2026-11-24 09:30: TC-ADM-014: Service Provider check only where the field exists (no test-wide skip)
+**Why:** Question: is APH TC-ADM-014 failing because APH has no Service Provider field, and can that check be
+bypassed when the field does not exist? It was not the cause (the failures are the duplicate wording and the
+blank Description reaching Review), but the step used `test.skip()`, which can turn the WHOLE test into
+"skipped" and hide its other results. Now: no field (APH) -> note + screenshot, carry on; field (Fassbayar) -> tested.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/administrator/planCodes.spec.ts` | Changed: ADM-014 "Service Provider required" step: `if (!field) { annotate; screenshot; return }` instead of `test.skip` |
+
+**Key code**
+```ts
+if (!(await admin.input('serviceProvider').count())) {
+  test.info().annotations.push({ type: 'info', description: 'No Service Provider field ... not applicable' });
+  return;
+}
+```
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-APH'; npx playwright test common/tests/administrator/planCodes.spec.ts -g "IPP plan code validation"
+```
+Result 24 Nov: both portals still Fail for the same 2 reasons (wording; blank Description accepted), Service Provider not among them.
+
+### 2026-11-23 16:40: Shareable report zip; summary explains why "Open full report" can show 404
+**Why:** Business readers got test_summary.html alone; its "Open full report" buttons are relative links to
+`execution-report-<env>/test_execution_report.html` (which load screenshots from `evidence/`), so without those
+folders they open a 404. The single-file reports (screenshots inside) are 168 / 205 MB: too big to send.
+Now every full run also builds ONE zip (summary + both report folders + screenshots) outside the project, and the
+summary says how to open it.
+
+| File / folder | Change |
+|---|---|
+| `scripts/package-reports.js` | New: builds `<Downloads>/Test_Reports_<date>.zip` (REPORT_PACKAGE_DIR overrides) |
+| `scripts/run-all.js` | Changed: runs package-reports.js at the end |
+| `package.json` | Changed: `npm run report:package` |
+| `common/reporters/summaryReport.ts` | Changed: yellow note "Opening the full reports" + button tooltip |
+
+**Key code**
+```js
+const folders = [...new Set([...html.matchAll(/href="(execution-report-[^/"]+)\//g)].map((m) => m[1]))];
+// copy summary + each folder's test_execution_report.html + evidence/, then Compress-Archive
+```
+
+**How to run / check**
+```powershell
+npm run report:package          # -> C:\Users\<you>\Downloads\Test_Reports_<date>.zip ; send the zip, Extract All, open test_summary.html
+```
+
+### 2026-11-23 16:00: Sheet links checked: TC-CS-008 linked; every link matches its sheet row
+**Why:** Request: the report's sheet links must point to the right test case rows. Checked every test in the
+code against `report-notes/<env>/sheet_links.json` and every linked row against column A of the v1.1
+workbooks (Test Case Library): all rows match. TC-CS-008 (company view of credit settlements) was not linked:
+now linked to STL-002 ("... company view"), like CS-003..005.
+Still without a link on purpose (no matching case in that sheet, so no false "Pass" in it): APH TC-ADM-030,
+TC-COMP-005, TC-CS-009; Fassbayar TC-COMP-005, TC-CS-009, TC-ADM-016 / 029 (Host Settings: APH only).
+
+| File / folder | Change |
+|---|---|
+| `report-notes/uat-aph/sheet_links.json` | Changed: TC-CS-008 -> TC-APH-BP-STL-002 (row 208) |
+| `report-notes/uat-fassbayar/sheet_links.json` | Changed: TC-CS-008 -> TC-FB-BP-STL-002 (row 238) |
+
+**Key code**
+```json
+"TC-CS-008": [{"sheetId": "TC-APH-BP-STL-002", "row": 208}]
+```
+
+**How to run / check**: run any test; the report's "All test cases" table shows the sheet ID as a link to its row.
+
+### 2026-11-23 15:55: Report: a screenshot of every page in every module
+**Why:** Full run request: every screen must be in the report so each failure can be traced. Administrator and
+Manage Readers already shot every screen (page objects); the other modules only had a few screenshots.
+Now every page a test lands on gets a step screenshot automatically (JPEG, like the step screenshots).
+
+| File / folder | Change |
+|---|---|
+| `common/fixtures/base.ts` | Changed: new auto fixture `screenEveryPage` (on each main-frame navigation: wait for load, full-page JPEG, attached as "screen: <page title>"); skips /admin, /reader, login (shot by their page objects) |
+
+**Key code**
+```ts
+page.on('framenavigated', (frame) => { if (frame === page.mainFrame()) /* load -> screenshot -> attach */ });
+```
+
+**How to run / check**
+```powershell
+$env:DEMO='false'; $env:ADM_ALLOW_UAT_CHANGES='true'; node scripts/run-all.js     # both portals + test_summary.html
+$env:STEP_SCREENSHOTS='false'                                                       # turns step screenshots off
+```
+
+### 2026-11-23 15:50: TC-RDR-010: valid remarks "sss" check (proves the remarks rule typo)
+**Why:** RDR-016 showed remarks of only spaces are accepted. The page's rule is `/([^\\s])/` (double
+backslash): it means "a character that is not \ or s" instead of "a non-space character". If so, valid remarks
+"sss" must be wrongly rejected. Checked on both portals: "sss" -> "Please enter a short description", not
+suspended (screenshots 15 / 16 of TC-RDR-010). Same rule on the Suspend and Reinstate Reader forms.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/manageReaders/readers.spec.ts` | Changed: RDR-010 step: Suspend with remarks "sss" must be accepted (reinstates the test reader after) |
+
+**Key code**
+```ts
+await rdr.fillCounted('description', 'sss');
+expect.soft(rejected, `valid remarks "sss" rejected with "${message}"`).toBe(false);
+```
+
+**How to run / check**
+```powershell
+$env:ADM_ALLOW_UAT_CHANGES='true'; $env:ENV_NAME='UAT-APH'; npx playwright test common/tests/manageReaders -g "remarks limit and counter"
+```
+
+### 2026-11-23 15:45: Report: every "Human action required" case is listed in the Human Action table
+**Why:** The reader reports showed "No human action required" although RDR-005 / 011 / 014 were skipped as
+"Human action required": the report's not-applicable filter dropped them. Rule (user): anything that needs a
+person must be in the Human Action table, with what to do. The human-action reader cases now also open and
+screenshot the screens the tester will use before they stop.
+
+| File / folder | Change |
+|---|---|
+| `common/reporters/reportNotes.ts` | Changed: "Human action required" no longer filtered out; handling text for human action, "Changes UAT data" and preview skips |
+| `common/tests/manageReaders/readers.spec.ts` | Changed: RDR-005 / 011 / 014 screenshot the related screens (working company readers, Suspended / Active readers) before stopping |
+
+The workbook writer (`tools/workbook-results/update_workbook.py`) is unchanged: HAR cases stay Not Run in the sheet for a tester.
+
+**Key code**
+```ts
+const NOT_APPLICABLE = /^(Not verified on |Applicable for .+ only)|is not a host of/;   // no "Human action required"
+{ match: /Human action required:?\s*(.*)$/i, handling: (m) => `A person must do this: ${m[1]}. Record the result in the workbook (Actual Result).` }
+```
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-APH'; npx playwright test common/tests/manageReaders -g "reassigned|cannot take a payment|take payments again"
+# report: Human Action table lists TC-RDR-005, 011, 014
+```
+
+### 2026-11-23 15:15: Manage Readers: 16 test cases (TC-RDR-001..016) on both portals
+**Why:** Request: analyse APH rows 175-190 (TC-APH-BP-RDR-001..016) and Fassbayar rows 193-208
+(TC-FB-BP-RDR-001..016) with every tab (Field Registry, Option Lists, Screen Index, Open Questions and the
+**Test Data** sheet, read online for APH because the synced copy was older), explore Manage Readers on both
+portals and create the test cases. Both sheets have the same 16 cases; the portals differ only in the
+quicklinks (APH 2, Fassbayar 5) and APH's extra Fassbayar-sync buttons on Reader Details.
+
+```mermaid
+flowchart LR
+  T[TD-07 working company] -->|Register CSV: QARDR + 10 digits| R[own test readers]
+  R --> S1[Suspend Lost / Not functioning / Others] --> RE[Reinstate] --> R
+  R -->|2 NEW readers| P[Deactivate - Reassignment / Terminate: Permanently Suspended]
+```
+
+| File / folder | Change |
+|---|---|
+| `common/tests/manageReaders/readers.spec.ts` | New: TC-RDR-001..016 |
+| `common/pages/ReadersPage.ts` | New: Reader Summary / Details / Status History / Suspend / Reinstate / Register (2-step upload), Export |
+| `common/pages/AdministratorPage.ts` | Changed: top menu configurable (`menuPath`, reused by ReadersPage); Quicklink Go waits for the next page |
+| `common/fixtures/base.ts` | Changed: `readersPage` fixture |
+| `portals.config.ts` | Changed: `readers` rules per portal (quicklinks, details buttons, TD-07 working company, company B) |
+| `report-notes/uat-aph/sheet_links.json`, `report-notes/uat-fassbayar/sheet_links.json` | Changed: TC-RDR-001..016 -> rows 175-190 / 193-208 |
+| `explore/scan/readers.scan.ts`, `explore/scan/readerUpload.scan.ts` | New: read-only exploration; upload probe (never Submits) |
+| `common/tests/manageReaders/README.md` | Changed |
+
+**Key code**
+```ts
+// own test readers only; registered on the TD-07 working company when there are not enough
+const [serial] = await testReaders(rdr, 1, 'RDR-008');
+await rdr.setStatus('Suspend', serial, 'Lost', 'QA RDR-008 suspend Lost');   // screenshot before + after Submit
+const rows = (await rdr.statusHistory()).rows;                               // div "table" in the pop-up
+```
+
+**Results 23 Nov (workbooks off), both portals the same: 10 passed, 3 failed, 3 skipped**
+- RDR-004: a serial with spaces / `#!` is approved and registered (no "Invalid Serial No."); a .xlsx shows
+  "Please select a file to upload" (sheet: "Please upload a valid CSV"). A serial repeated in one CSV: both rows rejected.
+- RDR-012: the Reinstate form shows no "Suspended" label (sheet expects one).
+- RDR-016: remarks of only spaces are accepted and the reader is reinstated (the page's rule `/([^\\s])/` is double-escaped).
+- Skipped: 011 / 014 human action (device + card); 005 waits for "company B" in the Test Data sheet.
+
+**How to run / check**
+```powershell
+# read-only cases only
+npx playwright test common/tests/manageReaders/readers.spec.ts
+# all cases (registers / suspends the automation's own test readers)
+$env:ADM_ALLOW_UAT_CHANGES='true'; $env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test common/tests/manageReaders/readers.spec.ts
+```
+
+### 2026-11-23 14:15: TC-ADM-018: screenshots of every suspend / reinstate / login step
+**Why:** To show Fassbayar's defect evidence: after Reinstate the user's status is Active in the list,
+but logging in as that user still gives "Your account is suspended". The login in the separate browser
+and the Suspend / Reinstate forms had no step screenshots.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/administrator/bankUsers.spec.ts` | Changed: `setAccess()` shoots the filled form, the page after Submit and the user's list row; ADM-018 shoots the test user's screen after Login (LOGGED IN / REFUSED) |
+
+**Key code**
+```ts
+await admin.captureStep(`${action} form for ${user} filled, before Submit`);
+await admin.captureStep(`Manage Bank Users: ${user} status after ${action}`);
+await login.captureStep(`Log in as ${label} ${user}: ${ok ? 'LOGGED IN' : 'REFUSED'}`);
+```
+
+**How to run / check** (changes data: suspends then reinstates the Test Data user)
+```powershell
+$env:ENV_NAME='UAT-FASSBAYAR'; $env:UAT_FASSBAYAR_WORKBOOK='C:\nowhere\off.xlsx'; $env:ADM_ALLOW_UAT_CHANGES='true'; $env:REPORT_DIR="$env:TEMP\adm018-FB"
+npx playwright test common/tests/administrator/bankUsers.spec.ts -g "Suspended bank user cannot log in"
+```
+
+### 2026-11-23 14:10: TC-ADM-022: screenshots of the form before each Submit
+**Why:** To show what was submitted when Fassbayar's Edit Bank User Details accepts a blank Name / Email
+(the screenshot after Submit only shows the result).
+
+| File / folder | Change |
+|---|---|
+| `common/tests/administrator/bankUsers.spec.ts` | Changed: ADM-022 `captureStep` after blanking Name / Email and after typing "ab" / "bad@" |
+
+**Key code**
+```ts
+await admin.clear(['name', 'email']);
+await admin.captureStep('Name and Email blanked, before Submit');
+```
+
+**How to run / check** (own account; Submit then Back, never confirmed)
+```powershell
+$env:ENV_NAME='UAT-FASSBAYAR'; $env:UAT_FASSBAYAR_WORKBOOK='C:\nowhere\off.xlsx'; $env:REPORT_DIR="$env:TEMP\adm022-FB"
+npx playwright test common/tests/administrator/bankUsers.spec.ts -g "TC-ADM-022"
+```
+
+### 2026-11-23 13:55: Report Notes explain why a test failed or was skipped
+**Why:** The Notes column showed only the first line of the error (e.g. "Error: User ID 3 chars accepted"),
+which reads as the opposite of what happened and hides the other failed checks. Notes now say, briefly,
+what was checked, what was expected and what the portal showed, for EVERY failed check (soft ones too, max 4).
+Skips start with "Skipped:" (or "Human action required ..." / "Preview: ...").
+
+| File / folder | Change |
+|---|---|
+| `common/reporters/executionReport.ts` | Changed: `explainErrors()` / `explainError()` / `skipNote()` build the Notes text |
+| `common/tests/administrator/planCodes.spec.ts` | Changed: ADM-014 duplicate check label "Duplicate plan code message (sheet wording)" |
+
+**Key code** (examples of the new Notes)
+```text
+Failed: User ID 3 chars accepted - expected no error message, portal showed "Please enter valid User ID"
+Failed: Role list (OPT_ROLE_ASSIGN) - portal has extra "Failover Operator"
+Failed: 1) Duplicate plan code message (sheet wording) - expected "Duplicate plan code in form", portal showed "Duplicated. Not Available" 2) ...
+```
+List differences: "portal has extra x" / "portal is missing x"; timeouts: "the page did not show what was expected in time".
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-FASSBAYAR'; $env:UAT_FASSBAYAR_WORKBOOK='C:\nowhere\off.xlsx'; $env:ADM_PREVIEW_CHANGES='true'; $env:REPORT_DIR="$env:TEMP\cherlynn-FB"
+npx playwright test common/tests/administrator -g "Bank user validation: User ID 3-20|IPP plan code validation|Audit Trail date range limit"
+```
+
+### 2026-11-23 13:25: TC-ADM-014: Service Provider "required" check only where a blank choice exists
+**Why:** Re-running Fassbayar ADM-003 / 014 / 019 with step screenshots showed that the Fassbayar
+Service Provider dropdown has no blank / "Select One" choice: it always starts on the first provider
+(Aeon Credit), so it cannot be left empty. The step "Service Provider required" therefore went to
+Review & Confirm and failed wrongly (a test fault, not a portal fault). It now records a finding and
+moves on when there is no blank choice. A screenshot of the dropdown's choices is added.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/administrator/planCodes.spec.ts` | Changed: ADM-014 Service Provider step checks for a blank choice first |
+
+**Key code**
+```ts
+const providers = await admin.options('serviceProvider');
+await admin.captureOptions('serviceProvider', 'Service Provider (Add a Plan Code)');
+if (!providers.some((o) => o === '' || /select/i.test(o))) { /* finding: always pre-selected */ return; }
+```
+
+**How to run / check** (workbook off, separate report; nothing is saved)
+```powershell
+$env:ENV_NAME='UAT-FASSBAYAR'; $env:UAT_FASSBAYAR_WORKBOOK='C:\nowhere\off.xlsx'; $env:REPORT_DIR="$env:TEMP\cherlynn-FB"
+npx playwright test common/tests/administrator -g "Bank user validation: User ID 3-20|IPP plan code validation|Audit Trail date range limit"
+```
+
+### 2026-11-23 13:10: Report: dropdown choices shown in screenshots (Failover Operator)
+**Why:** Fassbayar TC-ADM-001 / 002 / 020 fail because the Role dropdown has an extra choice, "Failover Operator",
+that the sheet does not list. The screenshots showed the dropdown closed, so the extra choice could not be seen.
+The portal hides the real dropdown behind a styled box, so a panel listing every choice is drawn under the box
+for the screenshot and removed again. Choices the sheet does not list are marked red "NOT IN SHEET".
+
+| File / folder | Change |
+|---|---|
+| `common/pages/AdministratorPage.ts` | Changed: new `captureOptions(name, label, expected)` |
+| `common/tests/administrator/bankUsers.spec.ts` | Changed: ADM-001 / 020 shoot the Role and Status filters; ADM-002 shoots the Role list (first role only) |
+
+**Key code**
+```ts
+await admin.captureOptions('role', 'Role (Add a Bank User)', ROLE_ASSIGN);
+// panel under the styled box; a choice not in `expected` -> red "<choice> <- NOT IN SHEET"
+```
+
+**How to run / check** (workbook off, separate report; ADM-002 in preview so no new users are created)
+```powershell
+$env:ENV_NAME='UAT-FASSBAYAR'; $env:UAT_FASSBAYAR_WORKBOOK='C:\nowhere\off.xlsx'; $env:ADM_PREVIEW_CHANGES='true'; $env:REPORT_DIR="$env:TEMP\failover-FB"
+npx playwright test common/tests/administrator/bankUsers.spec.ts -g "Manage Bank Users shows|Add a bank user for each|search and filter field validation"
+```
+
+### 2026-11-23 11:52: TC-TRX-001 uses today's newest transaction (APH archive hours)
+
+**Why:** TC-TRX-001 failed on APH: the fixed test transaction (18 Nov) is now archived, and APH shows archived
+transaction details only 22:00 - 06:00 ("Archive data can only be viewed between 22:00 and 06:00"). Not a portal defect.
+
+| File / folder | Change | What |
+|---|---|---|
+| `common/pages/TransactionSummaryPage.ts` | Changed | `newestTransactionId()` (first row of the list, which opens on today; APH column "Transaction ID", Fassbayar "Transaction ID (Business Name)"); `openDetails()` returns `'archive'` when the archive-hours message shows |
+| `common/tests/manageTransactions/transactionSummary.spec.ts` | Changed | Uses today's newest transaction; status read from the search result; no transaction today -> the known one; archived -> Human action required (time window) |
+
+**Result (23 Nov):** Pass on APH (`11071342231126002477`) and Fassbayar (`0001440411332695515008314`).
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-APH'; npx playwright test --grep "@transaction-summary"
+```
+
+---
+
+### 2026-11-23 11:40: Report: a screenshot of every Administrator screen and every Submit result
+
+**Why:** Asked that the report shows every screen, so it is clear which screen is OK and where a check fails.
+
+| File / folder | Change | What |
+|---|---|---|
+| `common/pages/BasePage.ts` | Changed | `captureStep(label)`: full-page JPEG (quality 70) attached like `captureScreen`; off with `STEP_SCREENSHOTS=false` |
+| `common/pages/AdministratorPage.ts` | Changed | step screenshot after `openQuicklink`, `quicklinkGo`, `clickButton`, `openPopup`, and after every `submit()` named by its outcome: "went to Review & Confirm", "errors: ...", "no error shown"; `screenName()` |
+| `common/reporters/executionReport.ts` | Changed | evidence accepts JPEG (`.jpg`, data URI `image/jpeg`); file names cut to 60 characters |
+
+**Why JPEG:** the APH report already had 176 PNG screenshots (62 MB; single-file report 85 MB). JPEG step shots are about 5x smaller.
+
+Example (APH, ADM-021): `Screen: Add a Bank User` -> `After Submit: errors: Please enter valid User ID` (all blank) ->
+`After Submit: went to Review & Confirm` (blank Name = the defect) -> `... went to Review & Confirm` (blank Email).
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-APH'; $env:REPORT_DIR="$env:TEMP\blank-fields-aph"; npx playwright test common/tests/administrator -g "Add a Bank User: mandatory fields"
+```
+
+---
+
+### 2026-11-23 10:38: Administrator test data from the workbooks' Test Data sheets (QA Lead update)
+
+**Why:** The QA Lead filled in the Test Data sheet of both v1.1 workbooks (23 Nov, online). The Administrator tests now
+use the users and plan code named there; the automation's own dummy users are only the fallback.
+
+| Purpose | APH (Test Data) | Fassbayar (Test Data) |
+|---|---|---|
+| Disposable user: edit / suspend / reinstate (ADM-004, 006) | TD-04 `test_email` | TD-01 `hGtkMDzs` |
+| Reset Password (ADM-009) | TD-04 `test_email` | not given -> dummy `qaautotest02` |
+| Log in while suspended (ADM-018) | TD-02 = `qaautotest01` (QA Lead 10:46: "can use qaautotest01"; set in `portals.config.ts`) | TD-01 `hGtkMDzs` (password needed in `.env`) |
+| Test IPP plan code (ADM-013) | TD-11 `789` | TD-05 `789`, Maybank (`MBB`) |
+
+| File / folder | Change | What |
+|---|---|---|
+| `portals.config.ts` | Changed | `AdministratorRules`: `testBankUser`, `resetUser`, `loginTestUser`, `testPlanCode`, `testPlanProvider` per portal |
+| `common/tests/administrator/bankUsers.spec.ts` | Changed | `sheetUser()` (must exist, used as it is), `caseUser()` (sheet user else dummy); ADM-009 reads the email from the pop-up for a sheet user; ADM-018 uses the sheet's login user |
+| `common/tests/administrator/planCodes.spec.ts` | Changed | ADM-013 uses the sheet's code + provider; deletes it first if a stopped run left it Active; shared `openActivePlanCode()` / `deletePlanCode()`; the search result has no Service Provider column (the full list has) |
+
+**Sync note:** the full run started 10:2x was STOPPED before it wrote any workbook: the APH workbook on this PC was older
+(10:02) than the online file the QA Lead had edited (10:26). Writing would have risked a OneDrive conflict / losing her edit.
+Check runs since then: workbook writing off. FB 789 (MBB) left Active by one check run was deleted by the next run.
+
+**Check run (workbook off):** APH ADM-004, 006, 009, 013 Pass; Fassbayar ADM-004, 006, 009, 013 Pass; ADM-018 needs the password.
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-FASSBAYAR'; $env:ADM_ALLOW_UAT_CHANGES='true'; $env:UAT_FASSBAYAR_WORKBOOK='C:\nowhere\off.xlsx'
+npx playwright test common/tests/administrator -g "Bank User Details and Edit|Suspend Bank User Access with reason|Reset Password pop-up|Suspended bank user cannot log in|Add, edit and delete a test IPP"
+```
+
+---
+
+### 2026-11-23 10:04: Team test mailbox: ADM-009 automated, ADM-018 ready (two dummy bank users)
+
+**Why:** QA Lead (Cher Lynn, 23 Nov) gave a team test mailbox for the dummy users' emails and confirmed
+`automationaph` must not be suspended. The mailbox address is only in the local `.env` (`ADM_TEST_EMAIL`).
+
+| Dummy user (both portals) | Used by | Email |
+|---|---|---|
+| `qaautotest01` | ADM-004 edit, ADM-006 suspend / reinstate, ADM-018 log in as it | test mailbox (moved from example.com automatically) |
+| `qaautotest02` | ADM-009 Reset Password (a reset forces a new password, so it is kept apart from 01) | test mailbox |
+
+| File / folder | Change | What |
+|---|---|---|
+| `common/tests/administrator/bankUsers.spec.ts` | Changed | `ensureUser()` (create once / move email to the mailbox), `setAccess()` (suspend / reinstate); ADM-009 automated (pop-up text, Continue, "Email has been sent to ..."); ADM-018 automated: suspend -> log in refused (separate browser) -> reinstate -> log in allowed. Needs the password, else Human action |
+| `common/utils/uatChanges.ts` | Changed | `TEST_EMAIL` (ADM_TEST_EMAIL) |
+| `portals.config.ts` | Changed | `TEST_BANK_USER_PASSWORD` (<ENV>_TEST_BANK_USER_PASSWORD) |
+| `.env.example` | Changed | placeholders for the three settings |
+
+**Done on UAT (23 Nov):** ADM-004 and ADM-009 Pass on both portals; `qaautotest02` reset email sent; one-off: reset email
+sent for `qaautotest01` on APH and Fassbayar so its password can be set from the mailbox.
+
+**Human action left:** set `qaautotest01`'s password from the two emails, then fill `UAT_APH_TEST_BANK_USER_PASSWORD` /
+`UAT_FASSBAYAR_TEST_BANK_USER_PASSWORD` in `.env` -> ADM-018 runs. ADM-009: check the email arrived. ADM-017 stays manual (device).
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-APH'; $env:ADM_ALLOW_UAT_CHANGES='true'
+npx playwright test common/tests/administrator/bankUsers.spec.ts -g "Bank User Details and Edit|Reset Password pop-up|Suspended bank user cannot log in"
+```
+
+---
+
+### 2026-11-23 09:57: Resigned no longer tested (OQ-APH-23); findings shown on passed tests
+
+**Why:** Asked to get failures to pass where possible. Only changes backed by a QA Lead decision were made:
+OQ-APH-23 (closed 22 Nov, "remove resign test cases"). The other failures are sheet-vs-portal differences or likely
+defects and stay failing until the QA Lead decides or the portal is fixed.
+
+| File / folder | Change | What |
+|---|---|---|
+| `common/tests/administrator/bankUsers.spec.ts` | Changed | `withoutResigned()`: "Resigned" left out of the Status filter / Suspend reason checks (ADM-001, 005, 020) and noted as a finding |
+| `common/reporters/executionReport.ts` | Changed | A passed test with a `finding` annotation gets notes "Finding: ..." |
+| `tools/workbook-results/update_workbook.py` | Changed | Actual Result shows a pass's "Finding: ..." note |
+
+**Result (23 Nov):** APH ADM-001, 005, 020 Pass; Fassbayar ADM-005 Pass, ADM-001 / 020 still fail on "Failover Operator".
+APH credit settlement tests: all Pass, Actual Result notes the Date filter finding.
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-APH'; npx playwright test common/tests/administrator/bankUsers.spec.ts -g "Manage Bank Users shows search|Suspend Bank User Access form shows|All Users"
+```
+
+---
+
+### 2026-11-23 09:38: Fixes after the first full run with changes on; APH credit settlement Date filter finding
+
+**Why:** The full run with `ADM_ALLOW_UAT_CHANGES=true` showed test bugs, and the credit settlement tests still skipped on APH.
+
+**Finding (APH, possible defect):** Manage Credit Settlements > Date filter returns "No record" for every day searched
+(today and 30 days back), although the list without a date has 147 settlements, newest 20 Nov 2026
+(e.g. TID 10029595 settled 19 Nov, but TID 10029595 + Date 19 Nov = 0). Fassbayar's Date filter works.
+
+| File / folder | Change | What |
+|---|---|---|
+| `common/utils/portalDate.ts` | Changed | Node writes September as "Sept"; the portal only reads "Sep" and ignores an unreadable date (shows every settlement). Fixed |
+| `common/pages/AdministratorPage.ts` | Changed | `portalDate` "Sep" fix; new `allRowCells()` reads every page of a list (`#pageInfo`, `a[href*="page=N"]`) |
+| `common/pages/CreditSettlementPage.ts` | Changed | `searchAllDates()` (date the list cannot read = every settlement) |
+| `common/tests/manageCreditSettlements/creditSettlement.spec.ts` | Changed | Look back 7 days, then the full list as test data + a "finding" annotation about the Date filter |
+| `common/tests/administrator/planCodes.spec.ts` | Changed | `listedPlanCodes` reads every page (Fassbayar has 52 plan codes, 15 a page; 097 is a REAL Fassbayar plan code) |
+| `common/tests/administrator/bankUsers.spec.ts` | Changed | ADM-002: Super Admin must not be offered (hard), role list = sheet (soft: Fassbayar adds Failover Operator); ADM-003: retries a random ID that already exists; ADM-004: checks the new name on Bank User Details (Complete page shows only User ID / Role) |
+
+**How to run / check**
+```powershell
+$env:DEMO='false'; $env:ADM_ALLOW_UAT_CHANGES='true'; node scripts/run-all.js
+```
+
+---
+
+### 2026-11-23 09:17: Skipped tests made runnable: dummy bank user, reusable plan codes, credit settlement look-back
+
+**Why:** Asked that every skipped test either runs or is marked Human action required. Decided to save changes on
+UAT without waiting for the QA lead (test environment), and to let ADM-002 create its 5 users on every run.
+
+| Skipped before | Now |
+|---|---|
+| ADM-002 add bank users | Runs with `ADM_ALLOW_UAT_CHANGES=true`; creates 5 permanent users every run |
+| ADM-004 / 006 edit, suspend + reinstate | Use the automation's dummy user `qaautotest01` (created once, reused; `ADM_TEST_BANK_USER` overrides). Left Suspended by a crashed run -> reinstated first |
+| ADM-013 plan code | Reuses test codes 097..093 that are not Active (a deleted code can be added again: checked 23 Nov, no save) |
+| ADM-015 / 016 | Run (restore themselves) |
+| TC-CS-003/004/005/007/008 | No settlement today -> go back a day at a time (up to 30 days) and use the newest day with settlements |
+| TC-CS-005 batch in archive (APH 22:00-06:00 only) | Human action required (time window) |
+| ADM-009 / 017 / 018 | Stay Human action required (mailbox / device / user's password) |
+
+| File / folder | Change | What |
+|---|---|---|
+| `common/tests/administrator/bankUsers.spec.ts` | Changed | `DUMMY_USER`, `dummyUserRow()`, `testBankUser()` creates the dummy once; ADM-006 reinstates a left-suspended dummy first |
+| `common/tests/administrator/planCodes.spec.ts` | Changed | `listedPlanCodes` joins several rows of one code (a deleted code can be listed again); ADM-013 picks a test code that is not Active, opens the Active row, checks "24 \| Active" and "not Active" after delete |
+| `common/tests/manageCreditSettlements/creditSettlement.spec.ts` | Changed | `firstRowOrSkip` looks back `LOOKBACK_DAYS = 30`; CS-008 sets the same day on the company list; CS-005 archive window -> Human action |
+| `common/pages/CreditSettlementPage.ts` | Changed | `searchDate(date)` (read-only date field set like the picker, then Search) |
+| `common/utils/portalDate.ts` | Changed | `portalDaysAgo(n)` |
+
+**How to run / check**
+```powershell
+$env:DEMO='false'; $env:ADM_ALLOW_UAT_CHANGES='true'; node scripts/run-all.js     # both portals, workbooks + test_summary.html
+```
+
+---
+
+### 2026-11-23 09:10: First real run of the self-undoing Administrator changes; plan code delete is a form
+
+**Why:** Decided to run the data-changing tests that undo themselves (ADM-013, 015, 016) on APH UAT
+(`ADM_ALLOW_UAT_CHANGES=true`). Bank user ones (ADM-002, 004, 006) held back: they need a permanent dummy user.
+
+| File / folder | Change | What |
+|---|---|---|
+| `common/tests/administrator/planCodes.spec.ts` | Changed | TC-ADM-013 delete step: "Delete Plan Code" opens a FORM (Reason Incorrect create / Others, remarks `description`, Submit), not a yes/no pop-up. Now fills it and Submits; preview stops before that Submit |
+
+**What happened on APH UAT (23 Nov 2026)**
+- 1st run: ADM-015 (MyDebit 250 -> 251 -> 250) and ADM-016 (host period, restored) passed. ADM-013 added 097, edited it
+  (Term 24) and then failed at the delete (form not submitted) -> 097 was left Active.
+- Cleanup: 097 deleted by hand-written one-off script (Reason Incorrect create, remarks "QA automation cleanup").
+- 2nd run (fixed): all 3 passed; plan code 096 added, edited, deleted.
+- Workbook NOT written for these runs (`--reporter=list` replaces the reporter that writes it).
+
+**Note:** deleted plan codes stay on the list (Deleted), so each ADM-013 run uses up one of 097..093; 095, 094, 093 are left.
+
+**How to run / check**
+```powershell
+$env:ENV_NAME='UAT-APH'; $env:ADM_ALLOW_UAT_CHANGES='true'
+npx playwright test common/tests/administrator -g "Edit contactless CVM|Edit Host Downtime|Add, edit and delete a test IPP"   # no --reporter flag, so the workbook is written
+```
+
+---
+
+### 2026-11-23 08:42: Preview mode for the data-changing Administrator tests (ADM_PREVIEW_CHANGES)
+
+**Why:** Asked to see the skipped Administrator tests run in the browser. They change UAT data, so a preview walks
+through the real screens up to the save point, takes a screenshot, and stops with nothing saved.
+
+| File / folder | Change | What |
+|---|---|---|
+| `common/utils/uatChanges.ts` | Changed | `UAT_PREVIEW` (ADM_PREVIEW_CHANGES=true and changes not allowed); `requireUatChanges` lets preview through; new `stopBeforeSaving(page, what)` |
+| `common/pages/AdministratorPage.ts` | Changed | `confirm()` calls `stopBeforeSaving` first (preview: screenshot of Review & Confirm, test stops) |
+| `common/tests/administrator/bankUsers.spec.ts` | Changed | ADM-004 / 006 use `testBankUser()` (ADM_TEST_BANK_USER, or in preview any other active user); ADM-006 stops before the Suspend Submit (it saves at once) |
+| `.env.example` | Changed | `ADM_PREVIEW_CHANGES` note |
+
+**Key code**
+```ts
+export const UAT_PREVIEW = !UAT_CHANGES_ALLOWED && process.env.ADM_PREVIEW_CHANGES === 'true';
+export async function stopBeforeSaving(page: BasePage, what: string) {
+  if (!UAT_PREVIEW) return;
+  await page.captureScreen(`Preview: ${what} (not saved)`);
+  test.skip(true, `Preview: stopped before ${what}; nothing saved`);
+}
+```
+A preview ends as **Skipped** on purpose: the save and the check of the saved result are not done.
+
+APH preview (23 Nov 2026): ADM-002, 004, 006, 013, 015, 016 each stopped at their save point; nothing saved.
+
+**How to run / check** (workbook off so preview results are not written)
+```powershell
+$env:ENV_NAME='UAT-APH'; $env:ADM_PREVIEW_CHANGES='true'; $env:UAT_APH_WORKBOOK='C:\nowhere\off.xlsx'
+npx playwright test common/tests/administrator -g "Add a bank user for each|Bank User Details and Edit|Suspend Bank User Access with reason|Add, edit and delete a test IPP|Edit contactless CVM|Edit Host Downtime"
+```
+
+---
+
+### 2026-11-23 01:20: Administrator on Fassbayar (FassBayar baseline rows 250-277) + TC-ADM-030
+
+**Why:** Asked to explore the Fassbayar Administrator module, compare it with APH, and automate FassBayar sheet rows 250-277.
+The shared Administrator specs now run on both portals. Differences are kept in `portals.config.ts`.
+
+| Screen / rule | APH | Fassbayar |
+|---|---|---|
+| Quicklinks | 8 | 7 (no Host Settings, `/admin/getHostSettingDetails` is 404) |
+| Bank user roles | sheet list | + "Failover Operator" (filter and Add / Edit) |
+| Plan code list / form | no Service Provider | + Service Provider (12 hosts) |
+| Card brand limit column | Contactless CVM Limit (MYR) | Contactless CVM Limit (RM) |
+| Audit Trail actions | 117 | longer list (sheet "60+", count not checked) |
+| Sheet cases | ADM-001..029 (rows 220-248) | ADM-001..015, 017..028, 030 (rows 250-277, no Host Settings 016 / 029) |
+
+| File / folder | Change | What |
+|---|---|---|
+| `portals.config.ts` | Changed | features `bankUsers`, `cardBrandSettings`, `hostSettings` (Fassbayar: no Host Settings); new `administrator` rules (`cardBrandLimitColumn`, `auditActionCount`) |
+| `common/tests/administrator/planCodes.spec.ts` | Changed | TC-ADM-030 Edit Plan Code Details validation; Service Provider step only where the field exists; list rows read in full (Fassbayar's extra Service Provider column hid Status, so ADM-014 skipped); the duplicate check picks the existing code's own provider by option value (list shows `HLB`, dropdown text is "Hong Leong Bank") |
+| `common/tests/administrator/bankUsers.spec.ts` | Changed | ADM-003 accepted-length checks are soft (Fassbayar rejects a 3-character User ID) |
+| `common/pages/AdministratorPage.ts` | Changed | `reviewShown()` waits up to 3 s for the Review slide; `filter()` waits for load and gives Search 45 s (Fassbayar error log is large) |
+| `report-notes/uat-fassbayar/sheet_links.json` | Changed | TC-ADM-001..015, 017..028, 030 -> TC-FB-BP-ADM-0NN, rows 250-277 (checked on the synced v1.1 file) |
+
+**Key code**
+```ts
+// portals.config.ts (Fassbayar)
+features: { ..., bankUsers: true, cardBrandSettings: true, hostSettings: false },
+administrator: { cardBrandLimitColumn: 'Contactless CVM Limit (RM)', auditActionCount: undefined },
+```
+
+**Fassbayar run (written into FassBayar v1.1 rows 250-277, 28 Automation IDs): 13 passed, 8 skipped / Blocked (gated / manual), 7 failed.** Every failure is a difference between the sheet and the portal:
+- ADM-001, 020: Role filter has "Failover Operator"; Status filter has "Resigned"
+- ADM-003: a 3-character User ID is rejected ("Please enter valid User ID"); the sheet says 3-20
+- ADM-005: Suspend Reason has "Resigned" (sheet: Others)
+- ADM-019: Audit Trail accepts a 1-year range with no message
+- ADM-022: blank Name / Email on Edit Bank User reaches Review
+- ADM-014: duplicate plan code message is "Duplicated. Not Available" (sheet: "Duplicate plan code in form"); blank Description reaches Review (same as APH)
+
+**How to run / check**
+```powershell
+npm run test:fassbayar                                     # all Fassbayar tests; writes FassBayar v1.1 (incl. rows 250-277)
+$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test common/tests/administrator   # Administrator only
+$env:UAT_FASSBAYAR_WORKBOOK='C:\nowhere\off.xlsx'; $env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test common/tests/administrator   # check only, no workbook write
+```
+
+---
+
+### 2026-11-23 01:15: New module: Administrator (TC-ADM-001 to 029, APH baseline rows 220-248)
+
+**By:** Derrick. **Why:** automate the ADM cases of `APH_System_Portal_Baseline_Test_Cases_v1.1.xlsx`
+(Test Case Library rows 220-248), after exploring APH > Administrator with the automation account.
+
+| File / folder | Change |
+|---|---|
+| `explore/scan/administrator.scan.ts` | **New**: read-only exploration of Administrator (pages, forms, pop-ups; never confirms) |
+| `common/pages/AdministratorPage.ts` | **New**: shared page object (lists, Quicklink + Go, forms Submit / Back, pop-ups, validation without Submit) |
+| `common/tests/administrator/bankUsers.spec.ts` | **New**: TC-ADM-001 to 009, 018, 020 to 023 (APH: `features.bankUsers`) |
+| `common/tests/administrator/logs.spec.ts` | **New**: TC-ADM-010, 011, 012, 019, 024, 025 (both portals) |
+| `common/tests/administrator/planCodes.spec.ts` | **New**: TC-ADM-013, 014, 026 (both portals) |
+| `common/tests/administrator/cardBrands.spec.ts` | **New**: TC-ADM-015, 017, 027, 028 (APH: `features.cardBrandSettings`) |
+| `common/tests/administrator/hostSettings.spec.ts` | **New**: TC-ADM-016, 029 (APH: `features.hostSettings`) |
+| `common/utils/uatChanges.ts` | **New**: `requireUatChanges()` (runs only with `ADM_ALLOW_UAT_CHANGES=true`), `humanAction()` (HAR) |
+| `portals.config.ts` | Changed: features `bankUsers`, `cardBrandSettings`, `hostSettings` (APH true, Fassbayar false) |
+| `common/fixtures/base.ts` | Changed: `administratorPage` fixture |
+| `report-notes/uat-aph/sheet_links.json` | Changed: TC-ADM-0NN -> TC-APH-BP-ADM-0NN (rows 220-248) |
+| `tools/workbook-results/update_workbook.py`, `common/reporters/reportNotes.ts` | Changed: HAR skips ("Human action required") keep the workbook row Not Run and are listed once |
+
+| Group | Cases | How |
+|---|---|---|
+| Automated, read-only | 001, 003, 005, 007, 008, 010, 011, 012, 014, 019, 020-029 | Forms Submitted (validation / Review) and left with Back; Suspend / Reinstate checked with the page's validateInput1() without Submit |
+| Change UAT data (off by default) | 002, 004, 006, 013, 015, 016 | Run only with `ADM_ALLOW_UAT_CHANGES=true` (004 / 006 also need `ADM_TEST_BANK_USER`); team to decide |
+| Manual (HAR) | 009, 017, 018 | Human Action; workbook stays Not Run |
+
+Pop-ups found (opened and closed, nothing confirmed): Reset Password ("Are you sure you want to reset password?
+Yes, an activation email will be sent to {email}", Cancel / Continue), Status History >> (bank user, plan code),
+Switch Bank User, System Error Details (View Details).
+
+Portal vs sheet differences (the tests fail on them, soft checks): Status filter has "Resigned" (sheet Active /
+Suspended); Suspend Reason has "Resigned" (sheet Others); Audit Trail accepts a 1-year range (sheet: range limit);
+blank fields reach Review on Add a Bank User (Name, Email), Edit Bank User (Name, Email), Edit Card Brand (CVM),
+Edit Host Setting (period), Add Plan Code (Description); duplicate plan code says "Duplicated. Not Available"
+(sheet "Duplicate plan code in form"). Own account: no Suspend, Role not editable.
+
+```mermaid
+flowchart LR
+  ADM[Administrator] --> BU[Manage Bank Users] --> UD[Bank User Details]
+  UD -.pop-up.-> SH[Status History] & RP[Reset Password] & SW[Switch Bank User]
+  UD --> ED[Edit] & SU[Suspend] & RE[Reinstate]
+  ADM --> EL[System Error Log] -.pop-up.-> EDT[Error Details: Save to File]
+  ADM --> AT[Audit Trail: search, export]
+  ADM --> PC[IPP Plan codes] --> PD[Details: Edit / Delete / Status History]
+  ADM --> CB[Card Brand Settings] --> CE[Edit CVM limit]
+  ADM --> HS[Host Settings] --> HE[Edit downtime period]
+```
+
+**How to run / check**
+```powershell
+npx playwright test common/tests/administrator          # APH: 29 tests (Fassbayar: 9)
+npx playwright test --grep @administrator
+$env:ENV_NAME='UAT-APH'; npx playwright test --config explore/scan/scan.config.ts administrator   # exploration
+```
+
+---
+
+### 2026-11-22 23:20: Workbook "Automation ID" column filled from the mapping
+
+**By:** Derrick. **Why:** the v1.1 workbooks have a new column B "Automation ID"; it should show which
+automated test(s) cover each case, with the same IDs as the report.
+
+| File / folder | Change |
+|---|---|
+| `tools/workbook-results/update_workbook.py` | Changed: every case linked in `sheet_links.json` gets all its automated tests in "Automation ID" (e.g. `TC-CS-002, TC-CS-003, TC-CS-004, TC-CS-005`), on every run, even if the tests did not run (the column shows the link, not the result). Skipped when the sheet has no such column |
+
+Written now (no results changed): APH v1.1 11 cases, FassBayar v1.1 12 cases, e.g. APH STL-002 =
+`TC-CS-002, TC-CS-003, TC-CS-004, TC-CS-005`, FassBayar TXN-019 = `TC-BILL-001`. Cells of cases that are not
+linked are left as they are.
+
+Also today: OneDrive did not upload the 22:43 / 22:45 writes until it was quit and reopened (then it merged
+them, no conflict copy). If the sync arrows stay on the files, quit and reopen OneDrive.
+
+**How to run / check**
+```powershell
+npm run test:all     # results + Automation ID written into the v1.1 workbooks
+```
+
+---
+
+### 2026-11-22 23:00: Relinked to the v1.1 baseline workbooks (v1.0 archived)
+
+**By:** Derrick. **Why:** the lead published `APH_System_Portal_Baseline_Test_Cases_v1.1.xlsx` and
+`FassBayar_System_Portal_Baseline_Test_Cases_v1.1.xlsx` in Baseline and moved v1.0 to `Baseline/Archive`
+(Archive is not used and not touched).
+
+| File / folder | Change |
+|---|---|
+| `report-notes/uat-aph/sheet_links.json` | v1.1 link, name, column "Test Case ID (APH Baseline v1.1)"; 13 tests linked |
+| `report-notes/uat-fassbayar/sheet_links.json` | v1.1 link, name, column "Test Case ID (FassBayar Baseline v1.1)"; 14 tests linked |
+| `.env` (local only) | `UAT_APH_WORKBOOK` / `UAT_FASSBAYAR_WORKBOOK` -> the v1.1 files in Baseline (synced, kept on this device) |
+
+| Test | APH v1.1 | FassBayar v1.1 | vs v1.0 |
+|---|---|---|---|
+| TC-APH-001 | AUTH-002 (3), AUTH-012 (13) | AUTH-002 (3), AUTH-012 (13) | logout case renumbered |
+| TC-COMP-001 | CMP-014 (34), CMP-008 (29) | CMP-014 (34), CMP-008 (28) | APH renumbered |
+| TC-COMP-002 | CMP-014 (34) | CMP-014 (34) | new on FassBayar (case now checks disabled payment types) |
+| TC-COMP-003 | CMP-091 (93) | CMP-091 (106) | APH: the "MID used by another company" case |
+| TC-COMP-004 | CMP-002 (23) | CMP-002 (22) | same ID (case widened: also name / authoriser search) |
+| TC-TRX-001 | TXN-006 (196) | TXN-006 (220) | one number now (case adds a partial-ID step) |
+| TC-BILL-001 | - | TXN-019 (233) | renumbered |
+| TC-CS-001 / 002-005 / 007 | STL-001 / 002 / 003 (207-209) | STL-001 / 002 / 003 (237-239) | same IDs |
+| TC-CS-006 | XCUT-002 (250) | XCUT-002 (279) | same ID |
+
+Still unmapped: TC-COMP-005, TC-COMP-006-xx, TC-CS-008, TC-CS-009 (no matching case in v1.1).
+Checked: every row on the synced v1.1 files (24 links, 0 mismatches); both reports link only to v1.1;
+workbook update dry run finds every case. Columns unchanged (Status V, Actual Result W, Tester Y, Execution
+Date Z, Build AA; new column B "Automation ID", empty).
+
+Open: v1.1 carries over automation results from v1.0; three no longer match a linked test (APH CMP-026,
+APH STL-005, FassBayar STL-005 show "Pass"). Left as they are until the team decides.
+
+**How to run / check**
+```powershell
+npm run test:all     # writes into the v1.1 workbooks
+```
+
+---
+
+### 2026-11-22 22:30: Workbook: skipped tests -> Blocked with the reason; mapping re-checked
+
+**By:** Derrick. **Why:** a skipped test (e.g. no credit settlement today) should show **Blocked** with its
+reason in the workbook, and every automated test must be linked to the right test case.
+
+| File / folder | Change |
+|---|---|
+| `tools/workbook-results/update_workbook.py` | Changed: a **skipped** test makes its case **Blocked**; Actual Result gives the reason, e.g. `TC-CS-003 blocked (not executed) (No credit settlement on UAT-APH for 22 Nov 2026: ...)`. Order: Fail > Blocked > Pass. Skips that only mean "not this portal" are ignored |
+| `report-notes/uat-aph/sheet_links.json`, `report-notes/uat-fassbayar/sheet_links.json` | Re-checked against both workbooks (all rows confirmed); changes below |
+| `common/pages/TransactionSummaryPage.ts` | Changed: when View Details answers with the portal's "An error has occurred" page, the test fails with that message (was a 60 s timeout) |
+
+Mapping changes:
+
+| Test | APH | FassBayar | Why |
+|---|---|---|---|
+| TC-COMP-004 Company Summary | + CMP-002 (row 25) | + CMP-002 (row 3) | "Search companies by MID" |
+| TC-TRX-001 Transaction Summary | + TXN-007 (row 170) | + TXN-005 (row 153) | search by exact Transaction ID |
+| TC-BILL-001 Bill Payment Report | - | + TXN-017 (row 165) | "Bill Payment Report search" |
+| TC-CS-009 Schedule Force Settlement | - STL-007 | - STL-006 | those cases expect a schedule to be **saved**; the test only opens step 1 |
+| TC-CS-006 Batch No. not found | - STL-004 | | STL-004 is an archived batch, not a missing one |
+
+Still unmapped (no matching case): TC-COMP-005 / 006-xx (card schemes), TC-CS-008 (View all credit settlements),
+TC-CS-009, FassBayar TC-COMP-002. The removed links' rows (APH STL-004, STL-007; FassBayar STL-006) were put back
+to their state before automation (Not Run) from the first backups.
+
+Written from the 22 Nov 22:25 run: APH 11 cases (STL-002, STL-003 **Blocked**: no settlement today; TXN-007 **Fail**:
+APH portal error page on View Details), FassBayar 12 cases (STL-002, STL-003 Blocked; the rest Pass).
+
+Partial links (the test checks the main point, not every step of the case): AUTH-013 / AUTH-010, CMP-013 /
+CMP-014 (Retail only), CMP-002 (MID search only), APH TXN-007, APH CMP-020, STL-002, STL-003, XCUT-002,
+FassBayar CMP-008. Their Status still follows the test, as agreed.
+
+**How to run / check**
+```powershell
+npm run test:all     # run output ends with "[workbook] ... Pass / Blocked / Fail" lines
+```
 
 ---
 

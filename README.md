@@ -20,7 +20,8 @@ system-portal-automation/
 │   ├── hosts/                # one profile per host (Service Provider): MID rule, suffix, card schemes, payment types
 │   ├── creation/             # hostCompanyData: a new company for one host (NewHostCompany) + data shapes
 │   ├── flows/                # login (loginAs, loginAsAdmin)
-│   ├── testdata/             # reusable fixed data (existingMids: a MID already taken per environment)
+│   ├── testdata/             # reusable fixed data (existingMids: a MID already taken per environment;
+│   │                         #   RDR_01..08 reader upload CSVs with {PLACEHOLDERS} + readerCsvFiles.ts)
 │   ├── utils/                # hostValidation, portalDate, random, testCase()
 │   ├── pages/                # BasePage, LoginPage, ConsolePage, HomePage, AddCompanyFormPage
 │   ├── fixtures/base.ts      # base test: shared pages, blocked-page check, requireFeature()

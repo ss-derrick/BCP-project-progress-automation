@@ -6,7 +6,9 @@ import { knownTransactionFor } from '../../testdata/knownTransactions';
 
 // Manage Transactions > Transaction Summary - SHARED: runs on APH and Fassbayar.
 // Read-only: searches and views an existing transaction. Never voids it.
-// The trxID differs per environment (common/testdata/knownTransactions.ts).
+// Test data: the NEWEST transaction of today (the list opens on today), so it is not archived yet
+// (APH shows archived transaction details only 22:00 - 06:00). None today -> the known transaction of
+// the environment (common/testdata/knownTransactions.ts); archived -> Human action (time window).
 // Run only this submodule:  npx playwright test --grep @transaction-summary
 
 const MODULE = 'Manage Transactions';
@@ -25,17 +27,24 @@ test.describe('Manage Transactions > Transaction Summary', { tag: '@transaction-
     testCase({ id: 'TC-TRX-001', module: MODULE, priority: 'High', suite: ['smoke'] }),
     async ({ transactionSummaryPage, transactionDetailsPage }) => {
 
-      const trx = knownTransactionFor(ENV_NAME);
-      test.skip(!trx, `No known transaction for ${ENV_NAME} (common/testdata/knownTransactions.ts)`);
-      const { trxId, status } = trx!;
+      // Test data: today's newest transaction, else the environment's known one
+      const known = knownTransactionFor(ENV_NAME);
+      let trxId = await transactionSummaryPage.newestTransactionId();
+      if (trxId) {
+        test.info().annotations.push({ type: 'test data', description: `Newest transaction of today: ${trxId}` });
+      } else {
+        test.skip(!known, `No transaction today and no known transaction for ${ENV_NAME} (common/testdata/knownTransactions.ts)`);
+        trxId = known!.trxId;
+      }
+      let status = '';
 
       // Content: search the Transaction ID
       await test.step(`Search Transaction ID ${trxId}`, async () => {
         await transactionSummaryPage.search(trxId);
       });
 
-      // Validation: exactly this transaction comes back, Approved
-      await test.step(`Verify the transaction is returned with status ${status}`, async () => {
+      // Validation: exactly this transaction comes back
+      await test.step('Verify exactly this transaction is returned', async () => {
         expect(await transactionSummaryPage.getTotalRecords(), 'Total Records').toBe(1);
 
         const row = transactionSummaryPage.row(trxId);
@@ -43,14 +52,20 @@ test.describe('Manage Transactions > Transaction Summary', { tag: '@transaction-
 
         const shown = await transactionSummaryPage.readRow(row);
         expect(shown['Transaction ID'], 'Transaction ID').toBe(trxId);
-        expect(shown['Status'], 'Status').toBe(status);
+        status = shown['Status'];
+        expect(status, 'Status shown').not.toBe('');
+        if (trxId === known?.trxId) expect(status, 'Status').toBe(known.status);
 
-        await transactionSummaryPage.captureScreen(`Search result - ${trxId}`);
+        await transactionSummaryPage.captureScreen(`Search result - ${trxId} (${status})`);
       });
 
       // Content: View Details
       await test.step('Open View Details', async () => {
-        await transactionSummaryPage.openDetails(transactionSummaryPage.row(trxId));
+        const opened = await transactionSummaryPage.openDetails(transactionSummaryPage.row(trxId));
+        if (opened === 'archive') {
+          await transactionSummaryPage.captureScreen('Archive hours message');
+          test.skip(true, `Human action required: transaction ${trxId} is archived; its details can only be viewed 22:00 - 06:00`);
+        }
       });
 
       // Validation: the details page is this transaction, Payment Status Approved
