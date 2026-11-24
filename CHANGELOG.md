@@ -33,6 +33,7 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 
 ## Changes
 
+- [2026-11-24 12:00: Pushed to GitHub on branch readers-admin-report-highlights; local scan results ignored](#2026-11-24-1200-pushed-to-github-on-branch-readers-admin-report-highlights-local-scan-results-ignored)
 - [2026-11-24 11:25: Report: failed screens highlighted red in the screenshot flow; "starts failing here"](#2026-11-24-1125-report-failed-screens-highlighted-red-in-the-screenshot-flow-starts-failing-here)
 - [2026-11-24 11:10: TC-RDR-016: each kind of blank remarks tried separately](#2026-11-24-1110-tc-rdr-016-each-kind-of-blank-remarks-tried-separately)
 - [2026-11-24 10:55: TC-ADM-019: Fassbayar also has no Audit Trail date limit by design](#2026-11-24-1055-tc-adm-019-fassbayar-also-has-no-audit-trail-date-limit-by-design)
@@ -95,6 +96,25 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 - [2026-11-18: Structure built: one codebase, two portals](#2026-11-18-structure-built-one-codebase-two-portals)
 
 ---
+
+### 2026-11-24 12:00: Pushed to GitHub on branch readers-admin-report-highlights; local scan results ignored
+**Why:** Request: push the code to the repo (public). Committed on a new branch (not straight onto `main`);
+merge it on GitHub with a pull request. Before the commit every file was checked for passwords, the test
+mailbox, personal email and the Windows user name (none found). The read-only scan outputs of the portal
+(account names, MIDs) stay local.
+
+| File / folder | Change |
+|---|---|
+| `.gitignore` | Changed: `/explore/scan/results/readers-*.json`, `/explore/scan/results/readerUpload-*.json`, `__pycache__/` |
+
+**Key code**
+```
+/explore/scan/results/readers-*.json
+/explore/scan/results/readerUpload-*.json
+__pycache__/
+```
+
+**How to run / check**: `git status` (no scan results, no __pycache__); GitHub: branch `readers-admin-report-highlights` -> Compare & pull request -> Merge.
 
 ### 2026-11-24 11:25: Report: failed screens highlighted red in the screenshot flow; "starts failing here"
 **Why:** Request: keep the screen-by-screen flow, but make it obvious in the report on which screen a test
