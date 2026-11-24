@@ -11,8 +11,9 @@ import { TransactionDetailsPage } from '../pages/TransactionDetailsPage';
 import { CreditSettlementPage } from '../pages/CreditSettlementPage';
 import { AdministratorPage } from '../pages/AdministratorPage';
 import { ReadersPage } from '../pages/ReadersPage';
-import { cssFailMarks, cssMarks, markedScreenshot } from '../utils/screenMarks';
-import { explainMessages } from '../utils/explainFailure';
+import { cssMarks, failureCardShot } from '../utils/screenMarks';
+import { sheetCases } from '../utils/sheetExpected';
+import { explainMessages, failureParts } from '../utils/explainFailure';
 
 // BASE TEST for every portal.
 //   common/tests/<module>/*  import { test } from '../../fixtures/base'
@@ -90,18 +91,27 @@ export const test = base.extend<SharedPages & AutoFixtures>({
   //    the error messages boxed in red. The report shows these instead of Playwright's plain final screenshot.
   failureScreen: [
     async ({ page }, use, testInfo) => {
+      // failure card (common/utils/screenMarks.ts): the Excel sheet's Expected Result of this test's case
+      // (green) next to each failed check "should be ... / portal shows ..." (red), the screen under it
+      const automationId = testInfo.annotations.find((a) => a.type === 'id')?.description ?? '';
+      const sheet = automationId ? sheetCases(automationId) : [];
+      const where = () => { try { return new URL(page.url()).pathname; } catch { return ''; } };
+      const card = async (errors: typeof testInfo.errors, stopped: boolean) => {
+        const lines = explainMessages(errors.map((e) => e.message ?? String(e.value ?? '')));
+        const checks = (lines.length ? lines : ['see the report Notes']).map(failureParts);
+        const body = await failureCardShot(page, {
+          testTitle: `${testInfo.title}${stopped ? (testInfo.status === 'timedOut' ? ' (timed out here)' : ' (test stopped here)') : ''}`,
+          automationId, where: where(), checks, sheet
+        });
+        if (body) await testInfo.attach(`screen: FAILED - ${(lines[0] ?? '').slice(0, 80)}`, { body, contentType: 'image/jpeg' }).catch(() => {});
+      };
       let seen = 0;
       let busy: Promise<void> = Promise.resolve();
       const shootNew = () => {
         if (testInfo.errors.length <= seen || page.isClosed()) return;
         const fresh = testInfo.errors.slice(seen);
         seen = testInfo.errors.length;
-        busy = busy.then(async () => {
-          const lines = explainMessages(fresh.map((e) => e.message ?? String(e.value ?? '')));
-          const where = (() => { try { return new URL(page.url()).pathname; } catch { return ''; } })();
-          const body = await page.screenshot({ fullPage: true, type: 'jpeg', quality: 70, style: cssFailMarks(`check failed on ${where}`, lines) }).catch(() => null);
-          if (body) await testInfo.attach(`screen: FAILED - ${(lines[0] ?? '').slice(0, 80)}`, { body, contentType: 'image/jpeg' }).catch(() => {});
-        });
+        busy = busy.then(() => card(fresh, false)).catch(() => {});
       };
       const timer = setInterval(shootNew, 200);
       await use();
@@ -109,13 +119,7 @@ export const test = base.extend<SharedPages & AutoFixtures>({
       await busy;
       if (testInfo.status === testInfo.expectedStatus || testInfo.status === 'skipped' || page.isClosed()) return;
       if (testInfo.errors.length <= seen) return;                  // every failure already shot where it happened
-      const failures = explainMessages(testInfo.errors.slice(seen).map((e) => e.message ?? String(e.value ?? '')));
-      const where = (() => { try { return new URL(page.url()).pathname; } catch { return ''; } })();
-      const body = await markedScreenshot(page, {
-        caption: `${testInfo.status === 'timedOut' ? 'Timed out' : 'Test failed'} on ${where || 'this screen'}`,
-        failures: failures.length ? failures : ['see the report Notes']
-      });
-      if (body) await testInfo.attach(`screen: FAILED - ${(failures[0] ?? '').slice(0, 80)}`, { body, contentType: 'image/jpeg' });
+      await card(testInfo.errors.slice(seen), true);
     },
     { auto: true }
   ],

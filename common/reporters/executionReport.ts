@@ -50,6 +50,8 @@ interface GalleryEntry {
 
 // Attachment name prefix used by BasePage.captureScreen()
 const SCREEN_PREFIX = 'screen: ';
+// skip reasons of a case that belongs to another portal (also used by summaryReport.ts)
+const OTHER_PORTAL = /^(Not verified on |Applicable for .+ only)/;
 
 const DEFAULT_GENERATOR = path.join(
   process.env.USERPROFILE ?? process.env.HOME ?? '',
@@ -93,6 +95,9 @@ function explainErrors(result: TestResult): string {
 const skipNote = (reason?: string): string => {
   if (!reason) return 'Skipped (no reason given)';
   if (/^Human action required/i.test(reason)) return reason;
+  // not applicable to this portal: kept as is, so the Human Action table and the workbook recognise it
+  // (reportNotes.ts / update_workbook.py NOT_APPLICABLE: "Not verified on ...", "Applicable for ... only", "is not a host of")
+  if (/^(Not verified on |Applicable for .+ only)|is not a host of/.test(reason)) return reason;
   if (/^Preview:/i.test(reason)) return `${reason} (preview run: stopped before saving)`;
   return `Skipped: ${reason}`;
 };
@@ -286,6 +291,12 @@ export default class ExecutionReportReporter implements Reporter {
       }
       seenIds.add(id);
 
+      // A case for ANOTHER portal only ("Applicable for Fassbayar only", "Not verified on ...") is not
+      // part of this portal's report at all (same rule as the test summary): this report lists the
+      // cases that apply to this portal / its Excel sheet.
+      const own = result ? this.toStatus(test, result, annotation) : null;
+      if (own && own.status === 'skipped' && OTHER_PORTAL.test(own.notes)) continue;
+
       library.push({
         id,
         module: annotation('module') ?? (test.parent.title || 'General'),
@@ -296,7 +307,7 @@ export default class ExecutionReportReporter implements Reporter {
 
       if (!result) continue;   // not executed -> report shows "Not run"
 
-      const { status, notes } = this.toStatus(test, result, annotation);
+      const { status, notes } = own ?? this.toStatus(test, result, annotation);
       const evidence = this.copyEvidence(result, id, evidenceDir, status === 'pass');
       // where it starts failing: the first red "FAILED HERE" screenshot of the flow
       const shots = this.gallery[id.replace(/[^\w.-]/g, '_')] ?? [];

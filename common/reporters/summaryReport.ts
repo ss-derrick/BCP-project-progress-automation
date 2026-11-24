@@ -38,6 +38,7 @@ interface SystemSummary {
   label: string;
   runCategory?: string;     // "Smoke run", "Full run"... (executionReport.ts)
   fullReport?: string;
+  probe?: string;          // one screenshot of that report: loaded by the page to check the folder is there
   total: number;
   passed: number;
   notPassed: Result[];
@@ -104,6 +105,9 @@ export default class SummaryReporter implements Reporter {
     const library = readJson<LibraryEntry[]>(path.join(dir, 'data', 'test_case_library.json'), []);
     const fullReport = ['test_execution_report.html']
       .map((f) => path.join(dir, f)).find((f) => fs.existsSync(f));
+    // first screenshot of the report (evidence/manifest.json): the page loads it to check the folder is next to it
+    const manifest = readJson<Record<string, { file: string }[]>>(path.join(dir, 'evidence', 'manifest.json'), {});
+    const probeFile = Object.values(manifest).flat().map((e) => e.file).find((f) => f && fs.existsSync(path.join(dir, f)));
 
     const own = results.filter((r) => !(r.status === 'skipped' && OTHER_PORTAL.test(r.notes ?? '')));
     const counts: Record<string, number> = {};
@@ -130,6 +134,7 @@ export default class SummaryReporter implements Reporter {
       label,
       runCategory: config.run_category,
       fullReport: fullReport ? `${folder}/${path.basename(fullReport)}` : undefined,
+      probe: probeFile ? `${folder}/${probeFile}` : undefined,
       total: own.length,
       passed: counts.pass ?? 0,
       notPassed: own.filter((r) => r.status !== 'pass'),
@@ -172,7 +177,7 @@ export default class SummaryReporter implements Reporter {
       .join(' ');
 
     const button = s.fullReport
-      ? `<a class="button" href="${esc(s.fullReport)}" title="Opens ${esc(s.fullReport)}: works only when this summary is opened from the unzipped report package">Open full report &#8599;</a>`
+      ? `<a class="button" href="${esc(s.fullReport)}" data-name="${esc(s.name)}" data-folder="${esc(s.folder)}"${s.probe ? ` data-probe="${esc(s.probe)}"` : ''} title="Opens ${esc(s.fullReport)}: works only when this summary is opened from the unzipped report package">Open full report &#8599;</a>`
       : `<span class="button off" title="generate_report.py was not found when this report was made, so only its data and screenshots exist">Full report not generated</span>`;
 
     const failedTable = ok
@@ -247,6 +252,7 @@ export default class SummaryReporter implements Reporter {
   .mono { font-family:Consolas, monospace; font-size:13px; }
   .button { background:var(--brand); color:#fff; text-decoration:none; padding:8px 14px; border-radius:6px; white-space:nowrap; }
   .button.off { background:#c9cfc0; color:#4d5547; cursor:help; }
+  .missing-note { color:#b71c1c; background:#ffebee; border:1px solid #ef9a9a; border-radius:6px; padding:6px 10px; margin-top:6px; font-size:13px; max-width:420px; }
   .share-note { background:#fff8e1; border:1px solid #f0d58a; border-radius:8px; padding:10px 14px; margin:0 0 16px; font-size:14px; line-height:1.5; }
   .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0 8px; }
   .stat { background:var(--bg); border-radius:6px; padding:10px; text-align:center; font-size:13px; color:var(--muted); }
@@ -288,6 +294,52 @@ export default class SummaryReporter implements Reporter {
   <footer>Each system's numbers come from its own last run, so they may be from different times (see "Last run").
   Full details, screenshots, gaps and human action items are in each system's report.</footer>
 </main>
+<div id="open-warning" hidden style="position:fixed;inset:0;z-index:9999;background:rgba(183,28,28,.96);color:#fff;
+  font:16px/1.6 Arial;padding:40px;overflow:auto">
+  <div style="max-width:760px;margin:auto">
+    <h2 style="margin-top:0;color:#fff">&#9888; The full reports cannot open from here</h2>
+    <p id="open-why"></p>
+    <ol>
+      <li>Get the zip <b>Test_Reports_&lt;date&gt;.zip</b> (not only this HTML file).</li>
+      <li><b>Right-click the zip &rarr; Extract All &rarr; Extract.</b> Do not just double-click into it.</li>
+      <li>Open the extracted folder <b>Test_Reports_&lt;date&gt;</b> and double-click <b>test_summary.html</b> there.</li>
+      <li>The address bar should then show <code>...&#92;Test_Reports_&lt;date&gt;&#92;test_summary.html</code> (no <code>.zip</code>, no <code>Temp</code>).</li>
+    </ol>
+    <button onclick="document.getElementById('open-warning').hidden=true" style="font:inherit;padding:8px 16px;border-radius:6px;border:0;cursor:pointer">Show the summary anyway</button>
+  </div>
+</div>
+<script>
+// Warn when this page was opened where its report folders cannot be next to it:
+// inside a zip (Windows copies only this one file to a Temp folder) or as a single file on a web page.
+(function () {
+  var p = decodeURIComponent(location.pathname);
+  var why = '';
+  if (location.protocol !== 'file:') why = 'This summary was opened from a web page (Teams / SharePoint / email preview). It is only one file: the full reports and screenshots are not with it.';
+  // Windows puts a file double-clicked inside a zip in "...\\Temp\\<id>_<name>.zip.<n>\\": match that folder only
+  // (an extracted copy, even under Temp, has no ".zip" in its folder names)
+  else if (/\\.zip(\\.\\d+)?[\\/]/i.test(p)) why ='This summary was opened from inside the zip, without extracting it. Windows copied only this one file to a temporary folder, without the report folders.';
+  if (why) { document.getElementById('open-why').textContent = why; document.getElementById('open-warning').hidden = false; }
+})();
+// Each system's report folder must be next to this page: load one of its screenshots; if it cannot be
+// loaded, that system's folder is missing (zip not fully extracted, or only some folders copied).
+(function () {
+  document.querySelectorAll('a.button[data-probe]').forEach(function (btn) {
+    var img = new Image();
+    img.onerror = function () {
+      btn.classList.add('off');
+      btn.removeAttribute('href');
+      btn.textContent = 'Report folder missing';
+      var note = document.createElement('div');
+      note.className = 'missing-note';
+      note.textContent = btn.getAttribute('data-name') + ': its folder "' + btn.getAttribute('data-folder') +
+        '" is not next to this summary, so its full report cannot open. Extract the WHOLE zip again ' +
+        '(right-click > Extract All) and open test_summary.html from the extracted folder.';
+      btn.parentNode.insertBefore(note, btn.nextSibling);
+    };
+    img.src = btn.getAttribute('data-probe');
+  });
+})();
+</script>
 </body>
 </html>
 `;

@@ -33,6 +33,15 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 
 ## Changes
 
+- [2026-11-24 15:40: Failure cards: Excel's Expected Result next to what the portal shows, on every failed screen](#2026-11-24-1540-failure-cards-excels-expected-result-next-to-what-the-portal-shows-on-every-failed-screen)
+- [2026-11-24 15:20: Home: each portal runs only its own sheet's cases](#2026-11-24-1520-home-each-portal-runs-only-its-own-sheets-cases)
+- [2026-11-24 15:10: TC-HOME-001: a clock that does not tick is a finding, not a failure](#2026-11-24-1510-tc-home-001-a-clock-that-does-not-tick-is-a-finding-not-a-failure)
+- [2026-11-24 15:00: Each portal's report lists only the cases that apply to it](#2026-11-24-1500-each-portals-report-lists-only-the-cases-that-apply-to-it)
+- [2026-11-24 14:45: Home results in the main reports, workbooks and zip; not-applicable skips kept out of Human Action](#2026-11-24-1445-home-results-in-the-main-reports-workbooks-and-zip-not-applicable-skips-kept-out-of-human-action)
+- [2026-11-24 14:20: Home: 5 test cases (TC-HOME-001..005) on both portals](#2026-11-24-1420-home-5-test-cases-tc-home-001005-on-both-portals)
+- [2026-11-24 13:15: Report zip: short paths (Windows 260-character limit); in-zip warning only for real zip paths](#2026-11-24-1315-report-zip-short-paths-windows-260-character-limit-in-zip-warning-only-for-real-zip-paths)
+- [2026-11-24 12:50: Summary checks each report folder; zip with standard "/" paths](#2026-11-24-1250-summary-checks-each-report-folder-zip-with-standard--paths)
+- [2026-11-24 12:30: Summary warns when opened inside the zip or as a single file](#2026-11-24-1230-summary-warns-when-opened-inside-the-zip-or-as-a-single-file)
 - [2026-11-24 12:00: Pushed to GitHub on branch readers-admin-report-highlights; local scan results ignored](#2026-11-24-1200-pushed-to-github-on-branch-readers-admin-report-highlights-local-scan-results-ignored)
 - [2026-11-24 11:25: Report: failed screens highlighted red in the screenshot flow; "starts failing here"](#2026-11-24-1125-report-failed-screens-highlighted-red-in-the-screenshot-flow-starts-failing-here)
 - [2026-11-24 11:10: TC-RDR-016: each kind of blank remarks tried separately](#2026-11-24-1110-tc-rdr-016-each-kind-of-blank-remarks-tried-separately)
@@ -96,6 +105,219 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 - [2026-11-18: Structure built: one codebase, two portals](#2026-11-18-structure-built-one-codebase-two-portals)
 
 ---
+
+### 2026-11-24 15:40: Failure cards: Excel's Expected Result next to what the portal shows, on every failed screen
+**Why:** Request: a failed screenshot should not only show the error but also say it should not be like this
+and what the Excel sheet expects instead, with more detail for every failed test. Each failed check (at the
+moment it fails, and where a test stops) now gets a "failure card" picture:
+- red header: FAILED HERE, test title, Automation ID;
+- green box: the linked Excel case (TC ID, row, title, Expected Result word for word, Steps);
+- red box: each failed check "Should be ... / Portal shows ..." (yes / no checks in words);
+- page and time; the real screen under it (error messages boxed in red).
+The card is drawn in a separate blank tab from a plain screenshot, so the portal page is never touched.
+The Excel text comes from `report-notes/<env>/sheet_expected.json`, exported from the workbook (refreshed when the
+workbook is newer) and git-ignored (internal sheet text; public repo).
+
+```mermaid
+flowchart LR
+  W[(Excel workbook)] -->|export_expected.py| J[sheet_expected.json local]
+  F[check fails] --> S[plain screenshot] --> C[failure card tab: Excel expects / portal shows / screen] --> R[report gallery]
+  J --> C
+```
+
+| File / folder | Change |
+|---|---|
+| `tools/workbook-results/export_expected.py` | New: linked cases' title / steps / Expected Result -> JSON (read-only) |
+| `common/utils/sheetExpected.ts` | New: `sheetCases(automationId)` (loads / refreshes the JSON) |
+| `common/utils/screenMarks.ts` | Changed: `failureCardShot()` |
+| `common/utils/explainFailure.ts` | Changed: `failureParts()` (check / should / actual) |
+| `common/fixtures/base.ts` | Changed: `failureScreen` attaches failure cards |
+| `.gitignore` | Changed: `/report-notes/*/sheet_expected.json` |
+
+**Key code**
+```ts
+const body = await failureCardShot(page, { testTitle, automationId, where: where(), checks: lines.map(failureParts), sheet: sheetCases(automationId) });
+```
+
+**How to run / check**: run a failing test (e.g. `-g "IPP plan code validation"` on UAT-APH), open the report,
+"screenshots (N) ❌ fails at #k" -> "Go to first failure".
+
+### 2026-11-24 15:20: Home: each portal runs only its own sheet's cases
+**Why:** Request: the Fassbayar sheet has only HOME-001 / 002, so the APH sheet's header / Quicklinks / last-login
+cases (TC-HOME-001..003) must not run on Fassbayar nor show in its report ("must follow the test scenario").
+The Home tests are now two groups, each skipped as a whole (no login, no run) on the portal whose sheet does not
+have them; the reporter leaves "Applicable for <portal> only" cases out of that portal's report and summary.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/home/home.spec.ts` | Changed: group "header, Quicklinks, last login (APH sheet)" (`home.headerCases`) and group "Daily Transaction Snapshot (Fassbayar sheet)" (`home.dailySnapshot`) |
+| `portals.config.ts` | Changed: `home.headerCases` (APH true, Fassbayar false) |
+
+**Key code**
+```ts
+test.describe('Home @home - header, Quicklinks, last login (APH sheet)', () => {
+  test.skip(!HOME.headerCases, `Applicable for APH only: not a case of the ${PORTAL_PROFILE.name} baseline sheet`);
+```
+
+**How to run / check**: `npx playwright test common/tests/home` -> APH report: TC-HOME-001..003; Fassbayar report: TC-HOME-004..005.
+Main reports, summary and zip rebuilt with these results.
+
+### 2026-11-24 15:10: TC-HOME-001: a clock that does not tick is a finding, not a failure
+**Why:** Review of TC-APH-BP-HOME-003 (APH row 19) column by column: its Expected Result is the Quicklinks
+panel groups with their registry links; it does not ask for a ticking clock. Only the Field Registry note of
+FR-XCUT-S01-013 says "Live clock" (its label is just "{weekday}, {dd Mon yyyy}, {hh:mm:ss}", which matches). The
+test failed the case on that note; now the frozen clock is a finding in Notes / Actual Result and the case passes.
+APH workbook row 19 updated (Pass), main APH report, summary and zip refreshed.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/home/home.spec.ts` | Changed: clock tick -> `finding` annotation instead of a soft check |
+
+**Key code**
+```ts
+if (later?.[0] === first![0]) test.info().annotations.push({ type: 'finding', description: 'Header clock shows the page-load time, it does not tick ...' });
+```
+
+**How to run / check**: `$env:ENV_NAME='UAT-APH'; npx playwright test common/tests/home` -> TC-HOME-001..003 Pass
+
+### 2026-11-24 15:00: Each portal's report lists only the cases that apply to it
+**Why:** The APH report showed TC-HOME-004 / 005 (Fassbayar's Daily Transaction Snapshot; APH's Home has none)
+as "Skipped", which looked like missing APH testing; the APH Excel has no such cases. Request: follow the
+Excel sheet's cases. A case skipped as belonging to another portal ("Applicable for <portal> only",
+"Not verified on ...") is now left out of that portal's report altogether (as the test summary already did).
+Cases skipped for other reasons (human action, data changes off, host not on the portal) still show.
+
+| File / folder | Change |
+|---|---|
+| `common/reporters/executionReport.ts` | Changed: `OTHER_PORTAL` rule; such cases are not written to the report data (library, results, screenshots) |
+
+**Key code**
+```ts
+const own = result ? this.toStatus(test, result, annotation) : null;
+if (own && own.status === 'skipped' && OTHER_PORTAL.test(own.notes)) continue;
+```
+
+**How to run / check**: APH report: TC-HOME-001..003 only (no TC-HOME-004 / 005); Fassbayar report: TC-HOME-001..005.
+
+### 2026-11-24 14:45: Home results in the main reports, workbooks and zip; not-applicable skips kept out of Human Action
+**Why:** Request: the Home cases must be linked in the test execution report and the workbooks, with their
+status. The Home tests were run into separate reports; the main reports (full run of 09:22) did not have them.
+- Workbooks: TC-HOME-001..003 written to APH rows 19-21 and TC-HOME-004..005 to Fassbayar rows 19-20
+  (Automation ID, Status, Actual Result, date); every link checked against both workbooks first.
+- Main reports: the Home results, library entries and screenshots were added to `execution-report-uat-*`
+  and the reports rebuilt without re-running (`npx playwright test --list`), then the summary and the zip.
+- The Notes of a not-applicable skip started with "Skipped: ", so "Applicable for Fassbayar only" was listed in the
+  APH Human Action table. Notes now keep not-applicable reasons as they are (report and workbook rules match them).
+
+| File / folder | Change |
+|---|---|
+| `common/reporters/executionReport.ts` | Changed: `skipNote()` keeps "Not verified on / Applicable for ... only / is not a host of" unprefixed |
+
+**Key code**
+```ts
+if (/^(Not verified on |Applicable for .+ only)|is not a host of/.test(reason)) return reason;
+```
+
+**How to run / check**: open `execution-report-uat-aph/test_execution_report.html`: TC-HOME-001..003 link to
+TC-APH-BP-HOME-003..005; Human Action table without TC-HOME-004/005.
+
+### 2026-11-24 14:20: Home: 5 test cases (TC-HOME-001..005) on both portals
+**Why:** Request: analyse APH rows 19-21 (TC-APH-BP-HOME-003..005) and Fassbayar rows 19-20
+(TC-FB-BP-HOME-001..002) with every tab (Field Registry, Screen Index, Test Data) and the Home page of both
+portals, then create the test cases. The sheets test different parts of the same screen: APH the header, the
+Quicklinks panel and the last login; Fassbayar the Daily Transaction Snapshot (APH's Home has no snapshot: the
+chart script is there with empty values). One shared spec runs all 5 on both portals; the snapshot cases are
+"Applicable for Fassbayar only".
+
+| File / folder | Change |
+|---|---|
+| `common/tests/home/home.spec.ts` | New: TC-HOME-001..005 |
+| `common/pages/HomePage.ts` | Changed: header, Quicklinks `panels()`, snapshot locators, `snapshotAmounts()` (from the chart's sliceLabels) |
+| `portals.config.ts` | Changed: `home` per portal (boxes, links, target headings; `dailySnapshot`) |
+| `report-notes/uat-aph/sheet_links.json`, `report-notes/uat-fassbayar/sheet_links.json` | Changed: TC-HOME-001..003 -> APH rows 19-21, TC-HOME-004..005 -> Fassbayar rows 19-20 |
+| `explore/scan/home.scan.ts` | New: read-only scan of Home (results local, `.gitignore`) |
+| `common/tests/home/README.md`, `.gitignore` | Changed |
+
+**Key code**
+```ts
+expect(total, 'Total Amount = Settled + Unsettled (Voided not counted)').toBeCloseTo(a.Settled + a.Unsettled, 2);
+expect(r.snap[s], `${s} amount`).toBeCloseTo(r.sums[s], 2);   // vs today's Transaction Summary by status
+```
+
+**Results 24 Nov (workbooks off)**
+- APH: 001 Fail (header clock does not tick: FR-XCUT-S01-013 says "Live clock"), 002 Pass (18 links), 003 Pass, 004 / 005 not applicable.
+- Fassbayar: 001 Fail (same clock), 002 Fail (34 links open the right page, but browser titles: Parent Company
+  Summary "All Companies", Add a Parent Company "Add a Company", Remove Company Logo "N/A", Fasstap Summary "All
+  Readers", Bill Payment Report "All Transactions"; OQ-FB-08: titles in scope, mismatches are defects), 003 / 004 / 005 Pass.
+
+**How to run / check**: `npx playwright test common/tests/home/home.spec.ts` (read-only)
+
+### 2026-11-24 13:15: Report zip: short paths (Windows 260-character limit); in-zip warning only for real zip paths
+**Why:** Colleagues could not extract the zip ("tak boleh extract"), and earlier one got APH but not FassBayar.
+The zip itself extracts fully with Explorer here, so the cause is the full path length on their PC: files opened
+from a Teams chat sit in "...\OneDrive - <company>\Microsoft Teams Chat Files\<zip name>\" (~110 characters)
+and the deepest file in the zip was 142 characters, over Windows' 260 limit; FassBayar's paths are a little longer
+than APH's, so its files were the ones skipped. Now the package copies each screenshot as
+`evidence/<TC-ID>/<NN>.<ext>` and rewrites the references in the report and summary (captions unchanged):
+longest path in the zip 85 characters. Also: the "opened inside the zip" warning matched any `\Temp\` folder,
+so an extracted copy under Temp was wrongly blocked; it now matches only Windows' in-zip folder `...zip.<n>\`.
+
+| File / folder | Change |
+|---|---|
+| `scripts/package-reports.js` | Changed: short screenshot names in the package + reference rewrite (report and summary probes) |
+| `common/reporters/summaryReport.ts` | Changed: in-zip check `/\.zip(\.\d+)?[\/]/` only |
+
+**Key code**
+```js
+const short = file.replace(/^(\d+)-.*(\.\w+)$/, '$1$2');   // "04-screen-....jpg" -> "04.jpg"
+report = report.split(`evidence/${tc}/${file}`).join(`evidence/${tc}/${short}`);
+```
+
+**How to run / check**: `npm run report:summary; npm run report:package`; Explorer "Extract All" of the zip:
+1,429 files, 0 missing screenshot references, both "Open full report" buttons open.
+
+### 2026-11-24 12:50: Summary checks each report folder; zip with standard "/" paths
+**Why:** A colleague's APH report opened from the summary but FassBayar showed "File not found": the zip
+holds both reports (checked), so the FassBayar folder was not next to the summary on that PC (partial extract /
+copy). Now:
+- the summary loads one screenshot of each report when it opens; if it cannot, that system's button becomes
+  "Report folder missing" with a red note saying to extract the whole zip again (instead of a dead link);
+- the zip is built with Windows' own `tar.exe` (standard "/" paths); PowerShell 5.1 Compress-Archive wrote "\"
+  inside the zip, which some unzip tools turn into flat file names.
+
+| File / folder | Change |
+|---|---|
+| `common/reporters/summaryReport.ts` | Changed: `probe` (first screenshot from evidence/manifest.json) on each button + check script + `.missing-note` |
+| `scripts/package-reports.js` | Changed: zip with `%SystemRoot%\System32\tar.exe -a` (Compress-Archive only as fallback) |
+
+**Key code**
+```js
+var img = new Image(); img.onerror = function () { /* button -> "Report folder missing" + note */ }; img.src = btn.dataset.probe;
+spawnSync(winTar, ['-a', '-c', '-f', zip, '-C', path.dirname(stage), path.basename(stage)]);
+```
+
+**How to run / check**: `npm run report:summary; npm run report:package`; extract the zip: both buttons open their
+report; delete one execution-report-* folder: its button says "Report folder missing".
+
+### 2026-11-24 12:30: Summary warns when opened inside the zip or as a single file
+**Why:** Colleagues got "File not found" / "404" from "Open full report": one opened test_summary.html
+INSIDE the zip without extracting (Windows copies only that file to `Temp\...zip.NNN\`), the QA Lead opened the
+single HTML file sent earlier (Teams). The links themselves are correct: checked by clicking both buttons from an
+extracted zip (both reports open). Now the summary shows a red full-page warning with the steps when it is
+opened from a web page or from inside a zip / Temp folder.
+
+| File / folder | Change |
+|---|---|
+| `common/reporters/summaryReport.ts` | Changed: `#open-warning` overlay + script (detects non-file URL, `.zip...\` or `\Temp\` in the path) |
+
+**Key code**
+```js
+if (location.protocol !== 'file:') why = 'opened from a web page ...';
+else if (/\.zip[^\/]*[\/]/i.test(p) || /[\/]Temp[\/]/i.test(p)) why = 'opened from inside the zip ...';
+```
+
+**How to run / check**: `npm run report:summary; npm run report:package`, then open test_summary.html once from the
+extracted zip (no warning, both buttons open the reports) and once by double-clicking it inside the zip (warning).
 
 ### 2026-11-24 12:00: Pushed to GitHub on branch readers-admin-report-highlights; local scan results ignored
 **Why:** Request: push the code to the repo (public). Committed on a new branch (not straight onto `main`);

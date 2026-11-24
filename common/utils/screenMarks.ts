@@ -96,6 +96,74 @@ export function cssFailMarks(caption: string, failures: string[]): string {
     [id$="Error"]:not(:empty), .errorMsg:not(:empty) { outline:3px solid #d32f2f !important; outline-offset:2px; }`;
 }
 
+// ---------- Failure card ----------
+// The report picture of a failed check: what the Excel sheet expects (green) next to what the portal shows
+// (red), with the screen at that moment under it. Built in a SEPARATE blank tab from a plain screenshot,
+// so the portal page is never touched (safe while the test is still acting).
+export interface FailureCard {
+  testTitle: string;
+  automationId: string;
+  where: string;                                            // page path
+  checks: { check: string; should: string; actual: string }[];
+  sheet: { sheetId: string; row: number; title: string; steps: string; expected: string }[];
+}
+
+const ERROR_BOXES = `[id$="Error"]:not(:empty), .errorMsg:not(:empty) { outline:3px solid #d32f2f !important; outline-offset:2px; }`;
+
+export async function failureCardShot(page: Page, card: FailureCard): Promise<Buffer | null> {
+  const shot = await page.screenshot({ fullPage: true, type: 'jpeg', quality: 70, style: ERROR_BOXES }).catch(() => null);
+  if (!shot) return null;
+  const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\n/g, '<br>');
+  const time = new Date().toLocaleString('en-GB', { timeZone: 'Asia/Kuala_Lumpur' });
+  const sheetHtml = card.sheet.length
+    ? card.sheet.map((s) => `<div class="sid">${esc(s.sheetId)} &middot; Excel row ${s.row}</div><div class="ttl">${esc(s.title)}</div>
+        <div class="lbl">Expected Result (Excel)</div><div class="exp">${esc(s.expected)}</div>
+        ${s.steps ? `<div class="lbl">Steps (Excel)</div><div class="steps">${esc(s.steps)}</div>` : ''}`).join('<hr>')
+    : `<div class="exp">This automated test has no linked case in the Excel sheet: the checks on the right are what it expects.</div>`;
+  const checksHtml = card.checks.map((c, i) => `<li><div class="chk">${i + 1}. ${esc(c.check)}</div>` +
+    (c.should || c.actual ? `<div class="row"><span class="ok">&#10004; Should be:</span> ${esc(c.should || '-')}</div>
+       <div class="row"><span class="bad">&#10008; Portal shows:</span> ${esc(c.actual || '-')}</div>` : '') + `</li>`).join('');
+  const html = `<!doctype html><html><head><meta charset="utf-8"><style>
+    body{margin:0;font:14px/1.45 Arial,sans-serif;background:#fff;color:#222}
+    .head{background:#b71c1c;color:#fff;padding:12px 18px;font-size:17px;font-weight:bold}
+    .head small{display:block;font-size:13px;font-weight:normal;color:#ffcdd2;margin-top:2px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 18px}
+    .box{border-radius:8px;padding:10px 14px}
+    .want{background:#e8f5e9;border:2px solid #43a047}.got{background:#ffebee;border:2px solid #e53935}
+    .box h3{margin:0 0 6px;font-size:15px}.want h3{color:#1b5e20}.got h3{color:#b71c1c}
+    .sid{font-weight:bold;color:#1b5e20}.ttl{font-style:italic;margin-bottom:6px}
+    .lbl{font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.03em;margin-top:6px}
+    .exp{font-weight:bold}.steps{font-size:13px;color:#333}
+    ul{margin:0;padding:0;list-style:none} li{margin-bottom:8px}
+    .chk{font-weight:bold}.row{margin-left:12px}.ok{color:#1b5e20;font-weight:bold}.bad{color:#b71c1c;font-weight:bold}
+    .meta{padding:0 18px 8px;font-size:12px;color:#555}
+    .screen{margin:0 18px 18px;border:6px solid #d32f2f;border-radius:4px}
+    .screen img{display:block;width:100%}
+    .cap{margin:0 18px 4px;font-size:12px;color:#b71c1c;font-weight:bold}
+  </style></head><body>
+    <div class="head">&#10060; FAILED HERE: ${esc(card.testTitle)}<small>${esc(card.automationId)} &middot; it should not be like this: the Excel sheet expects what is on the left</small></div>
+    <div class="grid">
+      <div class="box want"><h3>&#10004; What the Excel sheet expects</h3>${sheetHtml}</div>
+      <div class="box got"><h3>&#10008; What the portal does instead</h3><ul>${checksHtml}</ul></div>
+    </div>
+    <div class="meta">Page: ${esc(card.where)} &middot; ${esc(time)} (MYT)</div>
+    <div class="cap">Screen at the moment of the failure (error messages on it boxed in red):</div>
+    <div class="screen"><img src="data:image/jpeg;base64,${shot.toString('base64')}"></div>
+  </body></html>`;
+  const tab = await page.context().newPage().catch(() => null);
+  if (!tab) return shot;
+  try {
+    await tab.setViewportSize({ width: 1300, height: 800 });
+    await tab.setContent(html, { waitUntil: 'load' });
+    await tab.evaluate(() => Promise.all(Array.from(document.images).map((i) => i.decode().catch(() => {}))));
+    return await tab.screenshot({ fullPage: true, type: 'jpeg', quality: 75 });
+  } catch {
+    return shot;
+  } finally {
+    await tab.close().catch(() => {});
+  }
+}
+
 // Full-page screenshot with the marks (JPEG unless png = true); null when the page is gone
 export async function markedScreenshot(page: Page, marks: ScreenMarks, png = false): Promise<Buffer | null> {
   try {

@@ -34,3 +34,5 @@ Test_Execution_Report_*.html
 /explore/scan/results/readers-*.json
 /explore/scan/results/readerUpload-*.json
 __pycache__/
+/explore/scan/results/home-*.json
+/report-notes/*/sheet_expected.json

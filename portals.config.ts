@@ -93,6 +93,28 @@ export interface ReaderRules {
   secondMid: string;
 }
 
+// Home (/console): Quicklinks panel boxes and their links (explore/scan/home.scan.ts 24 Nov 2026 + the APH
+// Field Registry FR-HOME-S01-001..024). heading = title of the page the link opens.
+export interface HomeLink { text: string; href: string; heading: string }
+export interface HomeRules {
+  panels: { title: string; links: HomeLink[] }[];
+  dailySnapshot: boolean;            // Daily Transaction Snapshot chart (Fassbayar sheet HOME-001/002); APH Home has none
+  headerCases: boolean;              // header / Quicklinks / last login cases: only in the APH sheet (HOME-003..005)
+}
+const L = (text: string, href: string, heading: string): HomeLink => ({ text, href, heading });
+const HOME_COMPANIES = [L('Company Summary', '/company', 'All Companies'), L('Add a Company', '/company/register', 'Add a Company'),
+  L('Bulk Company Upload', '/company/bulkupload', 'Bulk Company Upload')];
+const HOME_MOBILE = [L('Mobile User Summary', '/mobileUser', 'All Mobile Users'), L('Add a Mobile User', '/mobileUser/registerSearch', 'Add a Mobile User'),
+  L('Terminal Summary', '/terminal', 'All Terminals'), L('Register New Terminal', '/terminal/register', 'Register New Terminal')];
+const HOME_READERS = [L('Reader Summary', '/reader', 'All Readers'), L('Register New Readers', '/reader/register', 'Register New Readers')];
+const HOME_TRANSACTIONS = [L('Transaction Summary', '/transaction', 'All Transactions'),
+  L('Geofencing Bypassed Transaction Report', '/transaction/getBlankTransactionsReport', 'Geofencing Bypassed Transaction Report'),
+  L('Reporting', '/transaction/billingReport', 'Reporting')];
+const HOME_SETTLEMENTS = [L('Credit Settlement Summary', '/creditSettlement', 'All Credit Settlements'),
+  L('Schedule Force Settlement', '/creditSettlement/searchCompany', 'Schedule Force Settlement')];
+const HOME_ADMIN = [L('Manage Bank Users', '/admin', 'All Users'), L('Add a Bank User', '/admin/register', 'Add a Bank User'),
+  L('System Error Log', '/admin/errorLog', 'System Error Log'), L('Audit Trail', '/admin/auditTrail', 'User Activities')];
+
 export interface PortalProfile {
   name: string;
   hosts: HostProfile[];
@@ -100,6 +122,7 @@ export interface PortalProfile {
   creditSettlement: CreditSettlementRules;
   administrator: AdministratorRules;
   readers: ReaderRules;
+  home: HomeRules;
   features: {
     sstTin: boolean;          // SST / TIN / bank / MCC / references / DBA fields on Add a Company
     logoUpload: boolean;      // Upload / Remove Company Logo
@@ -137,6 +160,17 @@ export const portals: Record<Portal, PortalProfile> = {
       cardBrandLimitColumn: 'Contactless CVM Limit (MYR)', auditActionCount: 117, auditRangeLimited: false,   // no limit: QA Lead 24 Nov
       testBankUser: 'test_email', resetUser: 'test_email', loginTestUser: 'qaautotest01',
       testPlanCode: '789', testPlanProvider: ''
+    },
+    home: {
+      dailySnapshot: false, headerCases: true,   // APH sheet: HOME-003..005
+      panels: [
+        { title: 'All Companies', links: HOME_COMPANIES },
+        { title: 'Manage Mobile Users', links: HOME_MOBILE },
+        { title: 'Manage Readers', links: HOME_READERS },
+        { title: 'Manage Transactions', links: HOME_TRANSACTIONS },
+        { title: 'Manage Credit Settlements', links: HOME_SETTLEMENTS },
+        { title: 'Administrator', links: HOME_ADMIN }
+      ]
     },
     readers: {
       quicklinks: ['Reader Summary', 'Register New Readers'],
@@ -186,6 +220,24 @@ export const portals: Record<Portal, PortalProfile> = {
       cardBrandLimitColumn: 'Contactless CVM Limit (RM)', auditActionCount: undefined, auditRangeLimited: false,  // no limit: QA Lead 24 Nov
       testBankUser: 'hGtkMDzs', resetUser: '', loginTestUser: 'hGtkMDzs',
       testPlanCode: '789', testPlanProvider: 'MBB'   // MBB = Maybank (list shows the host code)
+    },
+    home: {
+      dailySnapshot: true, headerCases: false,   // Fassbayar sheet: HOME-001..002 only
+      panels: [
+        { title: 'All Companies', links: [...HOME_COMPANIES,
+          L('Parent Company Summary', '/company/parentCompanyListing', 'All Parent Companies'),
+          L('Add a Parent Company', '/company/registerMasterMerchant', 'Add a Parent Company'),
+          L('Upload Company Logo', '/company/uploadCompanyLogo', 'Upload Company Logo'),
+          L('Remove Company Logo', '/company/removeCompanyLogo', 'Remove Company Logo')] },
+        { title: 'Manage Mobile Users', links: HOME_MOBILE },
+        { title: 'Manage Readers', links: [...HOME_READERS,
+          L('Readers Replacement Report', '/reader/getReplacementReport', 'Readers Replacement Report'),
+          L('Replace Readers', '/reader/replacement', 'Replace Readers'),
+          L('Fasstap Summary', '/fasstap', 'All Fasstap')] },
+        { title: 'Manage Transactions', links: [...HOME_TRANSACTIONS, L('Bill Payment Report', '/transaction/billPaymentBatchList', 'Bill Payment Report')] },
+        { title: 'Manage Credit Settlements', links: HOME_SETTLEMENTS },
+        { title: 'Administrator', links: HOME_ADMIN }
+      ]
     },
     readers: {
       quicklinks: ['Reader Summary', 'Register New Readers', 'Readers Replacement Report', 'Replace Readers', 'Fasstap Summary'],

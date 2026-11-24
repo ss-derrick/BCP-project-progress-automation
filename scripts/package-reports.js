@@ -27,14 +27,34 @@ const folders = [...new Set([...html.matchAll(/href="(execution-report-[^/"]+)\/
 
 fs.rmSync(stage, { recursive: true, force: true });
 fs.mkdirSync(stage, { recursive: true });
-fs.copyFileSync(summary, path.join(stage, 'test_summary.html'));
+// SHORT paths inside the package: Windows refuses to extract a file whose full path is over 260 characters, and
+// files opened from Teams already sit in "...\OneDrive - <company>\Microsoft Teams Chat Files\<zip name>\".
+// Screenshots are copied as evidence/<TC-ID>/<NN>.<ext> (captions stay in the report) and every reference
+// to the old name in the report / summary is rewritten.
+let summaryHtml = html;
 for (const f of folders) {
   const src = path.join(root, f);
   if (!fs.existsSync(path.join(src, 'test_execution_report.html'))) continue;
   fs.mkdirSync(path.join(stage, f), { recursive: true });
-  fs.copyFileSync(path.join(src, 'test_execution_report.html'), path.join(stage, f, 'test_execution_report.html'));
-  if (fs.existsSync(path.join(src, 'evidence'))) fs.cpSync(path.join(src, 'evidence'), path.join(stage, f, 'evidence'), { recursive: true });
+  let report = fs.readFileSync(path.join(src, 'test_execution_report.html'), 'utf8');
+  const evidence = path.join(src, 'evidence');
+  if (fs.existsSync(evidence)) {
+    for (const tc of fs.readdirSync(evidence, { withFileTypes: true }).filter((d) => d.isDirectory())) {
+      fs.mkdirSync(path.join(stage, f, 'evidence', tc.name), { recursive: true });
+      for (const file of fs.readdirSync(path.join(evidence, tc.name))) {
+        const short = file.replace(/^(\d+)-.*(\.\w+)$/, '$1$2');            // "04-screen-....jpg" -> "04.jpg"
+        fs.copyFileSync(path.join(evidence, tc.name, file), path.join(stage, f, 'evidence', tc.name, short));
+        if (short === file) continue;
+        const from = `evidence/${tc.name}/${file}`;
+        const to = `evidence/${tc.name}/${short}`;
+        report = report.split(from).join(to);
+        summaryHtml = summaryHtml.split(`${f}/${from}`).join(`${f}/${to}`);
+      }
+    }
+  }
+  fs.writeFileSync(path.join(stage, f, 'test_execution_report.html'), report);
 }
+fs.writeFileSync(path.join(stage, 'test_summary.html'), summaryHtml);
 fs.writeFileSync(path.join(stage, 'READ ME FIRST.txt'),
   'Unzip the whole zip first (right-click > Extract All), then open test_summary.html INSIDE this folder.\r\n' +
   'Click "Open full report" on a system to open its full report; screenshots load from the evidence folders next to it.\r\n' +
@@ -42,9 +62,14 @@ fs.writeFileSync(path.join(stage, 'READ ME FIRST.txt'),
 
 fs.mkdirSync(outDir, { recursive: true });
 fs.rmSync(zip, { force: true });
-const run = spawnSync('powershell', ['-NoProfile', '-Command',
-  // the FOLDER itself (not only its contents): however it is unzipped, summary and report folders stay together
-  `Compress-Archive -Path '${stage.replace(/'/g, "''")}' -DestinationPath '${zip.replace(/'/g, "''")}' -CompressionLevel Optimal`],
+// The FOLDER itself (not only its contents): however it is unzipped, summary and report folders stay together.
+// Windows' own tar (bsdtar) writes standard zip paths with "/" (PowerShell 5.1 Compress-Archive writes "\",
+// which some unzip tools turn into flat file names, so a report folder can go missing after extracting).
+const winTar = path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'tar.exe');
+const run = fs.existsSync(winTar)
+  ? spawnSync(winTar, ['-a', '-c', '-f', zip, '-C', path.dirname(stage), path.basename(stage)], { stdio: 'inherit' })
+  : spawnSync('powershell', ['-NoProfile', '-Command',
+    `Compress-Archive -Path '${stage.replace(/'/g, "''")}' -DestinationPath '${zip.replace(/'/g, "''")}' -CompressionLevel Optimal`],
   { stdio: 'inherit' });
 fs.rmSync(stage, { recursive: true, force: true });
 if (run.status !== 0) { console.warn('[package] zip not created'); process.exit(0); }

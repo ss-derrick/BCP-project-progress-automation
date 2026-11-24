@@ -63,6 +63,9 @@
     "TC-RDR-013": [{"sheetId": "TC-APH-BP-RDR-013", "row": 187}],
     "TC-RDR-014": [{"sheetId": "TC-APH-BP-RDR-014", "row": 188}],
     "TC-RDR-015": [{"sheetId": "TC-APH-BP-RDR-015", "row": 189}],
-    "TC-RDR-016": [{"sheetId": "TC-APH-BP-RDR-016", "row": 190}]
+    "TC-RDR-016": [{"sheetId": "TC-APH-BP-RDR-016", "row": 190}],
+    "TC-HOME-001": [{"sheetId": "TC-APH-BP-HOME-003", "row": 19}],
+    "TC-HOME-002": [{"sheetId": "TC-APH-BP-HOME-004", "row": 20}],
+    "TC-HOME-003": [{"sheetId": "TC-APH-BP-HOME-005", "row": 21}]
   }
 }

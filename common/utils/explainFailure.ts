@@ -49,3 +49,20 @@ export function explainMessages(messages: string[], max = 6): string[] {
   const notes = [...new Set(messages.map((m) => explainError(stripAnsi(m), '')).filter(Boolean))];
   return notes.length > max ? [...notes.slice(0, max), `(+${notes.length - max} more, see the report)`] : notes;
 }
+
+// The same explanation in parts, for the failure screenshots:
+//   'Name error - expected "Please enter valid Name", portal showed nothing'
+//   -> { check: 'Name error', should: '"Please enter valid Name"', actual: 'nothing' }
+export function failureParts(line: string): { check: string; should: string; actual: string } {
+  const [check, ...rest] = line.split(' - ');
+  const detail = rest.join(' - ');
+  let m = detail.match(/^expected (.*), portal showed (.*)$/);
+  if (m) return { check, should: m[1], actual: m[2] };
+  m = detail.match(/^not met on the portal \(expected (.*), got (.*)\)$/);
+  // yes / no checks ("blank Name must not reach Review"): say it in words, not true / false
+  if (m) return { check, should: check, actual: 'the opposite happened on the portal' };
+  m = detail.match(/^portal (has extra .*|is missing .*)$/);
+  if (m) return { check, should: 'exactly the list in the Excel sheet / Field Registry', actual: `the portal ${m[1]}` };
+  if (/did not show what was expected in time/.test(detail)) return { check, should: 'the page shows it', actual: detail };
+  return { check: line, should: '', actual: '' };
+}
