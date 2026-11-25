@@ -33,6 +33,15 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 
 ## Changes
 
+- [2026-11-25 15:30: TC-AUTH-010 waits the real 15 minutes](#2026-11-25-1530-tc-auth-010-waits-the-real-15-minutes)
+- [2026-11-25 14:53: TC-AUTH-003 uses each sheet's Test Data (Fassbayar TD-01)](#2026-11-25-1453-tc-auth-003-uses-each-sheets-test-data-fassbayar-td-01)
+- [2026-11-25 14:47: AUTH tests shown as module "Login (AUTH)"](#2026-11-25-1447-auth-tests-shown-as-module-login-auth)
+- [2026-11-25 14:42: TC-ADM-003 note explains the Fassbayar 3-character User ID failure](#2026-11-25-1442-tc-adm-003-note-explains-the-fassbayar-3-character-user-id-failure)
+- [2026-11-25 14:30: "Failover Operator" no longer fails TC-ADM-001 / 002](#2026-11-25-1430-failover-operator-no-longer-fails-tc-adm-001--002)
+- [2026-11-25 14:20: Login (AUTH) tests TC-AUTH-001..017 for both portals](#2026-11-25-1420-login-auth-tests-tc-auth-001017-for-both-portals)
+- [2026-11-25 10:00: Home runs in sheet order; Fassbayar Quicklink case = TC-HOME-006](#2026-11-25-1000-home-runs-in-sheet-order-fassbayar-quicklink-case--tc-home-006)
+- [2026-11-25 09:30: Fassbayar runs TC-HOME-002 (new sheet case TC-FB-BP-HOME-003)](#2026-11-25-0930-fassbayar-runs-tc-home-002-new-sheet-case-tc-fb-bp-home-003)
+- [2026-11-25 09:05: TC-ADM-020 leaves "Failover Operator" to TC-ADM-001; Fassbayar sheet links re-aligned](#2026-11-25-0905-tc-adm-020-leaves-failover-operator-to-tc-adm-001-fassbayar-sheet-links-re-aligned)
 - [2026-11-24 15:40: Failure cards: Excel's Expected Result next to what the portal shows, on every failed screen](#2026-11-24-1540-failure-cards-excels-expected-result-next-to-what-the-portal-shows-on-every-failed-screen)
 - [2026-11-24 15:20: Home: each portal runs only its own sheet's cases](#2026-11-24-1520-home-each-portal-runs-only-its-own-sheets-cases)
 - [2026-11-24 15:10: TC-HOME-001: a clock that does not tick is a finding, not a failure](#2026-11-24-1510-tc-home-001-a-clock-that-does-not-tick-is-a-finding-not-a-failure)
@@ -105,6 +114,197 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 - [2026-11-18: Structure built: one codebase, two portals](#2026-11-18-structure-built-one-codebase-two-portals)
 
 ---
+
+### 2026-11-25 15:30: TC-AUTH-010 waits the real 15 minutes
+
+**Why:** the user asked whether TC-FB-BP-AUTH-010 (row 11) was run as the sheet says. It was not. The test fast-forwarded only
+the page's clock, so the server session was still fresh, and that run cannot show a 15-minute sign-out. Its Fail was not valid.
+The test now follows the steps in real time.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/login/auth.spec.ts` | Changed: TC-AUTH-010 stays idle for real. It checks that the dialog appears before 15 minutes with both buttons, then clicks a menu item at 15.5 minutes and expects the login page. Timeout 22 minutes |
+| `common/tests/login/README.md` | Changed: AUTH-010 row (real wait, about 16 minutes per portal) |
+
+**Result (both portals, real time):** the dialog appears at 14.5 minutes with both buttons. At 15:00 the page goes to `/auth/logout`,
+which only redirects to Home. The menu click at 15.5 minutes opens All Companies, still logged in, so the case fails (workbook row 11).
+TC-AUTH-011 still fast-forwards the page clock: its Yes / No checks are clicks, which do not depend on the expiry.
+
+**How to run / check:** `$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test common/tests/login --grep "Idle session"` (about 16 minutes;
+don't log in as the main user meanwhile)
+
+### 2026-11-25 14:53: TC-AUTH-003 uses each sheet's Test Data (Fassbayar TD-01)
+
+**Why:** the user pointed out that TC-FB-BP-AUTH-003 (Fassbayar row 4) says Test Data TD-01, with the precondition "Active bank
+user, 0 failed attempts". The test used the TD-03 lockout user on both portals; on Fassbayar that user is locked ("Your account
+is suspended"), so the case failed for a reason that is not part of it. Each portal now follows its own sheet.
+
+| File / folder | Change |
+|---|---|
+| `portals.config.ts` | Changed: `AuthRules.wrongPasswordUser` (APH `TD-03`, Fassbayar `TD-01`) |
+| `common/tests/login/auth.spec.ts` | Changed: TC-AUTH-003 uses that user; a correct login straight after the wrong password resets the counter to 0 |
+
+**Result:** Fassbayar TC-AUTH-003 Pass (workbook row 4). APH is unchanged (TD-03 test180).
+
+**How to run / check:** `$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test common/tests/login --grep "Wrong password"`
+
+### 2026-11-25 14:47: AUTH tests shown as module "Login (AUTH)"
+
+**Why:** the user looked for the AUTH tests in the report's module filter and did not find them under "Login". The label now
+names the sheet's module too.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/login/auth.spec.ts` | Changed: `MODULE = 'Login (AUTH)'` |
+
+**How to run / check:** `$env:ENV_NAME='UAT-APH'; npx playwright test --list` (rebuilds the report), then pick "Login (AUTH)" in the module filter.
+
+### 2026-11-25 14:42: TC-ADM-003 note explains the Fassbayar 3-character User ID failure
+
+**Why:** the user asked whether TC-FB-BP-ADM-003 really fails and whether the test follows the scenario. A check by hand
+(Submit and Back only, never Confirm) shows that Fassbayar refuses every 3-character User ID and accepts 4; APH accepts 3.
+On Submit, the page validates the User ID with `regex_muid` (Mobile User ID rule, min 4) instead of `regex_buid` (min 3).
+The sheet and the QA Lead (OQ-FB-05) say 3-20, so this is a real failure; the report and workbook now say why.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/administrator/bankUsers.spec.ts` | Changed: TC-ADM-003 adds a finding with the cause, and the check is named "(page validates with the Mobile User ID rule, min 4)" |
+| `explore/scan/buid.scan.ts` | New: read-only check of 3/4/5-character User IDs and the page's User ID rule |
+
+**Key code:** `return successValidateField($("#userId").val(),regex_muid,"#userIdError",error_buid);` (portal page: the rule used on Submit)
+
+**How to run / check:** `$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test --config explore/scan/scan.config.ts buid`
+
+### 2026-11-25 14:30: "Failover Operator" no longer fails TC-ADM-001 / 002
+
+**Why:** the user decided that "Failover Operator" (a Fassbayar-only role) does not affect the bank-user cases.
+TC-ADM-001 and TC-ADM-002 should pass, as TC-ADM-020 already does.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/administrator/bankUsers.spec.ts` | Changed: `withoutFailover()` leaves "Failover Operator" out of the Role list comparisons in ADM-001, 002, 020 and 022, and adds a finding note instead |
+
+**Key code**
+
+```ts
+expect.soft(withoutFailover(await admin.options('role'), 'Role filter'), 'Role filter (OPT_ROLE_FILTER)').toEqual(ROLE_FILTER);
+```
+
+**Result:** on Fassbayar, TC-ADM-001 and 002 now Pass (workbook rows 251, 252). TC-ADM-002 ran with the UAT-changes switch, which
+created 5 bank users. APH TC-ADM-001 still passes.
+
+**How to run / check:** `$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test common/tests/administrator/bankUsers.spec.ts --grep "Manage Bank Users shows search"`
+
+### 2026-11-25 14:20: Login (AUTH) tests TC-AUTH-001..017 for both portals
+
+**Why:** the user asked for test cases from APH and Fassbayar sheet rows 2-18 (TC-APH-BP-AUTH-001..017,
+TC-FB-BP-AUTH-001..017). Both sheets have the same 17 cases, so one shared spec covers both portals, with IDs
+that follow the sheet numbers. The old TC-APH-001 (login + logout only) is replaced by TC-AUTH-002 and TC-AUTH-012.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/login/auth.spec.ts` | New: TC-AUTH-001..017 (no 008: AUTH-008 = TC-ADM-018) |
+| `common/tests/login/login.spec.ts` | Removed (TC-APH-001) |
+| `common/tests/login/README.md` | New: case table, test users, passwords |
+| `common/flows/bankUserFlow.ts` | New: `bankUserRow`, `bankUserStatus`, `setBankUserAccess` (moved from bankUsers.spec.ts, shared with AUTH-003/006) |
+| `common/tests/administrator/bankUsers.spec.ts` | Changed: uses the shared flow (no behaviour change) |
+| `portals.config.ts` | Changed: `AuthRules` (`lockoutUser`, `viewerUser` from the Test Data sheets), `LOCKOUT_USER_PASSWORD`, `VIEWER_PASSWORD` |
+| `report-notes/uat-aph/sheet_links.json`, `report-notes/uat-fassbayar/sheet_links.json` | Changed: TC-AUTH-0xx -> rows 2-18; TC-ADM-018 also -> AUTH-008 (row 9); TC-APH-001 removed |
+| `explore/scan/auth.scan.ts`, `explore/scan/authLogout.scan.ts` | New: read-only exploration (login page, messages, timeout script, logout, error pages) |
+| `README.md`, `docs/portal-module-map.md` | Changed: Login row |
+
+**Key code**
+
+```ts
+// idle dialog: the page's own timer, fast-forwarded (dialog at 14:30, sign-out at 15:00)
+await page.clock.install(); await page.goto('/console');
+await page.clock.fastForward('14:00'); await page.clock.fastForward('00:31');   // two jumps: script loader first
+// sign-out by the dialog / timer goes to GET /auth/logout: check the session really ended
+await expectSignedOut(page, () => dialog.locator('.btnNo').click(), 'After "No, sign me out"');
+```
+
+**Result (25 Nov), both portals:**
+- Pass: 001, 002, 004, 005, 012, 013; also 003 on APH.
+- Fail: 010 and 011. "No, sign me out" and the 15-minute idle sign-out go to GET /auth/logout, which only redirects to Home: the user stays logged in. The LOGOUT button (POST /logout) works.
+- FB 003: Fail. Lockout user ZifvhxMD is "Active" in Manage Bank Users, but login says "Your account is suspended".
+- Skipped:
+  - 006: needs `ADM_ALLOW_UAT_CHANGES=true`.
+  - 006, 007: need `<ENV>_LOCKOUT_USER_PASSWORD`.
+  - 017: needs `<ENV>_VIEWER_PASSWORD`.
+  - 009, 014, 015, 016: mailbox, Human Action.
+
+**How to run / check**
+
+```powershell
+$env:ENV_NAME='UAT-APH'; npx playwright test common/tests/login
+$env:ENV_NAME='UAT-APH'; npx playwright test --config explore/scan/scan.config.ts auth   # exploration
+```
+
+### 2026-11-25 10:00: Home runs in sheet order; Fassbayar Quicklink case = TC-HOME-006
+
+**Why:** the user asked for Fassbayar Home to follow the sheet, including the Automation ID: rows 19, 20, 21 = TC-HOME-004, 005, 006.
+This applies to the Home module only.
+
+| File / folder | Change |
+|---|---|
+| `portals.config.ts` | Changed: `HomeRules.quicklinkId` (APH `TC-HOME-002`, Fassbayar `TC-HOME-006`) |
+| `common/tests/home/home.spec.ts` | Changed: groups reordered (snapshot, header, Quicklinks, last login), so each portal runs in its sheet order. The Quicklink test uses `id: HOME.quicklinkId` |
+| `common/tests/home/README.md` | Changed: TC-HOME-006 row |
+| `report-notes/uat-fassbayar/sheet_links.json` | Changed: `TC-HOME-002` -> `TC-HOME-006` (TC-FB-BP-HOME-003, row 21) |
+
+**Key code:** `testCase({ id: HOME.quicklinkId, module: MODULE, priority: 'Low' })`
+
+**How to run / check:** `$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test common/tests/home`. The workbook row 21 Automation ID is now TC-HOME-006.
+
+### 2026-11-25 09:30: Fassbayar runs TC-HOME-002 (new sheet case TC-FB-BP-HOME-003)
+
+**Why:** the QA Lead added TC-FB-BP-HOME-003 "Each Quicklink opens the right page" (Fassbayar row 21), the same case
+as APH TC-APH-BP-HOME-004. TC-HOME-002 now runs on both portals and is linked to both rows. Results are written to the workbook.
+
+| File / folder | Change |
+|---|---|
+| `portals.config.ts` | Changed: `HomeRules.quicklinkCase` (APH true, Fassbayar true) |
+| `common/tests/home/home.spec.ts` | Changed: TC-HOME-002 moved to its own group, gated by `quicklinkCase`. A portal error page fails only that link (soft), and the other Quicklinks are still checked. Slow pages get up to 60 s. Browser-tab title mismatch is now a finding (it is checked by XCUT-003), not a failure |
+| `report-notes/uat-fassbayar/sheet_links.json` | Changed: `TC-HOME-002` -> TC-FB-BP-HOME-003, row 21 |
+
+**Key code**
+
+```ts
+const errorPage = new URL(home.page.url()).pathname.startsWith('/issue/') || (await home.page.getByText('An error has occurred').count()) > 0;
+expect.soft(errorPage ? `the portal error page "An error has occurred" (...)` : `the "${link.heading}" page`, `"${link.text}" opens`)
+  .toBe(`the "${link.heading}" page`);
+if (errorPage) { await home.captureStep(`${link.text} -> portal error page`); return; }
+```
+
+**Result (25 Nov):** Fassbayar 33 of 34 Quicklinks open the right page. **Terminal Summary** (`/terminal`) opens the
+portal error page "An error has occurred" from Home, from Manage Mobile Users and by its address. This is a portal issue, so
+TC-FB-BP-HOME-003 = Fail. APH TC-HOME-001..003 still pass.
+
+**How to run / check**
+
+```powershell
+$env:ENV_NAME='UAT-FASSBAYAR'; $env:REPORT_DIR="$env:TEMP\home-only-UAT-FASSBAYAR"; npx playwright test common/tests/home
+```
+
+### 2026-11-25 09:05: TC-ADM-020 leaves "Failover Operator" to TC-ADM-001; Fassbayar sheet links re-aligned
+**Why:** Decision: Fassbayar TC-ADM-020 (search and filter field validation) must pass and ignore "Failover
+Operator", because another case covers it: TC-FB-BP-ADM-001's Expected Result lists the Role filter values;
+ADM-020's Expected Result is about lengths, special characters, options / defaults. ADM-020 now leaves "Failover
+Operator" out of its Role-list comparison and notes it as a finding. Fassbayar workbook row updated (Pass).
+While checking, the Fassbayar sheet had one row inserted after row 20 (overnight edit): the 59 links from
+CMP-002 on were one row off; `sheet_links.json` re-aligned (the workbook writer finds rows by TC ID, so results were never affected).
+
+| File / folder | Change |
+|---|---|
+| `common/tests/administrator/bankUsers.spec.ts` | Changed: ADM-020 Role filter compared without "Failover Operator" (finding) |
+| `report-notes/uat-fassbayar/sheet_links.json` | Changed: 59 rows +1 (e.g. TC-FB-BP-ADM-020 268 -> 269, CMP-014 34 -> 35) |
+
+**Key code**
+```ts
+expect.soft(roles.filter((r) => r !== 'Failover Operator'), 'Role filter (OPT_ROLE_FILTER)').toEqual(ROLE_FILTER);
+```
+
+**How to run / check**: `$env:ENV_NAME='UAT-FASSBAYAR'; npx playwright test common/tests/administrator/bankUsers.spec.ts -g "All Users \(Manage Bank Users\): search and filter"` -> Pass
 
 ### 2026-11-24 15:40: Failure cards: Excel's Expected Result next to what the portal shows, on every failed screen
 **Why:** Request: a failed screenshot should not only show the error but also say it should not be like this

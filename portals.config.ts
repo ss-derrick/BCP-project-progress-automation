@@ -99,7 +99,9 @@ export interface HomeLink { text: string; href: string; heading: string }
 export interface HomeRules {
   panels: { title: string; links: HomeLink[] }[];
   dailySnapshot: boolean;            // Daily Transaction Snapshot chart (Fassbayar sheet HOME-001/002); APH Home has none
-  headerCases: boolean;              // header / Quicklinks / last login cases: only in the APH sheet (HOME-003..005)
+  headerCases: boolean;              // header + Quicklinks panel, last login cases: only in the APH sheet (HOME-003, 005)
+  quicklinkCase: boolean;            // each Quicklink opens the right page: APH HOME-004, Fassbayar HOME-003 (added 24 Nov)
+  quicklinkId: string;               // its Automation ID, numbered in each sheet's Home order (APH 2nd case, Fassbayar 3rd)
 }
 const L = (text: string, href: string, heading: string): HomeLink => ({ text, href, heading });
 const HOME_COMPANIES = [L('Company Summary', '/company', 'All Companies'), L('Add a Company', '/company/register', 'Add a Company'),
@@ -115,6 +117,15 @@ const HOME_SETTLEMENTS = [L('Credit Settlement Summary', '/creditSettlement', 'A
 const HOME_ADMIN = [L('Manage Bank Users', '/admin', 'All Users'), L('Add a Bank User', '/admin/register', 'Add a Bank User'),
   L('System Error Log', '/admin/errorLog', 'System Error Log'), L('Audit Trail', '/admin/auditTrail', 'User Activities')];
 
+// Login (AUTH) test users, from each workbook's Test Data sheet (TD-02, TD-03). Passwords only in .env:
+//   <ENV>_LOCKOUT_USER_PASSWORD (TD-03) and <ENV>_VIEWER_PASSWORD (TD-02; falls back to <ENV>_TEST_BANK_USER_PASSWORD
+//   when the Viewer is also the Administrator loginTestUser). No password -> the case says what is missing.
+export interface AuthRules {
+  lockoutUser: string;               // TD-03: lockout cases (AUTH-006, 007)
+  viewerUser: string;                // TD-02: a role without Add a Bank User (AUTH-017 Access Denied)
+  wrongPasswordUser: 'TD-01' | 'TD-03';  // AUTH-003 Test Data in this portal's sheet: TD-01 main user or TD-03 lockout user
+}
+
 export interface PortalProfile {
   name: string;
   hosts: HostProfile[];
@@ -123,6 +134,7 @@ export interface PortalProfile {
   administrator: AdministratorRules;
   readers: ReaderRules;
   home: HomeRules;
+  auth: AuthRules;
   features: {
     sstTin: boolean;          // SST / TIN / bank / MCC / references / DBA fields on Add a Company
     logoUpload: boolean;      // Upload / Remove Company Logo
@@ -161,8 +173,9 @@ export const portals: Record<Portal, PortalProfile> = {
       testBankUser: 'test_email', resetUser: 'test_email', loginTestUser: 'qaautotest01',
       testPlanCode: '789', testPlanProvider: ''
     },
+    auth: { lockoutUser: 'test180', viewerUser: 'qaautotest01', wrongPasswordUser: 'TD-03' },   // APH Test Data TD-03 / TD-02
     home: {
-      dailySnapshot: false, headerCases: true,   // APH sheet: HOME-003..005
+      dailySnapshot: false, headerCases: true, quicklinkCase: true, quicklinkId: 'TC-HOME-002',   // APH sheet: HOME-003..005
       panels: [
         { title: 'All Companies', links: HOME_COMPANIES },
         { title: 'Manage Mobile Users', links: HOME_MOBILE },
@@ -221,8 +234,9 @@ export const portals: Record<Portal, PortalProfile> = {
       testBankUser: 'hGtkMDzs', resetUser: '', loginTestUser: 'hGtkMDzs',
       testPlanCode: '789', testPlanProvider: 'MBB'   // MBB = Maybank (list shows the host code)
     },
+    auth: { lockoutUser: 'ZifvhxMD', viewerUser: 'ICynadCm', wrongPasswordUser: 'TD-01' },      // Fassbayar Test Data TD-03 / TD-02
     home: {
-      dailySnapshot: true, headerCases: false,   // Fassbayar sheet: HOME-001..002 only
+      dailySnapshot: true, headerCases: false, quicklinkCase: true, quicklinkId: 'TC-HOME-006',   // Fassbayar sheet: HOME-001..003
       panels: [
         { title: 'All Companies', links: [...HOME_COMPANIES,
           L('Parent Company Summary', '/company/parentCompanyListing', 'All Parent Companies'),
@@ -297,6 +311,11 @@ process.env.APP_PASSWORD ??= Credentials.password;
 // Password of the disposable test bank user (Administrator TC-ADM-018 logs in as it), per environment:
 // <ENV>_TEST_BANK_USER_PASSWORD in .env. Set once by hand from the user's activation email.
 export const TEST_BANK_USER_PASSWORD = envValue('TEST_BANK_USER_PASSWORD') ?? '';
+
+// Login (AUTH) test users' passwords (see AuthRules): <ENV>_LOCKOUT_USER_PASSWORD, <ENV>_VIEWER_PASSWORD
+export const LOCKOUT_USER_PASSWORD = envValue('LOCKOUT_USER_PASSWORD') ?? '';
+export const VIEWER_PASSWORD = envValue('VIEWER_PASSWORD') ??
+  (PORTAL_PROFILE.auth.viewerUser === PORTAL_PROFILE.administrator.loginTestUser ? TEST_BANK_USER_PASSWORD : '');
 
 // Optional: real mailbox for authoriser emails (Fassbayar builders use a
 // unique "+alias" of it). Not set = random @example.com address.

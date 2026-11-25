@@ -27,7 +27,7 @@ system-portal-automation/
 │   ├── fixtures/base.ts      # base test: shared pages, blocked-page check, requireFeature()
 │   ├── fixtures/portal.ts    # gives shared tests the portal's version of a page (AddCompanyFormPage)
 │   ├── tests/                # scenarios that run on BOTH portals, one folder per menu module:
-│   │   ├── login/                    login.spec.ts
+│   │   ├── login/                    auth.spec.ts
 │   │   ├── home/                     (empty)
 │   │   ├── allCompanies/             addCompany, addCompanyValidation, addCompanyCardScheme, companySummary
 │   │   ├── manageMobileUsers/        (empty)
@@ -98,7 +98,7 @@ suite were removed the same day; only code written for this structure is left. T
 
 | Module | Status |
 |---|---|
-| Login | shared (TC-APH-001) |
+| Login (AUTH) | shared, TC-AUTH-001..017 = sheet AUTH-001..017 on both portals (AUTH-008 = TC-ADM-018); 4 mailbox cases are Human Action |
 | Add a Company | shared page + APH / Fassbayar overrides (TC-COMP-001, 002, 003); random realistic data, Fassbayar SST/TIN/bank/MCC/references filled and checked on Review (Derrick, merged 19 Nov 2026) |
 | Add a Company: GP card schemes | shared, Derrick's (TC-COMP-005, TC-COMP-006-01…04; HSBC schemes Fassbayar only) |
 | Company Summary | shared (TC-COMP-004) |

@@ -215,7 +215,7 @@ Settings sections on company details:
 
 | Module | Automated now | Not yet |
 |---|---|---|
-| Login | TC-APH-001 | negative login |
+| Login | TC-AUTH-001..017 (login page, wrong / unknown / blank login, lockout, counter reset, session timeout dialog, logout, second login, Access Denied) | mailbox cases AUTH-009, 014, 015, 016 (Human Action) |
 | All Companies | Add a Company (TC-COMP-001 to 005) | list / filters, details, edit, parent company, link, bulk upload, logo, suspend |
 | Mobile Users | — | list, add mobile user, terminals |
 | Readers | — | list, register, replace, Fasstap |

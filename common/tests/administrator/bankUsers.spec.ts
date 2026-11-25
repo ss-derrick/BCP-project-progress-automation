@@ -4,6 +4,7 @@ import { testCase } from '../../utils/testCase';
 import { loginAs } from '../../flows/loginFlow';
 import { BASE_URL, Credentials, ENV_NAME, IGNORE_HTTPS_ERRORS, PORTAL_PROFILE, TEST_BANK_USER_PASSWORD } from '../../../portals.config';
 import { LoginPage } from '../../pages/LoginPage';
+import { bankUserRow, setBankUserAccess } from '../../flows/bankUserFlow';
 import { ADMIN_QUICKLINKS, portalDate, type AdministratorPage } from '../../pages/AdministratorPage';
 import { letters, digits } from '../../utils/random';
 import { requireUatChanges, stopBeforeSaving, TEST_BANK_USER, TEST_EMAIL, UAT_PREVIEW, UAT_CHANGES_ALLOWED } from '../../utils/uatChanges';
@@ -28,6 +29,12 @@ const withoutResigned = (options: string[]): string[] => {
   if (options.includes('Resigned')) test.info().annotations.push({ type: 'finding', description: '"Resigned" shown; not tested (QA Lead OQ-APH-23)' });
   return options.filter((o) => o !== 'Resigned');
 };
+// "Failover Operator" (Fassbayar only) does not affect the bank-user cases (user decision 25 Nov 2026): it is left
+// out of the Role list comparisons (ADM-001, 002, 020, 022) and noted in the report instead of failing the test.
+const withoutFailover = (options: string[], where: string): string[] => {
+  if (options.includes('Failover Operator')) test.info().annotations.push({ type: 'finding', description: `"Failover Operator" in the ${where}: not compared (Fassbayar role; does not affect this case)` });
+  return options.filter((o) => o !== 'Failover Operator');
+};
 const COLUMNS = ['User ID', 'Role', 'Status', 'Created Date', 'Quicklink'];
 const uniqueUserId = (len: number) => `qa${letters(1)}${digits(len - 3)}`.slice(0, len);   // \w only, 3-20
 
@@ -50,11 +57,9 @@ const DUMMY_USER = 'qaautotest01';
 const RESET_USER = 'qaautotest02';
 const SHEET = PORTAL_PROFILE.administrator;
 
-async function dummyUserRow(admin: AdministratorPage, user: string): Promise<Locator> {
-  await admin.openQuicklink('Manage Bank Users');
-  await admin.search(user);
-  return admin.rows.filter({ has: admin.page.locator('td:first-child', { hasText: new RegExp(`^\\s*${user}\\s*$`, 'i') }) }).first();
-}
+// Find / suspend / reinstate a bank user: shared with the Login (AUTH) tests (common/flows/bankUserFlow.ts)
+const dummyUserRow = bankUserRow;
+const setAccess = setBankUserAccess;
 
 // A user named in the Test Data sheet: must exist, used as it is
 async function sheetUser(admin: AdministratorPage, id: string): Promise<string> {
@@ -97,21 +102,6 @@ async function ensureUser(admin: AdministratorPage, id: string): Promise<string>
   return id;
 }
 
-// Suspend (Reason Others) or reinstate a user; Submit saves at once
-async function setAccess(admin: AdministratorPage, user: string, action: 'Suspend' | 'Reinstate', remarks: string): Promise<void> {
-  await admin.quicklinkGo(await dummyUserRow(admin, user), `${action} Bank User Access`);
-  if (action === 'Suspend') await admin.fill({ reason: 'Others' });
-  await admin.fillCounted('description', remarks);
-  await admin.captureStep(`${action} form for ${user} filled, before Submit`);
-  await stopBeforeSaving(admin, `${action} Submit for ${user} (Submit saves at once)`);
-  await admin.button('Submit').click();
-  await admin.page.waitForLoadState('load');
-  await admin.captureStep(`After ${action} Submit for ${user}`);
-  const row = await dummyUserRow(admin, user);
-  await admin.captureStep(`Manage Bank Users: ${user} status after ${action}`);
-  await expect(row.locator('td').nth(2)).toHaveText(action === 'Suspend' ? 'Suspended' : 'Active');
-}
-
 async function testBankUser(admin: AdministratorPage): Promise<string> {
   if (TEST_BANK_USER) return TEST_BANK_USER;
   if (UAT_CHANGES_ALLOWED) return caseUser(admin, SHEET.testBankUser, DUMMY_USER);
@@ -141,7 +131,7 @@ if (PORTAL_PROFILE.features.bankUsers) {
           await expect(admin.searchBox).toHaveValue('User ID');
           await admin.captureOptions('role', 'Role filter (Manage Bank Users)', ROLE_FILTER);
           await admin.captureOptions('status', 'Status filter (Manage Bank Users)', STATUS_FILTER_SHEET);
-          expect.soft(await admin.options('role'), 'Role filter (OPT_ROLE_FILTER)').toEqual(ROLE_FILTER);
+          expect.soft(withoutFailover(await admin.options('role'), 'Role filter'), 'Role filter (OPT_ROLE_FILTER)').toEqual(ROLE_FILTER);
           expect.soft(withoutResigned(await admin.options('status')), 'Status filter (sheet: Active / Suspended)').toEqual(STATUS_FILTER_SHEET);
           await expect(admin.input('from', admin.filterForm)).toHaveValue(portalDate({ years: -10 }));
           await expect(admin.input('to', admin.filterForm)).toHaveValue(portalDate());
@@ -169,7 +159,7 @@ if (PORTAL_PROFILE.features.bankUsers) {
             const roles = await admin.options('role');
             if (role === ROLE_ASSIGN[0]) await admin.captureOptions('role', 'Role (Add a Bank User)', ROLE_ASSIGN);
             expect(roles, 'Super Admin not offered').not.toContain('Super Admin');
-            expect.soft(roles, 'Role list (OPT_ROLE_ASSIGN)').toEqual(ROLE_ASSIGN);    // Fassbayar adds Failover Operator
+            if (role === ROLE_ASSIGN[0]) expect.soft(withoutFailover(roles, 'Role list'), 'Role list (OPT_ROLE_ASSIGN)').toEqual(ROLE_ASSIGN);
             const id = uniqueUserId(12);
             await admin.fill({ userId: id, name: `QA ${role}`.slice(0, 20), role, email: `${id}@example.com` });
             await admin.submit();
@@ -210,7 +200,13 @@ if (PORTAL_PROFILE.features.bankUsers) {
             for (let i = 0; i < 5 && err === 'Duplicated. Not Available'; i++) err = (await tryUser(len === 3 ? letters(3) : uniqueUserId(len))).userIdError;
             return err;
           };
-          expect.soft(await acceptedId(3), 'User ID 3 chars accepted').toBeUndefined();
+          const three = await acceptedId(3);
+          if (three === 'Please enter valid User ID') {
+            // checked by hand 25 Nov 2026 (explore/scan/buid.scan.ts): every 3-char ID refused on Fassbayar, 4 accepted
+            test.info().annotations.push({ type: 'finding', description: 'A 3-character User ID is refused on Submit: the page checks the ' +
+              'User ID on Submit with regex_muid (Mobile User ID rule, min 4) instead of regex_buid (min 3). Sheet / QA Lead: 3-20' });
+          }
+          expect.soft(three, 'User ID 3 chars accepted (page validates with the Mobile User ID rule, min 4)').toBeUndefined();
           expect.soft(await acceptedId(20), 'User ID 20 chars accepted').toBeUndefined();
           await admin.openQuicklink('Add a Bank User');
           await admin.fill({ userId: 'q' + digits(20) });
@@ -470,7 +466,7 @@ if (PORTAL_PROFILE.features.bankUsers) {
         await test.step('Dropdowns: Role (OPT_ROLE_FILTER), Status (sheet: Active / Suspended)', async () => {
           await admin.captureOptions('role', 'Role filter (All Users)', ROLE_FILTER);
           await admin.captureOptions('status', 'Status filter (All Users)', STATUS_FILTER_SHEET);
-          expect.soft(await admin.options('role')).toEqual(ROLE_FILTER);
+          expect.soft(withoutFailover(await admin.options('role'), 'Role filter'), 'Role filter (OPT_ROLE_FILTER)').toEqual(ROLE_FILTER);
           expect.soft(withoutResigned(await admin.options('status')), 'Status filter (sheet: Active / Suspended)').toEqual(STATUS_FILTER_SHEET);
         });
         await test.step('Special characters \' " < > % searched as plain text', async () => {
@@ -547,7 +543,7 @@ if (PORTAL_PROFILE.features.bankUsers) {
           await admin.fill({ name: 'abcdefghijklmnopqrstu' });
           expect((await admin.input('name').inputValue()).length).toBe(20);
           // Own account (used so no colleague's account is touched): its role cannot be changed, no Role list
-          if (await admin.input('role').count()) expect(await admin.options('role')).toEqual(ROLE_ASSIGN);
+          if (await admin.input('role').count()) expect(withoutFailover(await admin.options('role'), 'Role list')).toEqual(ROLE_ASSIGN);
           else test.info().annotations.push({ type: 'info', description: 'Own account: Role is not editable (no Role list)' });
         });
         await test.step('Valid values -> Review, then Back (not saved)', async () => {

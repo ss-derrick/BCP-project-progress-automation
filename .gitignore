@@ -29,6 +29,7 @@ Test_Execution_Report_*.html
 /README.html
 /explore/scan/results/administrator-*.json
 /explore/scan/results/administrator-details-*.json
+/explore/scan/results/auth-*.json
 /explore/scan/results/administrator-popups-*.json
 /explore/scan/results/administrator-validation-*.json
 /explore/scan/results/readers-*.json
