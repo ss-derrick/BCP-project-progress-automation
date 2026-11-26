@@ -33,6 +33,7 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 
 ## Changes
 
+- [2026-11-26 01:21: Manage Mobile Users tests TC-MU-001..029 for both portals](#2026-11-26-0121-manage-mobile-users-tests-tc-mu-001029-for-both-portals)
 - [2026-11-25 15:30: TC-AUTH-010 waits the real 15 minutes](#2026-11-25-1530-tc-auth-010-waits-the-real-15-minutes)
 - [2026-11-25 14:53: TC-AUTH-003 uses each sheet's Test Data (Fassbayar TD-01)](#2026-11-25-1453-tc-auth-003-uses-each-sheets-test-data-fassbayar-td-01)
 - [2026-11-25 14:47: AUTH tests shown as module "Login (AUTH)"](#2026-11-25-1447-auth-tests-shown-as-module-login-auth)
@@ -114,6 +115,50 @@ and **how to run or check it**. Newest first. Times are Malaysia time (MYT).
 - [2026-11-18: Structure built: one codebase, two portals](#2026-11-18-structure-built-one-codebase-two-portals)
 
 ---
+
+### 2026-11-26 01:21: Manage Mobile Users tests TC-MU-001..029 for both portals
+
+**Why:** the user asked for test cases from APH sheet rows 119-146 (TC-APH-BP-MU-001..029) and Fassbayar rows 134-159
+(TC-FB-BP-MU-001..029), built from every related tab and the portal, then run, with results synced to both workbooks and
+reports. Both sheets have mostly the same cases (APH has no MU-009; Fassbayar has no MU-011, 020, 022), so one shared
+spec covers both, and the IDs follow the sheet numbers.
+
+| File / folder | Change |
+|---|---|
+| `common/tests/manageMobileUsers/mobileUsers.spec.ts` | New: TC-MU-001..029 |
+| `common/tests/manageMobileUsers/README.md` | Changed: case table, test data, how the cases are run |
+| `common/pages/MobileUsersPage.ts` | New: page object (list, search, register form, flags, company finder) |
+| `common/pages/AdministratorPage.ts`, `common/pages/ReadersPage.ts` | Changed: `statusHistory()` / `exportCsv()` moved up to the shared admin page |
+| `common/fixtures/base.ts` | Changed: `mobileUsersPage` fixture; `/mobileUser` pages are shot by the page object |
+| `portals.config.ts` | Changed: `MobileUserRules` (sheet cases, TD-06 / TD-07 companies, failover / Counter No / Fasstap per portal) |
+| `report-notes/uat-aph/sheet_links.json`, `report-notes/uat-fassbayar/sheet_links.json` | Changed: TC-MU-0xx -> rows 119-146 / 134-159 |
+| `explore/scan/mobileUsers.scan.ts`, `muUsers.scan.ts`, `muDate.scan.ts` | New: read-only exploration and probes |
+| `.env` (local, not in git) | Workbook paths set back to the OneDrive files (they had been changed to SharePoint web links) |
+
+**Key code**
+
+```ts
+// a case only in the other portal's sheet: skipped as "Applicable for ... only", left out of this portal's report
+const inSheet = (n: string) => test.skip(!MU.sheetCases.includes(n), `Applicable for ${OTHER} only: ...`);
+// data-changing cases only touch the automation's own users (qamu + 6 digits) on the TD-07 working company
+```
+
+**Result (26 Nov):**
+
+| Portal | Pass | Fail | Skipped |
+|---|---|---|---|
+| APH | 18 | 4 | 6 |
+| Fassbayar | 14 | 2 | 10 |
+
+- Fails on both portals:
+  - MU-007: no MID gives "Please select at least one MID"; an existing ID gives "Duplicated. Not Available" (sheet: "Mobile User ID already exists"); a 7-digit contact is accepted. Fassbayar also rejects a 3-character ID (needs 4, OQ-FB-22).
+  - MU-014: a 7-digit contact is accepted on Edit.
+- Fails on APH only:
+  - MU-016: the Reinstate form has no "Suspended" badge.
+  - MU-022: Status History lists the oldest entry first.
+- Fassbayar register, edit and suspend cases are blocked: TD-07 TEST COMPANY AUTOMATION 1 has no Available TID.
+
+**How to run / check:** `$env:ENV_NAME='UAT-APH'; npx playwright test common/tests/manageMobileUsers` (add `$env:ADM_ALLOW_UAT_CHANGES='true'` for 005, 010, 013, 016)
 
 ### 2026-11-25 15:30: TC-AUTH-010 waits the real 15 minutes
 

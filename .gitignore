@@ -37,3 +37,4 @@ Test_Execution_Report_*.html
 __pycache__/
 /explore/scan/results/home-*.json
 /report-notes/*/sheet_expected.json
+/explore/scan/results/mobileUsers-*.json

@@ -1,4 +1,5 @@
-import { Page, Locator, FrameLocator, expect } from '@playwright/test';
+import { Page, Locator, FrameLocator, expect, test } from '@playwright/test';
+import * as fs from 'node:fs';
 import { BasePage } from './BasePage';
 import { Timeouts } from '../../portals.config';
 import { stopBeforeSaving } from '../utils/uatChanges';
@@ -319,5 +320,34 @@ export class AdministratorPage extends BasePage {
   async closePopup(): Promise<void> {
     await this.page.locator('#fancybox-close, .fancybox-close, .fancybox-item.fancybox-close').first().click({ timeout: 3_000 }).catch(() => {});
     await this.page.keyboard.press('Escape').catch(() => {});
+  }
+
+  // ---------- shared by Readers and Mobile Users ----------
+
+  // Status History pop-up rows (newest last, as on screen) as { column: text }
+  async statusHistory(): Promise<{ columns: string[]; rows: Record<string, string>[] }> {
+    const frame = await this.openPopup('Status History >>');
+    // div "table": #tblHeaderMid .col (header, "User ID<br>(Role)"), one div#tblWhiteMid per entry (oldest first)
+    const norm = (t: string) => t.replace(/\s+/g, ' ').replace(/\s*\(\s*/g, ' (').trim();
+    const columns = (await frame.locator('#tblHeaderMid .col').allInnerTexts()).map(norm).filter(Boolean);
+    const rows: Record<string, string>[] = [];
+    // entries alternate div#tblWhiteMid / div#tbl...Mid (row colours): every *Mid div except the header
+    for (const tr of await frame.locator('#barPadding > div[id^="tbl"][id$="Mid"]:not(#tblHeaderMid)').all()) {
+      const cells = (await tr.locator('.col').allInnerTexts()).map(norm);
+      if (cells.join('')) rows.push(Object.fromEntries(columns.map((c, i) => [c, cells[i] ?? ''])));
+    }
+    await this.closePopup();
+    return { columns, rows };
+  }
+
+  // Export to CSV of the current list (download); returns the file text
+  async exportCsv(): Promise<string> {
+    const [dl] = await Promise.all([
+      this.page.waitForEvent('download', { timeout: 60_000 }),
+      this.button('Export to CSV').click()
+    ]);
+    const file = test.info().outputPath(`export-${dl.suggestedFilename()}`);
+    await dl.saveAs(file);
+    return fs.readFileSync(file, 'utf8');
   }
 }

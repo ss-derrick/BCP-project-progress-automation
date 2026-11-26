@@ -126,6 +126,18 @@ export interface AuthRules {
   wrongPasswordUser: 'TD-01' | 'TD-03';  // AUTH-003 Test Data in this portal's sheet: TD-01 main user or TD-03 lockout user
 }
 
+// Manage Mobile Users (explore/scan/mobileUsers.scan.ts 26 Nov 2026 + each workbook's Test Data sheet)
+export interface MobileUserRules {
+  sheetCases: string[];              // MU case numbers in this portal's sheet (APH: no 009; Fassbayar: no 011, 020, 022)
+  refCompany: { name: string; mid: string };   // TD-06 reference company: READ ONLY (lists, details, forms never saved)
+  workCompany: { name: string; mid: string };  // TD-07 working company: the automation's own test mobile users
+  quicklinks: string[];              // left panel
+  failover: boolean;                 // Secondary Terminal (Failover-Capable) tables + Fassbayar Sync Status (APH, SSR-496)
+  counterNo: boolean;                // Counter No field (Fassbayar)
+  fasstap: boolean;                  // Enable Fasstap flag (Fassbayar)
+  contactMandatoryOnEdit: boolean;   // Edit form shows a contact error when blank
+}
+
 export interface PortalProfile {
   name: string;
   hosts: HostProfile[];
@@ -135,6 +147,7 @@ export interface PortalProfile {
   readers: ReaderRules;
   home: HomeRules;
   auth: AuthRules;
+  mobileUsers: MobileUserRules;
   features: {
     sstTin: boolean;          // SST / TIN / bank / MCC / references / DBA fields on Add a Company
     logoUpload: boolean;      // Upload / Remove Company Logo
@@ -174,6 +187,13 @@ export const portals: Record<Portal, PortalProfile> = {
       testPlanCode: '789', testPlanProvider: ''
     },
     auth: { lockoutUser: 'test180', viewerUser: 'qaautotest01', wrongPasswordUser: 'TD-03' },   // APH Test Data TD-03 / TD-02
+    mobileUsers: {
+      sheetCases: ['001', '002', '003', '004', '005', '006', '007', '008', '010', '011', '012', '013', '014', '015', '016', '017', '018', '019', '020', '021', '022', '023', '024', '025', '026', '027', '028', '029'],
+      refCompany: { name: 'onn parent company', mid: '048800001853662' },      // Test Data TD-06 (read only)
+      workCompany: { name: 'testcreate888', mid: '202610011060002' },           // Test Data TD-07
+      quicklinks: ['Mobile User Summary', 'Add a Mobile User', 'Terminal Summary', 'Register New Terminal'],
+      failover: true, counterNo: false, fasstap: false, contactMandatoryOnEdit: true
+    },
     home: {
       dailySnapshot: false, headerCases: true, quicklinkCase: true, quicklinkId: 'TC-HOME-002',   // APH sheet: HOME-003..005
       panels: [
@@ -235,6 +255,13 @@ export const portals: Record<Portal, PortalProfile> = {
       testPlanCode: '789', testPlanProvider: 'MBB'   // MBB = Maybank (list shows the host code)
     },
     auth: { lockoutUser: 'ZifvhxMD', viewerUser: 'ICynadCm', wrongPasswordUser: 'TD-01' },      // Fassbayar Test Data TD-03 / TD-02
+    mobileUsers: {
+      sheetCases: ['001', '002', '003', '004', '005', '006', '007', '008', '009', '010', '012', '013', '014', '015', '016', '017', '018', '019', '021', '023', '024', '025', '026', '027', '028', '029'],
+      refCompany: { name: 'SS FP TEST', mid: '201805230000001' },               // Test Data TD-06 (read only)
+      workCompany: { name: 'TEST COMPANY AUTOMATION 1', mid: '098821328347823' },  // Test Data TD-07 (no Available TID on 26 Nov)
+      quicklinks: ['Mobile User Summary', 'Add a Mobile User', 'Terminal Summary', 'Register New Terminal'],
+      failover: false, counterNo: true, fasstap: true, contactMandatoryOnEdit: false
+    },
     home: {
       dailySnapshot: true, headerCases: false, quicklinkCase: true, quicklinkId: 'TC-HOME-006',   // Fassbayar sheet: HOME-001..003
       panels: [

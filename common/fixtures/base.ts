@@ -11,6 +11,7 @@ import { TransactionDetailsPage } from '../pages/TransactionDetailsPage';
 import { CreditSettlementPage } from '../pages/CreditSettlementPage';
 import { AdministratorPage } from '../pages/AdministratorPage';
 import { ReadersPage } from '../pages/ReadersPage';
+import { MobileUsersPage } from '../pages/MobileUsersPage';
 import { cssMarks, failureCardShot } from '../utils/screenMarks';
 import { sheetCases } from '../utils/sheetExpected';
 import { explainMessages, failureParts } from '../utils/explainFailure';
@@ -34,6 +35,7 @@ type SharedPages = {
   creditSettlementPage: CreditSettlementPage;
   administratorPage: AdministratorPage;
   readersPage: ReadersPage;
+  mobileUsersPage: MobileUsersPage;
 };
 
 type AutoFixtures = {
@@ -53,6 +55,7 @@ export const test = base.extend<SharedPages & AutoFixtures>({
   creditSettlementPage: async ({ page }, use) => { await use(new CreditSettlementPage(page)); },
   administratorPage: async ({ page }, use) => { await use(new AdministratorPage(page)); },
   readersPage: async ({ page }, use) => { await use(new ReadersPage(page)); },
+  mobileUsersPage: async ({ page }, use) => { await use(new MobileUsersPage(page)); },
 
   // A step screenshot of EVERY page the test lands on (report: one per screen, in order), so a failure
   // can be traced screen by screen. Pages whose page objects already shoot every screen are left out:
@@ -68,7 +71,7 @@ export const test = base.extend<SharedPages & AutoFixtures>({
           try {
             await page.waitForLoadState('load', { timeout: 15_000 });
             const path = new URL(page.url()).pathname;
-            if (/^\/(admin|reader|auth|login|console)(\/|$)/.test(path) || path === '/') return;   // shot by their page objects / login flow
+            if (/^\/(admin|reader|mobileUser|auth|login|console)(\/|$)/.test(path) || path === '/') return;   // shot by their page objects / login flow
             const title = (await page.locator('.barPaddTitle, .title24Black').first().innerText({ timeout: 1_000 }).catch(() => '')).trim();
             // caption + red boxes via screenshot-only CSS (the test may be clicking meanwhile)
             const body = await page.screenshot({ fullPage: true, type: 'jpeg', quality: 70, style: cssMarks(`Screen: ${title || path}`) });
